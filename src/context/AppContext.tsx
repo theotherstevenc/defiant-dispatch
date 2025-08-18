@@ -9,6 +9,7 @@ import { logError } from '../utils/logError'
 const AppContext = createContext<AppContextProps | undefined>(undefined)
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [editorColorScheme, setEditorColorScheme] = useState<string>('')
   const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false)
   const [isPreventThreadingEnabled, setIsPreventThreadingEnabled] = useState(false)
@@ -42,6 +43,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsPreventThreadingEnabled(false)
       setIsDarkMode(false)
       setIsPreviewDarkMode(false)
+      setEditorColorScheme('')
       setHideWorkingFiles(true)
       setActiveEditor('')
       setEmailAddresses([])
@@ -76,7 +78,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             hideWorkingFiles,
             isDarkMode,
             isPreviewDarkMode,
+            editorColorScheme,
           } = data
+          setEditorColorScheme(editorColorScheme)
           setSubject(subject)
           setIsMinifyEnabled(isMinifyEnabled)
           setIsWordWrapEnabled(isWordWrapEnabled)
@@ -120,6 +124,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsDarkMode,
         isPreviewDarkMode,
         setIsPreviewDarkMode,
+        editorColorScheme,
+        setEditorColorScheme,
         user,
       }}>
       {children}
