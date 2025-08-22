@@ -32,8 +32,8 @@ const mockAppContext: AppContextProps = {
   setIsDarkMode: vi.fn(),
   isPreviewDarkMode: false,
   setIsPreviewDarkMode: vi.fn(),
-  editorColorScheme: '',
-  setEditorColorScheme: vi.fn(),
+  appColorScheme: '',
+  setAppColorScheme: vi.fn(),
   user: null,
 }
 
