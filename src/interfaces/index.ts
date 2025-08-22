@@ -74,5 +74,7 @@ export interface AppContextProps {
   setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
   isPreviewDarkMode: boolean
   setIsPreviewDarkMode: React.Dispatch<React.SetStateAction<boolean>>
+  appColorScheme: string
+  setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
   user: User | null
 }

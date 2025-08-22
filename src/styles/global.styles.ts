@@ -1,10 +1,12 @@
+import { EDITOR_DARK_MODE, EDITOR_LIGHT_MODE } from '../utils/constants'
+
 export const workspacePreviewIframeStyles = (isDarkMode: boolean) => ({
   width: '100%',
   height: '100%',
   border: 'none',
   overflow: 'hidden',
   display: 'block',
-  colorScheme: isDarkMode ? 'dark' : 'light',
+  colorScheme: isDarkMode ? EDITOR_DARK_MODE : EDITOR_LIGHT_MODE,
 })
 
 export const workspaceEditorStyles = {

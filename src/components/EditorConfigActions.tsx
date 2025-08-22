@@ -10,6 +10,7 @@ import {
   InputLockFile,
   InputMarkupSettings,
   InputSenderSettings,
+  InputThemeToggle,
   InputToggleEditorTheme,
   InputTogglePreviewTheme,
   InputToggleWorkingFiles,
@@ -25,6 +26,7 @@ const EditorConfigActions = () => (
       <InputSenderSettings />
     </Box>
     <Box sx={inputActionsStyles}>
+      <InputThemeToggle />
       <InputToggleEditorTheme />
       <InputTogglePreviewTheme />
       <InputFormatHTML />
