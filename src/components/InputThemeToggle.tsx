@@ -13,14 +13,13 @@ const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
 
 const InputThemeToggle = () => {
-  const { editorColorScheme, setEditorColorScheme } = useAppContext()
+  const { appColorScheme, setAppColorScheme } = useAppContext()
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const firestoreObj = { editorColorScheme: event.target.value }
+      const firestoreObj = { appColorScheme: event.target.value }
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setEditorColorScheme(event.target.value)
-      console.log('Editor color scheme changed to:', event.target.value)
+      setAppColorScheme(event.target.value)
     } catch (error) {
       logError('Failed to update editor color scheme:', 'InputThemeToggle', error)
     }
@@ -29,7 +28,7 @@ const InputThemeToggle = () => {
   return (
     <RadioGroup
       row
-      value={editorColorScheme || 'system'}
+      value={appColorScheme || 'system'}
       onChange={handleChange}
       aria-label='theme mode'
       name='theme-mode'>
