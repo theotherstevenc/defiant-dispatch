@@ -8,11 +8,24 @@ import SettingsSystemDaydreamIcon from '@mui/icons-material/SettingsSystemDaydre
 import FormControlLabel from '@mui/material/FormControlLabel'
 import RadioGroup from '@mui/material/RadioGroup'
 import Radio from '@mui/material/Radio'
-import { Tooltip } from '@mui/material'
+import { Box, Tooltip } from '@mui/material'
 import { StyledIconButton } from './StyledIconButton'
 
 const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
+
+const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolean }) => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      outline: selected ? (theme) => `2px solid ${theme.palette.primary.light}` : 'transparent',
+      transition: 'background 0.2s',
+    }}>
+    {icon}
+  </Box>
+)
 
 const InputThemeToggle = () => {
   const { appColorScheme, setAppColorScheme } = useAppContext()
@@ -40,8 +53,8 @@ const InputThemeToggle = () => {
             value='light'
             control={
               <Radio
-                icon={<LightModeIcon />}
-                checkedIcon={<LightModeIcon />}
+                icon={<IconRadio icon={<LightModeIcon />} selected={false} />}
+                checkedIcon={<IconRadio icon={<LightModeIcon />} selected={true} />}
                 sx={{
                   padding: 0,
                   color: (theme) =>
@@ -60,8 +73,8 @@ const InputThemeToggle = () => {
             value='system'
             control={
               <Radio
-                icon={<SettingsSystemDaydreamIcon />}
-                checkedIcon={<SettingsSystemDaydreamIcon />}
+                icon={<IconRadio icon={<SettingsSystemDaydreamIcon />} selected={false} />}
+                checkedIcon={<IconRadio icon={<SettingsSystemDaydreamIcon />} selected={true} />}
                 sx={{
                   padding: '0 10px',
                   color: (theme) =>
@@ -80,8 +93,8 @@ const InputThemeToggle = () => {
             value='dark'
             control={
               <Radio
-                icon={<DarkModeIcon />}
-                checkedIcon={<DarkModeIcon />}
+                icon={<IconRadio icon={<DarkModeIcon />} selected={false} />}
+                checkedIcon={<IconRadio icon={<DarkModeIcon />} selected={true} />}
                 sx={{
                   padding: 0,
                   color: (theme) =>
