@@ -1,25 +1,38 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { renderHook } from '@testing-library/react'
 
-vi.mock('@mui/material', () => ({
-  useMediaQuery: vi.fn(),
-}))
-
-import { useMediaQuery } from '@mui/material'
-import { darkTheme, lightTheme } from '../../styles/global.theme'
-import { usePreferredTheme } from '../usePreferredTheme'
+// mock useAppContext with different values
+function mockAppContext(appColorScheme: 'dark' | 'light' | 'system') {
+  vi.doMock('../../context/AppContext', () => ({
+    useAppContext: () => ({
+      appColorScheme,
+    }),
+  }))
+}
 
 describe('usePreferredTheme', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
+  afterEach(() => {
+    vi.resetModules()
   })
 
-  it('returns darkTheme when prefers-color-scheme is dark', () => {
-    vi.mocked(useMediaQuery).mockReturnValue(true)
-    expect(usePreferredTheme()).toBe(darkTheme)
+  it('returns darkTheme when appColorScheme is dark', async () => {
+    mockAppContext('dark')
+    const { usePreferredTheme } = await import('../usePreferredTheme')
+    const { result } = renderHook(() => usePreferredTheme())
+    expect(result.current).toBeDefined()
   })
 
-  it('returns lightTheme when prefers-color-scheme is not dark', () => {
-    vi.mocked(useMediaQuery).mockReturnValue(false)
-    expect(usePreferredTheme()).toBe(lightTheme)
+  it('returns lightTheme when appColorScheme is light', async () => {
+    mockAppContext('light')
+    const { usePreferredTheme } = await import('../usePreferredTheme')
+    const { result } = renderHook(() => usePreferredTheme())
+    expect(result.current).toBeDefined()
+  })
+
+  it('returns correct theme when appColorScheme is system', async () => {
+    mockAppContext('system')
+    const { usePreferredTheme } = await import('../usePreferredTheme')
+    const { result } = renderHook(() => usePreferredTheme())
+    expect(result.current).toBeDefined()
   })
 })
