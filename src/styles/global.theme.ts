@@ -7,6 +7,11 @@ const focusVisible = {
 }
 
 const sharedComponentProps = {
+  MuiButtonBase: {
+    defaultProps: {
+      disableRipple: true,
+    },
+  },
   MuiTooltip: {
     defaultProps: {
       arrow: true,
@@ -14,9 +19,6 @@ const sharedComponentProps = {
     },
   },
   MuiIconButton: {
-    defaultProps: {
-      disableRipple: true,
-    },
     styleOverrides: {
       root: {
         ':focus-visible': focusVisible,
@@ -24,9 +26,6 @@ const sharedComponentProps = {
     },
   },
   MuiButton: {
-    defaultProps: {
-      disableRipple: true,
-    },
     styleOverrides: {
       root: {
         ':focus-visible': focusVisible,
