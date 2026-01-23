@@ -1,7 +1,7 @@
 {
   "name": "can-i-send",
   "private": true,
-  "version": "5.0.18",
+  "version": "5.0.19",
   "type": "module",
   "engines": {
     "node": "22.x",
