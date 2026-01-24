@@ -12,6 +12,8 @@
     "dev:client": "vite",
     "dev:server": "NODE_ENV=development npx nodemon app.js",
     "depcheck": "depcheck",
+    "deploy": "npm run build && firebase deploy --only hosting",
+    "firebase:deploy": "firebase deploy --only hosting",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "patch": "npm version patch --no-git-tag-version && git add package.json package-lock.json && git commit -m \"chore: bump version to v$(node -p 'require(\"./package.json\").version')\"",
