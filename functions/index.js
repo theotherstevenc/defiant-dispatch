@@ -1,4 +1,5 @@
 import { onRequest } from 'firebase-functions/v2/https'
+import { defineSecret } from 'firebase-functions/params'
 import CryptoJS from 'crypto-js'
 import cors from 'cors'
 import express from 'express'
@@ -7,6 +8,11 @@ import nodemailer from 'nodemailer'
 import { simpleParser } from 'mailparser'
 
 const app = express()
+
+// Define secrets
+const encryptionKey = defineSecret('ENCRYPTION_KEY')
+const mailUsername = defineSecret('MAIL_USERNAME')
+const mailPass = defineSecret('MAIL_PASS')
 
 app.use(express.urlencoded({ limit: '50mb', extended: true }))
 app.use(express.json({ limit: '50mb' }))
@@ -18,7 +24,7 @@ const encryptText = (text, key) => {
 }
 
 const decryptText = (encryptedData) => {
-  const decrypted = CryptoJS.AES.decrypt(encryptedData, process.env.ENCRYPTION_KEY)
+  const decrypted = CryptoJS.AES.decrypt(encryptedData, encryptionKey.value())
   return decrypted.toString(CryptoJS.enc.Utf8)
 }
 
@@ -48,12 +54,8 @@ app.post('/api/encrypt', async (req, res) => {
     return res.status(400).json({ error: 'Text is required' })
   }
 
-  if (!process.env.ENCRYPTION_KEY) {
-    return res.status(500).json({ error: 'Missing credentials' })
-  }
-
   try {
-    const encrypted = encryptText(text, process.env.ENCRYPTION_KEY)
+    const encrypted = encryptText(text, encryptionKey.value())
     return res.json({ encrypted })
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' })
@@ -63,8 +65,8 @@ app.post('/api/encrypt', async (req, res) => {
 app.post('/api/send', async (req, res) => {
   try {
     const { testaddress, testsubject, ampversion, textversion, htmlversion } = req.body
-    const user = req.body.username || process.env.MAIL_USERNAME
-    const pass = decryptText(req.body.pass) || process.env.MAIL_PASS
+    const user = req.body.username || mailUsername.value()
+    const pass = decryptText(req.body.pass) || mailPass.value()
     const from = req.body.from || process.env.MAIL_FROM_NAME
     const host = req.body.host || process.env.MAIL_HOST
     const port = req.body.port || process.env.MAIL_PORT
@@ -108,4 +110,4 @@ app.get('/api/version', (req, res) => {
   res.json({ version: process.env.npm_package_version })
 })
 
-export const api = onRequest(app)
+export const api = onRequest({ secrets: [encryptionKey, mailUsername, mailPass] }, app)
