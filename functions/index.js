@@ -1,32 +1,111 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import { onRequest } from 'firebase-functions/v2/https'
+import CryptoJS from 'crypto-js'
+import cors from 'cors'
+import express from 'express'
+import fileUpload from 'express-fileupload'
+import nodemailer from 'nodemailer'
+import { simpleParser } from 'mailparser'
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+const app = express()
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
+app.use(express.json({ limit: '50mb' }))
+app.use(cors({ origin: '*' }))
+app.use(fileUpload())
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+const encryptText = (text, key) => {
+  return CryptoJS.AES.encrypt(text, key).toString()
+}
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+const decryptText = (encryptedData) => {
+  const decrypted = CryptoJS.AES.decrypt(encryptedData, process.env.ENCRYPTION_KEY)
+  return decrypted.toString(CryptoJS.enc.Utf8)
+}
+
+const ampVersion = (parsed) => {
+  if (parsed && Array.isArray(parsed.attachments)) {
+    const ampAttachment = parsed.attachments.find((attachment) => attachment.contentType === 'text/x-amp-html')
+    if (ampAttachment) {
+      return ampAttachment.content.toString()
+    }
+  }
+}
+
+const parseUpload = async (file) => {
+  const parsed = await simpleParser(file.data)
+
+  return {
+    html: parsed.html || '',
+    text: parsed.text || '',
+    amp: ampVersion(parsed) || '',
+  }
+}
+
+app.post('/api/encrypt', async (req, res) => {
+  const { text } = req.body
+
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' })
+  }
+
+  if (!process.env.ENCRYPTION_KEY) {
+    return res.status(500).json({ error: 'Missing credentials' })
+  }
+
+  try {
+    const encrypted = encryptText(text, process.env.ENCRYPTION_KEY)
+    return res.json({ encrypted })
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+})
+
+app.post('/api/send', async (req, res) => {
+  try {
+    const { testaddress, testsubject, ampversion, textversion, htmlversion } = req.body
+    const user = req.body.username || process.env.MAIL_USERNAME
+    const pass = decryptText(req.body.pass) || process.env.MAIL_PASS
+    const from = req.body.from || process.env.MAIL_FROM_NAME
+    const host = req.body.host || process.env.MAIL_HOST
+    const port = req.body.port || process.env.MAIL_PORT
+
+    const transporter = nodemailer.createTransport({
+      host: host,
+      port: port,
+      secure: false,
+      auth: {
+        user: user,
+        pass: pass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    })
+
+    await transporter.sendMail({
+      from: from + ' <' + user + '>',
+      to: testaddress,
+      subject: testsubject,
+      html: htmlversion,
+      text: textversion,
+      amp: ampversion,
+    })
+
+    return res.status(200).json({ success: true })
+  } catch (error) {
+    console.error('Error sending email:', error)
+    return res.status(500).json({ error: 'Internal Server Error.' })
+  }
+})
+
+app.post('/api/upload', async (req, res) => {
+  const file = req.files.file
+  const parsedContent = await parseUpload(file)
+  res.json(parsedContent)
+})
+
+app.get('/api/version', (req, res) => {
+  res.json({ version: process.env.npm_package_version })
+})
+
+export const api = onRequest(app)
