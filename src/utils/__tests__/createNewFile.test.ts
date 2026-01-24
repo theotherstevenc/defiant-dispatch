@@ -9,22 +9,16 @@ vi.mock('firebase/firestore', () => ({
 vi.mock('../firebase', () => ({ db: {} }))
 vi.mock('./logError', () => ({ logError: vi.fn() }))
 
-let setWorkingFileID: ReturnType<typeof vi.fn>
-let setWorkingFileName: ReturnType<typeof vi.fn>
-let setHtml: ReturnType<typeof vi.fn>
-let setText: ReturnType<typeof vi.fn>
-let setAmp: ReturnType<typeof vi.fn>
-let setIsFileLocked: ReturnType<typeof vi.fn>
+const setWorkingFileID = vi.fn<(id: string) => void>()
+const setWorkingFileName = vi.fn<(name: string) => void>()
+const setHtml = vi.fn<(v: string) => void>()
+const setText = vi.fn<(v: string) => void>()
+const setAmp = vi.fn<(v: string) => void>()
+const setIsFileLocked = vi.fn<(locked: boolean) => void>()
 
 describe('createNewFile', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    setWorkingFileID = vi.fn()
-    setWorkingFileName = vi.fn()
-    setHtml = vi.fn()
-    setText = vi.fn()
-    setAmp = vi.fn()
-    setIsFileLocked = vi.fn()
   })
 
   it('calls setter functions with correct values', async () => {
