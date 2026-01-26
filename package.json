@@ -8,9 +8,14 @@
     "npm": "10.x"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client": "vite",
-    "dev:server": "NODE_ENV=development npx nodemon app.js",
+    "dev": "concurrently \"npm:dev:functions\" \"npm:dev:emulators\" \"npm:dev:frontend\"",
+    "emulators": "firebase emulators:start",
+    "dev:emulators": "firebase emulators:start",
+    "dev:frontend": "vite",
+    "dev:functions": "npm run build --prefix functions -- --watch",
+    "dev:deprecated": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client:deprecated": "vite",
+    "dev:server:deprecated": "NODE_ENV=development npx nodemon app.js",
     "depcheck": "depcheck",
     "deploy": "npm run build && firebase deploy --only hosting",
     "firebase:deploy": "firebase deploy --only hosting",
