@@ -23,3 +23,5 @@ if (import.meta.env.DEV) {
   connectFirestoreEmulator(db, 'localhost', 8080)
   connectFunctionsEmulator(functions, 'localhost', 5001)
 }
+
+export { auth, db, functions }
