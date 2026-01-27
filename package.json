@@ -77,5 +77,8 @@
     "vite": "^7.3.1",
     "vite-plugin-html": "^3.2.2",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "rollup": "4.56.0"
   }
 }
