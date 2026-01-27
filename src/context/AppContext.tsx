@@ -31,29 +31,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
+      if (!firebaseUser) {
+        setSubject('')
+        setIsMinifyEnabled(false)
+        setIsWordWrapEnabled(false)
+        setIsPreventThreadingEnabled(false)
+        setIsDarkMode(false)
+        setIsPreviewDarkMode(false)
+        setAppColorScheme('')
+        setHideWorkingFiles(true)
+        setActiveEditor('')
+        setEmailAddresses([])
+        setInputSenderSettings({
+          host: '',
+          port: '',
+          username: '',
+          pass: '',
+          from: '',
+        })
+      }
     })
     return () => unsubscribe()
   }, [])
 
   useEffect(() => {
     if (!user) {
-      setSubject('')
-      setIsMinifyEnabled(false)
-      setIsWordWrapEnabled(false)
-      setIsPreventThreadingEnabled(false)
-      setIsDarkMode(false)
-      setIsPreviewDarkMode(false)
-      setAppColorScheme('')
-      setHideWorkingFiles(true)
-      setActiveEditor('')
-      setEmailAddresses([])
-      setInputSenderSettings({
-        host: '',
-        port: '',
-        username: '',
-        pass: '',
-        from: '',
-      })
       return
     }
 
@@ -64,21 +66,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const data = doc.data()
         if (data) {
           const {
-            subject,
-            host,
-            port,
-            username,
-            pass,
-            from,
-            isMinifyEnabled,
-            isWordWrapEnabled,
-            isPreventThreadingEnabled,
-            activeEditor,
-            emailAddresses,
-            hideWorkingFiles,
-            isDarkMode,
-            isPreviewDarkMode,
-            appColorScheme,
+            subject = '',
+            host = '',
+            port = '',
+            username = '',
+            pass = '',
+            from = '',
+            isMinifyEnabled = false,
+            isWordWrapEnabled = false,
+            isPreventThreadingEnabled = false,
+            activeEditor = '',
+            emailAddresses = [],
+            hideWorkingFiles = true,
+            isDarkMode = false,
+            isPreviewDarkMode = false,
+            appColorScheme = '',
           } = data
           setAppColorScheme(appColorScheme)
           setSubject(subject)
@@ -95,7 +97,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       },
       (error) => {
         logError('An error occurred while fetching app context data', 'AppContext', error)
-      }
+      },
     )
 
     return () => unsubscribe()
