@@ -1,17 +1,19 @@
-import { db } from '../firebase'
-import { useAppContext } from '../context/AppContext'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { Box, TextField } from '@mui/material'
-import { logError } from '../utils/logError'
+import Split from 'react-split'
+
+import { useAppContext } from '../context/AppContext'
+import { db } from '../firebase'
 import {
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_DEFAULT,
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,
   SUBJECT_LINE_INPUT_LABEL,
   SUBJECT_LINE_INPUT_LABEL_NON_THREADED,
 } from '../utils/constants'
-import Split from 'react-split'
-import InputChips from './InputChips'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import usePersistentValue from '../utils/usePersistentValue'
+
+import InputChips from './InputChips'
 
 const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
@@ -50,11 +52,7 @@ const InputEmailListSubjectLine = () => {
     <>
       <Box className='split-container'>
         <Split className='split-component' sizes={sizes} onDragEnd={setSizes}>
-          <InputChips
-            chipValues={emailAddresses}
-            setChipValues={setEmailAddresses}
-            onChange={handleEmailAddressesChange}
-          />
+          <InputChips chipValues={emailAddresses} setChipValues={setEmailAddresses} onChange={handleEmailAddressesChange} />
           <TextField
             id='subject'
             className='full-height'

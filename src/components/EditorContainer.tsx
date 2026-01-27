@@ -1,13 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useAppContext } from '../context/AppContext'
 import { Box } from '@mui/material'
 import { clsx } from 'clsx'
-import { EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT, EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM, EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY } from '../utils/constants'
-import Split from 'react-split'
-import EditorWorkspacePreview from './EditorWorkspacePreview'
-import EditorWorkingFiles from './EditorWorkingFiles'
-import usePersistentValue from '../utils/usePersistentValue'
 import { useEffect } from 'react'
+import Split from 'react-split'
+
+import { useAppContext } from '../context/AppContext'
+import {
+  EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT,
+  EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM,
+  EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY,
+} from '../utils/constants'
+import usePersistentValue from '../utils/usePersistentValue'
+
+import EditorWorkingFiles from './EditorWorkingFiles'
+import EditorWorkspacePreview from './EditorWorkspacePreview'
 
 const EditorContainer = () => {
   const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()

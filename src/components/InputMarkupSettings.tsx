@@ -1,22 +1,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { db } from '../firebase'
-import { useEffect } from 'react'
-import { useAppContext } from '../context/AppContext'
 import { Checkbox, FormControlLabel } from '@mui/material'
+import { useEffect } from 'react'
+
+import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-import { logError } from '../utils/logError'
-import { customMinifier } from '../utils/customMinifier'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { db } from '../firebase'
 import { SETTINGS_CHECKBOX_LABEL_MINIFY, SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING, SETTINGS_CHECKBOX_LABEL_WORD_WRAP } from '../utils/constants'
+import { customMinifier } from '../utils/customMinifier'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const InputMarkupSettings = () => {
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
-  const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } = useAppContext()
+  const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
+    useAppContext()
 
   const settings = [
     { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: isMinifyEnabled, setter: setIsMinifyEnabled },
     { name: 'isWordWrapEnabled', label: SETTINGS_CHECKBOX_LABEL_WORD_WRAP, checked: isWordWrapEnabled, setter: setIsWordWrapEnabled },
-    { name: 'isPreventThreadingEnabled', label: SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING, checked: isPreventThreadingEnabled, setter: setIsPreventThreadingEnabled },
+    {
+      name: 'isPreventThreadingEnabled',
+      label: SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING,
+      checked: isPreventThreadingEnabled,
+      setter: setIsPreventThreadingEnabled,
+    },
   ]
 
   const COLLECTION = 'config'

@@ -1,14 +1,15 @@
-import { Tooltip } from '@mui/material'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import styled from '@emotion/styled'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import { Tooltip } from '@mui/material'
+import { useRef } from 'react'
+
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-
-import { useRef } from 'react'
-import { logError } from '../utils/logError'
-import { createNewFile } from '../utils/createNewFile'
-import { StyledIconButton } from './StyledIconButton'
 import { BTN_UPLOAD_LABEL } from '../utils/constants'
+import { createNewFile } from '../utils/createNewFile'
+import { logError } from '../utils/logError'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -62,7 +63,17 @@ const InputFileUpload = () => {
     const fileName = file.name.replace(/\.[^/.]+$/, '')
     const boilerPlateMarkup = JSON.parse(text)
 
-    await createNewFile(fileName, boilerPlateMarkup, isBoilerplateApplied, setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked)
+    await createNewFile(
+      fileName,
+      boilerPlateMarkup,
+      isBoilerplateApplied,
+      setWorkingFileID,
+      setWorkingFileName,
+      setHtml,
+      setText,
+      setAmp,
+      setIsFileLocked
+    )
   }
 
   const handleButtonClick = () => {

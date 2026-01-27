@@ -1,11 +1,13 @@
-import beautify from 'js-beautify'
 import CodeIcon from '@mui/icons-material/Code'
-import { INPUT_FORMAT_HTML_LABEL } from '../utils/constants'
-import { useEditorContext } from '../context/EditorContext'
-import { useAppContext } from '../context/AppContext'
-import { StyledIconButton } from './StyledIconButton'
 import { Tooltip } from '@mui/material'
+import beautify from 'js-beautify'
+
+import { useAppContext } from '../context/AppContext'
+import { useEditorContext } from '../context/EditorContext'
+import { INPUT_FORMAT_HTML_LABEL } from '../utils/constants'
 import { logError } from '../utils/logError'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const InputFormatHTML = () => {
   const { html, setHtml } = useEditorContext()

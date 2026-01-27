@@ -1,11 +1,12 @@
-import { db } from '../firebase'
-import { useAppContext } from '../context/AppContext'
-import { encryptString } from '../utils/encryptString'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { TextField } from '@mui/material'
+
+import { useAppContext } from '../context/AppContext'
+import { db } from '../firebase'
 import { SenderSettings } from '../interfaces'
 import { SETTINGS_FROM, SETTINGS_HOST, SETTINGS_PASS, SETTINGS_PORT, SETTINGS_USER } from '../utils/constants'
+import { encryptString } from '../utils/encryptString'
 import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
@@ -34,7 +35,10 @@ const InputSenderSettings = () => {
     }
   }
 
-  const handleEvent = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>, isBlur: boolean) => {
+  const handleEvent = async (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    isBlur: boolean
+  ) => {
     const { id, value } = e.target
     try {
       await handleInput(id, value, isBlur)

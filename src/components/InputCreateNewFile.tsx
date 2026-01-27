@@ -1,15 +1,17 @@
-import { useState } from 'react'
-import { useAppContext } from '../context/AppContext'
-import { useEditorContext } from '../context/EditorContext'
-import { boilerPlateMarkup } from '../utils/boilerPlateMarkup'
-import { StyledIconButton } from './StyledIconButton'
-import { createNewFile } from '../utils/createNewFile'
-import { iconButtonStyles } from '../styles/global.styles'
-import { logError } from '../utils/logError'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox, Tooltip } from '@mui/material'
-import { BTN_LABEL_CANCEL, BTN_LABEL_CREATE, BTN_LABEL_CREATE_CHECKBOX, BTN_LABEL_CREATE_DIALOG, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox, Tooltip } from '@mui/material'
+import { useState } from 'react'
+
+import { useAppContext } from '../context/AppContext'
+import { useEditorContext } from '../context/EditorContext'
+import { iconButtonStyles } from '../styles/global.styles'
+import { boilerPlateMarkup } from '../utils/boilerPlateMarkup'
+import { BTN_LABEL_CANCEL, BTN_LABEL_CREATE, BTN_LABEL_CREATE_CHECKBOX, BTN_LABEL_CREATE_DIALOG, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
+import { createNewFile } from '../utils/createNewFile'
+import { logError } from '../utils/logError'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const InputCreateNewFile = () => {
   const { setIsMinifyEnabled, setIsWordWrapEnabled } = useAppContext()
@@ -31,7 +33,17 @@ const InputCreateNewFile = () => {
     setWorkingFileID('')
 
     try {
-      await createNewFile(fileName, boilerPlateMarkup, isBoilerplateApplied, setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked)
+      await createNewFile(
+        fileName,
+        boilerPlateMarkup,
+        isBoilerplateApplied,
+        setWorkingFileID,
+        setWorkingFileName,
+        setHtml,
+        setText,
+        setAmp,
+        setIsFileLocked
+      )
       setFileName('')
       handleClose()
     } catch (error) {
@@ -70,7 +82,12 @@ const InputCreateNewFile = () => {
               }
             }}
           />
-          <FormControlLabel control={<Checkbox name='isBoilerplateApplied' color='primary' />} label={BTN_LABEL_CREATE_CHECKBOX} checked={isBoilerplateApplied} onChange={handleChange} />
+          <FormControlLabel
+            control={<Checkbox name='isBoilerplateApplied' color='primary' />}
+            label={BTN_LABEL_CREATE_CHECKBOX}
+            checked={isBoilerplateApplied}
+            onChange={handleChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='secondary'>

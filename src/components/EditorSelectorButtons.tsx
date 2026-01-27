@@ -1,9 +1,10 @@
-import { db } from '../firebase'
-import { useAppContext } from '../context/AppContext'
-import { logError } from '../utils/logError'
 import { Button } from '@mui/material'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+
+import { useAppContext } from '../context/AppContext'
+import { db } from '../firebase'
 import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED, EDITOR_OPTION_AMP, EDITOR_OPTION_HTML, EDITOR_OPTION_TEXT } from '../utils/constants'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
@@ -30,7 +31,10 @@ const EditorSelectorButtons = () => {
     <>
       {editorOptions.map((editorOption) => {
         return (
-          <Button key={editorOption} variant={activeEditor === editorOption ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED} onClick={() => handleClick(editorOption)}>
+          <Button
+            key={editorOption}
+            variant={activeEditor === editorOption ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
+            onClick={() => handleClick(editorOption)}>
             {editorOption.toUpperCase()}
           </Button>
         )
