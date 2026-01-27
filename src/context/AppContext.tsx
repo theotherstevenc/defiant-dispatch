@@ -1,7 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+
 import { auth, db } from '../firebase'
 import { AppContextProps, SenderSettings } from '../interfaces'
 import { logError } from '../utils/logError'
@@ -97,7 +98,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       },
       (error) => {
         logError('An error occurred while fetching app context data', 'AppContext', error)
-      },
+      }
     )
 
     return () => unsubscribe()

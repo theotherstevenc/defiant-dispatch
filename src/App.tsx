@@ -1,8 +1,9 @@
 import './App.css'
+import { CssBaseline, ThemeProvider } from '@mui/material'
+
+import { EditorContainer, EditorConfigActions, EditorContentDelivery } from './components'
 import { EditorProvider } from './context/EditorContext'
 import { usePreferredTheme } from './utils/usePreferredTheme'
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { EditorContainer, EditorConfigActions, EditorContentDelivery } from './components'
 
 function App() {
   const theme = usePreferredTheme()
