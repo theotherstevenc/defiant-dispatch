@@ -116,13 +116,17 @@ const InputChips: React.FC<InputChipsProps> = ({ chipValues, setChipValues, onCh
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value.trim()
 
-    if (e.key === 'Enter' && value) {
+    if ((e.key === 'Enter' || e.key === ',') && value) {
       setChipValues((prev) => {
         const newValues = [...prev, value]
         onChange?.(newValues)
         return newValues
       })
       setInputValue('')
+      // Prevent comma from being entered in the input
+      if (e.key === ',') {
+        e.preventDefault()
+      }
     }
   }
 
