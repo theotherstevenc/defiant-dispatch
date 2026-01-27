@@ -1,9 +1,9 @@
+import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
-import pkg from './package.json'
 
-import { visualizer } from 'rollup-plugin-visualizer'
-import react from '@vitejs/plugin-react'
+import pkg from './package.json'
 
 export default defineConfig({
   define: {
@@ -57,9 +57,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5001',
         changeOrigin: true,
-        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/defiant-dispatch-6d153/us-central1/api'),
       },
     },
   },
