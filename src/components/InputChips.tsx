@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react'
-import { TextField, styled } from '@mui/material'
-import { FOCUS_OUTLINE_COLOR } from '../utils/constants'
-import Stack from '@mui/material/Stack'
-import Chip from '@mui/material/Chip'
 import ClearIcon from '@mui/icons-material/Clear'
+import { TextField, styled } from '@mui/material'
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
+import React, { useRef, useState } from 'react'
+
+import { FOCUS_OUTLINE_COLOR } from '../utils/constants'
 
 const StyledStack = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(0.5),
@@ -90,9 +91,7 @@ const ChipItem: React.FC<ChipItemProps> = ({ value, onDelete }) => {
       key={value}
       label={value}
       onDelete={handleDelete}
-      deleteIcon={
-        <StyledClearIcon tabIndex={0} role='button' aria-label={'Remove ' + value} onKeyDown={handleKeyDown} />
-      }
+      deleteIcon={<StyledClearIcon tabIndex={0} role='button' aria-label={'Remove ' + value} onKeyDown={handleKeyDown} />}
     />
   )
 }
@@ -117,13 +116,17 @@ const InputChips: React.FC<InputChipsProps> = ({ chipValues, setChipValues, onCh
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const value = (e.target as HTMLInputElement).value.trim()
 
-    if (e.key === 'Enter' && value) {
+    if ((e.key === 'Enter' || e.key === ',') && value) {
       setChipValues((prev) => {
         const newValues = [...prev, value]
         onChange?.(newValues)
         return newValues
       })
       setInputValue('')
+      // Prevent comma from being entered in the input
+      if (e.key === ',') {
+        e.preventDefault()
+      }
     }
   }
 

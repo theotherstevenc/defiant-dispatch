@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 
 // mock useAppContext with different values
 function mockAppContext(appColorScheme: 'dark' | 'light' | 'system') {

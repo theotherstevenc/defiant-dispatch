@@ -47,7 +47,7 @@ const parseUpload = async (file) => {
   }
 }
 
-app.post('/api/encrypt', async (req, res) => {
+app.post('/encrypt', async (req, res) => {
   const { text } = req.body
 
   if (!text) {
@@ -62,7 +62,7 @@ app.post('/api/encrypt', async (req, res) => {
   }
 })
 
-app.post('/api/send', async (req, res) => {
+app.post('/send', async (req, res) => {
   try {
     const { testaddress, testsubject, ampversion, textversion, htmlversion } = req.body
     const user = req.body.username || mailUsername.value()
@@ -100,14 +100,24 @@ app.post('/api/send', async (req, res) => {
   }
 })
 
-app.post('/api/upload', async (req, res) => {
+app.post('/upload', async (req, res) => {
   const file = req.files.file
   const parsedContent = await parseUpload(file)
   res.json(parsedContent)
 })
 
-app.get('/api/version', (req, res) => {
+app.get('/version', (req, res) => {
   res.json({ version: process.env.npm_package_version })
 })
+
+app.listen(() =>
+  console.log(`
+  _____ _____ _____ _____ ____
+  | __  |   __| __  |   __|  |
+  |    -|   __| __ -|   __|  |__
+  |__|__|_____|_____|_____|_____|
+  made with ❤ by a 𝗥𝗘𝗕𝗘𝗟
+`)
+)
 
 export const api = onRequest({ secrets: [encryptionKey, mailUsername, mailPass] }, app)

@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
-import App from './App'
 import { describe, it } from 'vitest'
+
+import App from './App'
 import { AppProvider } from './context/AppContext'
 
 describe('App', () => {

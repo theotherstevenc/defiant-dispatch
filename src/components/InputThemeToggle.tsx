@@ -1,14 +1,16 @@
-import { db } from '../firebase'
-import { useAppContext } from '../context/AppContext'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-import { logError } from '../utils/logError'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import SettingsSystemDaydreamIcon from '@mui/icons-material/SettingsSystemDaydream'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import Radio from '@mui/material/Radio'
 import { Box, Tooltip } from '@mui/material'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+
+import { useAppContext } from '../context/AppContext'
+import { db } from '../firebase'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+
 import { StyledIconButton } from './StyledIconButton'
 
 const COLLECTION = 'config'
@@ -43,12 +45,7 @@ const InputThemeToggle = () => {
   return (
     <Tooltip title='Toggle Theme'>
       <StyledIconButton>
-        <RadioGroup
-          row
-          value={appColorScheme || 'system'}
-          onChange={handleChange}
-          aria-label='theme mode'
-          name='theme-mode'>
+        <RadioGroup row value={appColorScheme || 'system'} onChange={handleChange} aria-label='theme mode' name='theme-mode'>
           <FormControlLabel
             value='light'
             control={
@@ -57,11 +54,9 @@ const InputThemeToggle = () => {
                 checkedIcon={<IconRadio icon={<LightModeIcon />} selected={true} />}
                 sx={{
                   padding: 0,
-                  color: (theme) =>
-                    theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                  color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   '&.Mui-checked': {
-                    color: (theme) =>
-                      theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                    color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   },
                 }}
               />
@@ -77,11 +72,9 @@ const InputThemeToggle = () => {
                 checkedIcon={<IconRadio icon={<SettingsSystemDaydreamIcon />} selected={true} />}
                 sx={{
                   padding: '0 10px',
-                  color: (theme) =>
-                    theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                  color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   '&.Mui-checked': {
-                    color: (theme) =>
-                      theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                    color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   },
                 }}
               />
@@ -97,11 +90,9 @@ const InputThemeToggle = () => {
                 checkedIcon={<IconRadio icon={<DarkModeIcon />} selected={true} />}
                 sx={{
                   padding: 0,
-                  color: (theme) =>
-                    theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                  color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   '&.Mui-checked': {
-                    color: (theme) =>
-                      theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white,
+                    color: (theme) => (theme.palette.mode === 'dark' ? theme.palette.common.black : theme.palette.common.white),
                   },
                 }}
               />

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { inputActionsStyles, inputConfigStyles, inputSenderSettingsStyles } from '../styles/global.styles'
+
 import {
   Authenticator,
   FontSizeControls,
@@ -16,6 +16,7 @@ import {
   InputToggleWorkingFiles,
   InputUpdateFiles,
 } from '../components'
+import { inputActionsStyles, inputConfigStyles, inputSenderSettingsStyles } from '../styles/global.styles'
 
 const EditorConfigActions = () => (
   <Box sx={inputConfigStyles}>

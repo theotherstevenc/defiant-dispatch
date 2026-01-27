@@ -1,15 +1,17 @@
+import CloseIcon from '@mui/icons-material/Close'
+import LoginIcon from '@mui/icons-material/Login'
+import LogoutIcon from '@mui/icons-material/Logout'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from '@mui/material'
+import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useState } from 'react'
+
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from '@mui/material'
-import { StyledIconButton } from './StyledIconButton'
 import { iconButtonStyles } from '../styles/global.styles'
+import { BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
 import { logError } from '../utils/logError'
-import LogoutIcon from '@mui/icons-material/Logout'
-import LoginIcon from '@mui/icons-material/Login'
-import CloseIcon from '@mui/icons-material/Close'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const Authenticator = () => {
   const auth = getAuth()

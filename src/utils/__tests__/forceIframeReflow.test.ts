@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, vi } from 'vitest'
+
 import forceIframeReflow from '../forceIframeReflow'
 
 describe('forceIframeReflow', () => {

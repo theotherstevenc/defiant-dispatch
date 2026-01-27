@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { db } from '../firebase'
-import { useAppContext } from '../context/AppContext'
-import { useEditorContext } from '../context/EditorContext'
+import { Editor } from '@monaco-editor/react'
 import { Box } from '@mui/material'
 import { useEffect, useRef } from 'react'
-import { logError } from '../utils/logError'
-import { Editor } from '@monaco-editor/react'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import Split from 'react-split'
+
+import { useAppContext } from '../context/AppContext'
+import { useEditorContext } from '../context/EditorContext'
+import { db } from '../firebase'
 import { workspaceEditorStyles, workspacePreviewIframeStyles } from '../styles/global.styles'
 import {
   EDITOR_DARK_MODE,
@@ -19,21 +19,18 @@ import {
   MOSAIC_OPTION_OFF,
   MOSAIC_OPTION_ON,
 } from '../utils/constants'
-import getSanitizedValue from '../utils/getSanitizedValue'
-import usePersistentValue from '../utils/usePersistentValue'
 import forceIframeReflow from '../utils/forceIframeReflow'
-import Split from 'react-split'
+import getSanitizedValue from '../utils/getSanitizedValue'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import usePersistentValue from '../utils/usePersistentValue'
 
 const EditorWorkspacePreview = () => {
-  const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } =
-    useEditorContext()
+  const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } = useEditorContext()
   const { isDarkMode, isPreviewDarkMode, isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const [sizes, setSizes] = usePersistentValue(
-    EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY,
-    EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT
-  )
+  const [sizes, setSizes] = usePersistentValue(EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY, EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT)
 
   const getEditorsConfig = (
     html: string,

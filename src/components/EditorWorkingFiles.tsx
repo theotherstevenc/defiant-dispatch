@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { db } from '../firebase'
-import { useEffect } from 'react'
-import { useAppContext } from '../context/AppContext'
-import { collection, onSnapshot } from 'firebase/firestore'
-import { useEditorContext } from '../context/EditorContext'
-import { Box, Button, Tooltip } from '@mui/material'
-import { WorkingFile } from '../interfaces'
-import { logError } from '../utils/logError'
 import LockIcon from '@mui/icons-material/Lock'
+import { Box, Button, Tooltip } from '@mui/material'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { useEffect } from 'react'
+
+import { useAppContext } from '../context/AppContext'
+import { useEditorContext } from '../context/EditorContext'
+import { db } from '../firebase'
+import { WorkingFile } from '../interfaces'
 import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED } from '../utils/constants'
+import { logError } from '../utils/logError'
 
 const EditorWorkingFiles = () => {
   const { setHtml, setText, setAmp, workingFileID, setWorkingFileID, setWorkingFileName, files, setFiles, setIsFileLocked } = useEditorContext()

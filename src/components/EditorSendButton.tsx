@@ -1,11 +1,12 @@
 import { Alert, Backdrop, Button, CircularProgress, Snackbar } from '@mui/material'
-import { useAppContext } from '../context/AppContext'
 import { useState } from 'react'
-import { EmailData, SenderSettings } from '../interfaces'
-import { getCurrentDateTime } from '../utils/getCurrentDateTime'
+
+import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-import { logError } from '../utils/logError'
+import { EmailData, SenderSettings } from '../interfaces'
 import { BTN_LABEL_SEND, SEND_ALERT_FAILURE, SEND_ALERT_SUCCESS } from '../utils/constants'
+import { getCurrentDateTime } from '../utils/getCurrentDateTime'
+import { logError } from '../utils/logError'
 
 const EditorSendButton = () => {
   const { html, text, amp } = useEditorContext()
@@ -14,7 +15,15 @@ const EditorSendButton = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false)
   const [isSendSuccessful, setIsSendSuccessful] = useState(true)
 
-  const createEmailData = (email: string[], subject: string, html: string, text: string, amp: string, isPreventThreadingEnabled: boolean, senderSettings: SenderSettings): EmailData => {
+  const createEmailData = (
+    email: string[],
+    subject: string,
+    html: string,
+    text: string,
+    amp: string,
+    isPreventThreadingEnabled: boolean,
+    senderSettings: SenderSettings
+  ): EmailData => {
     const currentDateTime = getCurrentDateTime()
     const formattedSubject = isPreventThreadingEnabled ? `${subject} ${currentDateTime}` : subject
     const { host, port, username, pass, from } = senderSettings

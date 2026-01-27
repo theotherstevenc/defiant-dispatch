@@ -1,14 +1,23 @@
-import { db } from '../firebase'
-import { useState } from 'react'
-import { deleteDoc, doc } from 'firebase/firestore'
-import { useEditorContext } from '../context/EditorContext'
-import { StyledIconButton } from './StyledIconButton'
-import { iconButtonStyles } from '../styles/global.styles'
-import { logError } from '../utils/logError'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tooltip } from '@mui/material'
-import { BTN_LABEL_CANCEL, BTN_LABEL_CONFIRM, BTN_LABEL_DELETE, BTN_LABEL_DELETE_CONFIRM, DIALOG_CANNOT_BE_UNDONE, LABEL_CLOSE } from '../utils/constants'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tooltip } from '@mui/material'
+import { deleteDoc, doc } from 'firebase/firestore'
+import { useState } from 'react'
+
+import { useEditorContext } from '../context/EditorContext'
+import { db } from '../firebase'
+import { iconButtonStyles } from '../styles/global.styles'
+import {
+  BTN_LABEL_CANCEL,
+  BTN_LABEL_CONFIRM,
+  BTN_LABEL_DELETE,
+  BTN_LABEL_DELETE_CONFIRM,
+  DIALOG_CANNOT_BE_UNDONE,
+  LABEL_CLOSE,
+} from '../utils/constants'
+import { logError } from '../utils/logError'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const InputDeleteFile = () => {
   const { deletedWorkingFileID, workingFileID, setHtml, setText, setAmp, workingFileName, setDeletedWorkingFileID, isFileLocked } = useEditorContext()

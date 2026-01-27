@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState } from 'react'
+
 import { EditorContextProps, WorkingFile } from '../interfaces'
 import { EDITOR_DEFAULT_FONT_SIZE, EDITOR_DEFAULT_FONT_SIZE_KEY, WORKING_FILE_ID_KEY } from '../utils/constants'
 import usePersistentValue from '../utils/usePersistentValue'

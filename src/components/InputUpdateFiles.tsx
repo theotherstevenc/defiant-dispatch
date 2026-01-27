@@ -1,14 +1,16 @@
-import { db } from '../firebase'
-import { useState } from 'react'
-import { useEditorContext } from '../context/EditorContext'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-import { StyledIconButton } from './StyledIconButton'
-import { iconButtonStyles } from '../styles/global.styles'
-import { logError } from '../utils/logError'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Tooltip } from '@mui/material'
-import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Tooltip } from '@mui/material'
+import { useState } from 'react'
+
+import { useEditorContext } from '../context/EditorContext'
+import { db } from '../firebase'
+import { iconButtonStyles } from '../styles/global.styles'
+import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
+import { logError } from '../utils/logError'
+import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const InputUpdateFiles = () => {
   const { deletedWorkingFileID, workingFileID, workingFileName, setWorkingFileName, isFileLocked } = useEditorContext()

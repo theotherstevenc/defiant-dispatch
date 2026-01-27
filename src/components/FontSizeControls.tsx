@@ -1,10 +1,17 @@
-import TextIncreaseIcon from '@mui/icons-material/TextIncrease'
-import TextDecreaseIcon from '@mui/icons-material/TextDecrease'
 import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore'
-import { useEditorContext } from '../context/EditorContext'
-import { StyledIconButton } from './StyledIconButton'
+import TextDecreaseIcon from '@mui/icons-material/TextDecrease'
+import TextIncreaseIcon from '@mui/icons-material/TextIncrease'
 import { Tooltip } from '@mui/material'
-import { EDITOR_DECREASE_FONT_SIZE_LABEL, EDITOR_DEFAULT_FONT_SIZE, EDITOR_INCREASE_FONT_SIZE_LABEL, EDITOR_RESET_FONT_SIZE_LABEL } from '../utils/constants'
+
+import { useEditorContext } from '../context/EditorContext'
+import {
+  EDITOR_DECREASE_FONT_SIZE_LABEL,
+  EDITOR_DEFAULT_FONT_SIZE,
+  EDITOR_INCREASE_FONT_SIZE_LABEL,
+  EDITOR_RESET_FONT_SIZE_LABEL,
+} from '../utils/constants'
+
+import { StyledIconButton } from './StyledIconButton'
 
 const FontSizeControls = () => {
   const { editorFontSize, setEditorFontSize } = useEditorContext()
