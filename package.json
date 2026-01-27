@@ -12,9 +12,6 @@
     "emulators": "firebase emulators:start",
     "dev:emulators": "firebase emulators:start",
     "dev:frontend": "vite",
-    "dev:deprecated": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client:deprecated": "vite",
-    "dev:server:deprecated": "NODE_ENV=development npx nodemon app.js",
     "depcheck": "depcheck",
     "deploy": "npm run build && firebase deploy --only hosting",
     "firebase:deploy": "firebase deploy --only hosting",
@@ -22,7 +19,6 @@
     "lint": "eslint .",
     "patch": "npm version patch --no-git-tag-version && git add package.json package-lock.json && git commit -m \"chore: bump version to v$(node -p 'require(\"./package.json\").version')\"",
     "preview": "vite preview",
-    "start": "npx nodemon app.js",
     "tag": "git tag -a $npm_package_version -m \"Release version $npm_package_version\" && git push origin $npm_package_version",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
