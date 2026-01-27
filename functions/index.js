@@ -110,4 +110,14 @@ app.get('/version', (req, res) => {
   res.json({ version: process.env.npm_package_version })
 })
 
+app.listen(() =>
+  console.log(`
+  _____ _____ _____ _____ ____
+  | __  |   __| __  |   __|  |
+  |    -|   __| __ -|   __|  |__
+  |__|__|_____|_____|_____|_____|
+  made with ❤ by a 𝗥𝗘𝗕𝗘𝗟
+`)
+)
+
 export const api = onRequest({ secrets: [encryptionKey, mailUsername, mailPass] }, app)
