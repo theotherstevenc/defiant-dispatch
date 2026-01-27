@@ -1,4 +1,5 @@
 import { useMediaQuery } from '@mui/material'
+
 import { useAppContext } from '../context/AppContext'
 import { darkTheme, lightTheme } from '../styles/global.theme'
 

@@ -1,3 +1,4 @@
+import * as firestore from 'firebase/firestore'
 import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('firebase/firestore', () => ({
@@ -7,7 +8,6 @@ vi.mock('firebase/firestore', () => ({
 }))
 
 import { updateFirestoreDoc } from '../updateFirestoreDoc'
-import * as firestore from 'firebase/firestore'
 
 describe('updateFirestoreDoc', () => {
   it('calls doc and setDoc with correct arguments', async () => {

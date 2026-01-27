@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
 import { createNewFile } from '../createNewFile'
 
 vi.mock('firebase/firestore', () => ({

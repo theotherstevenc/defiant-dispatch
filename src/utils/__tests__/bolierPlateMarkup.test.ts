@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+
 import { boilerPlateMarkup } from '../boilerPlateMarkup'
 
 describe('boilerplateMarkup', () => {

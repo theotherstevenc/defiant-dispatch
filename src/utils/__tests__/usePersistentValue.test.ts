@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('../logError', () => ({
   logError: vi.fn(),
 }))
 
-import usePersistentValue from '../usePersistentValue'
 import { logError } from '../logError'
+import usePersistentValue from '../usePersistentValue'
 
 beforeEach(() => {
   let store: Record<string, string> = {}

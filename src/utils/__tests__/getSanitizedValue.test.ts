@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import getSanitizedValue from '../getSanitizedValue'
+
 import { EDITOR_OPTION_TEXT } from '../constants'
+import getSanitizedValue from '../getSanitizedValue'
 
 describe('getSanitizedValue', () => {
   it('should sanitize and wrap the value provided in EDITOR_OPTION_TEXT', () => {

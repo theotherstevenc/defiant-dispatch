@@ -17,11 +17,6 @@ const DOCUMENT = 'editorSettings'
 const InputToggleWorkingFiles = () => {
   const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()
 
-  useHotkeys('mod+b', () => handleOpen(), {
-    enableOnFormTags: true,
-    preventDefault: true,
-  })
-
   const handleOpen = async () => {
     try {
       const firestoreObj = { hideWorkingFiles: !hideWorkingFiles }
@@ -31,6 +26,11 @@ const InputToggleWorkingFiles = () => {
       logError('Error updating Firestore document', 'InputToggleWorkingFiles', error)
     }
   }
+
+  useHotkeys('mod+b', () => handleOpen(), {
+    enableOnFormTags: true,
+    preventDefault: true,
+  })
 
   const handleToggleButtonLabel = hideWorkingFiles ? TOGGLE_BTN_SHOW_PROJECTS : TOGGLE_BTN_HIDE_PROJECTS
 

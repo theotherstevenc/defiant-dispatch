@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, MockInstance } from 'vitest'
+
 import { logError } from '../logError'
 
 describe('logError', () => {

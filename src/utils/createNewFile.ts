@@ -1,5 +1,7 @@
 import { addDoc, collection } from 'firebase/firestore'
+
 import { db } from '../firebase'
+
 import { logError } from './logError'
 
 export const createNewFile = async (
