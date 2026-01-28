@@ -7,8 +7,9 @@ export const usePreferredTheme = () => {
   const { appColorScheme } = useAppContext()
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
-  if (appColorScheme === 'system') {
+  const effectiveScheme = appColorScheme || 'system'
+  if (effectiveScheme === 'system') {
     return prefersDarkMode ? darkTheme : lightTheme
   }
-  return appColorScheme === 'dark' ? darkTheme : lightTheme
+  return effectiveScheme === 'dark' ? darkTheme : lightTheme
 }
