@@ -17,28 +17,46 @@ import InputTogglePreviewTheme from './InputTogglePreviewTheme'
 import InputToggleWorkingFiles from './InputToggleWorkingFiles'
 import InputUpdateFiles from './InputUpdateFiles'
 
+const CONFIG_SECTIONS = [
+  {
+    key: 'markup',
+    sx: undefined,
+    components: [InputMarkupSettings],
+  },
+  {
+    key: 'sender',
+    sx: inputSenderSettingsStyles,
+    components: [InputSenderSettings],
+  },
+  {
+    key: 'actions',
+    sx: inputActionsStyles,
+    components: [
+      InputThemeToggle,
+      InputToggleEditorTheme,
+      InputTogglePreviewTheme,
+      InputFormatHTML,
+      FontSizeControls,
+      InputLockFile,
+      InputToggleWorkingFiles,
+      InputCreateNewFile,
+      InputUpdateFiles,
+      InputDeleteFile,
+      InputFileUpload,
+      Authenticator,
+    ],
+  },
+] as const
+
 const EditorConfigActions = () => (
   <Box sx={inputConfigStyles}>
-    <Box>
-      <InputMarkupSettings />
-    </Box>
-    <Box sx={inputSenderSettingsStyles}>
-      <InputSenderSettings />
-    </Box>
-    <Box sx={inputActionsStyles}>
-      <InputThemeToggle />
-      <InputToggleEditorTheme />
-      <InputTogglePreviewTheme />
-      <InputFormatHTML />
-      <FontSizeControls />
-      <InputLockFile />
-      <InputToggleWorkingFiles />
-      <InputCreateNewFile />
-      <InputUpdateFiles />
-      <InputDeleteFile />
-      <InputFileUpload />
-      <Authenticator />
-    </Box>
+    {CONFIG_SECTIONS.map(({ key, sx, components: Components }) => (
+      <Box key={key} sx={sx}>
+        {Components.map((Component, i) => (
+          <Component key={`${key}-${i}`} />
+        ))}
+      </Box>
+    ))}
   </Box>
 )
 
