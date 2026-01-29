@@ -35,6 +35,8 @@ const Authenticator = () => {
   const handleClose = () => {
     setOpen(false)
     setLoginError(null)
+    setUsername('')
+    setPassword('')
   }
 
   const handleLogout = async () => {
@@ -56,6 +58,8 @@ const Authenticator = () => {
       await signInWithEmailAndPassword(auth, username, password)
       setOpen(false)
       setLoginError(null)
+      setUsername('')
+      setPassword('')
     } catch (error) {
       logError('Error signing in', 'Authenticator', error)
       setLoginError(BTN_LABEL_LOGIN_ERROR)
