@@ -3,7 +3,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
@@ -14,7 +14,7 @@ import { logError } from '../utils/logError'
 import { StyledIconButton } from './StyledIconButton'
 
 const Authenticator = () => {
-  const auth = getAuth()
+  const auth = useMemo(() => getAuth(), [])
   const { user } = useAppContext()
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setFiles } = useEditorContext()
 
