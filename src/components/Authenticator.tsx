@@ -1,14 +1,14 @@
 import CloseIcon from '@mui/icons-material/Close'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip, Typography } from '@mui/material'
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useState } from 'react'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
 import { iconButtonStyles } from '../styles/global.styles'
-import { BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
+import { BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGIN_ERROR, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
 import { logError } from '../utils/logError'
 
 import { StyledIconButton } from './StyledIconButton'
@@ -21,6 +21,7 @@ const Authenticator = () => {
   const [open, setOpen] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const handleAuthButtonClick = () => {
     if (!user) {
@@ -33,6 +34,7 @@ const Authenticator = () => {
 
   const handleClose = () => {
     setOpen(false)
+    setLoginError(null)
   }
 
   const handleLogout = async () => {
@@ -53,8 +55,10 @@ const Authenticator = () => {
     try {
       await signInWithEmailAndPassword(auth, username, password)
       setOpen(false)
+      setLoginError(null)
     } catch (error) {
       logError('Error signing in', 'Authenticator', error)
+      setLoginError(BTN_LABEL_LOGIN_ERROR)
     }
   }
 
@@ -89,6 +93,11 @@ const Authenticator = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
+          {loginError && (
+            <Typography color='error' sx={{ mt: 1, mb: 1 }}>
+              {loginError}
+            </Typography>
+          )}
           <TextField
             autoFocus
             margin='dense'
