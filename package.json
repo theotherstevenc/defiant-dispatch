@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "concurrently \"npm:dev:emulators\" \"npm:dev:frontend\"",
     "emulators": "firebase emulators:start",
-    "dev:emulators": "firebase emulators:start",
+    "dev:emulators": "firebase emulators:start --import=./emulator-data --export-on-exit",
     "dev:frontend": "vite",
     "depcheck": "depcheck",
     "deploy": "npm run build && firebase deploy --only hosting",
