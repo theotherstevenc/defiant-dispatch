@@ -22,7 +22,7 @@ const Authenticator = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleOpen = () => {
+  const handleAuthButtonClick = () => {
     if (!user) {
       setOpen(true)
     }
@@ -58,14 +58,14 @@ const Authenticator = () => {
     }
   }
 
-  const handleLoginButtonLabel = user ? BTN_LABEL_LOGOUT : BTN_LABEL_LOGIN
+  const authButtonLabel = user ? BTN_LABEL_LOGOUT : BTN_LABEL_LOGIN
 
   return (
     <>
-      <Tooltip title={handleLoginButtonLabel}>
+      <Tooltip title={authButtonLabel}>
         <StyledIconButton
-          onClick={handleOpen}
-          aria-label={handleLoginButtonLabel}
+          onClick={handleAuthButtonClick}
+          aria-label={authButtonLabel}
           sx={{
             bgcolor: user ? 'grey.400' : 'primary.dark',
             boxShadow: 3,
