@@ -1,7 +1,18 @@
 import CloseIcon from '@mui/icons-material/Close'
 import LoginIcon from '@mui/icons-material/Login'
 import LogoutIcon from '@mui/icons-material/Logout'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useMemo, useState } from 'react'
 
@@ -22,6 +33,7 @@ const Authenticator = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState<string | null>(null)
+  const [isAuthPending, setIsAuthPending] = useState(false)
 
   const handleAuthButtonClick = () => {
     if (!user) {
@@ -40,6 +52,7 @@ const Authenticator = () => {
   }
 
   const handleLogout = async () => {
+    setIsAuthPending(true)
     try {
       await signOut(auth)
       setHtml('')
@@ -50,10 +63,13 @@ const Authenticator = () => {
       setFiles([])
     } catch (error) {
       logError('Error signing out', 'Authenticator', error)
+    } finally {
+      setIsAuthPending(false)
     }
   }
 
   const handleLogin = async () => {
+    setIsAuthPending(true)
     try {
       await signInWithEmailAndPassword(auth, username, password)
       setOpen(false)
@@ -63,6 +79,8 @@ const Authenticator = () => {
     } catch (error) {
       logError('Error signing in', 'Authenticator', error)
       setLoginError(BTN_LABEL_LOGIN_ERROR)
+    } finally {
+      setIsAuthPending(false)
     }
   }
 
@@ -81,6 +99,7 @@ const Authenticator = () => {
         <StyledIconButton
           onClick={handleAuthButtonClick}
           aria-label={authButtonLabel}
+          disabled={isAuthPending}
           sx={{
             bgcolor: user ? 'grey.400' : 'primary.dark',
             boxShadow: 3,
@@ -92,7 +111,8 @@ const Authenticator = () => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>
           {BTN_LABEL_LOGIN}
-          <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles}>
+          {isAuthPending && <CircularProgress size={20} sx={{ ml: 1, verticalAlign: 'middle' }} />}
+          <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles} disabled={isAuthPending}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
@@ -111,6 +131,7 @@ const Authenticator = () => {
             onChange={(e) => setUsername(e.target.value)}
             value={username}
             onKeyDown={submitOnEnter}
+            disabled={isAuthPending}
           />
           <TextField
             margin='dense'
@@ -120,13 +141,14 @@ const Authenticator = () => {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             onKeyDown={submitOnEnter}
+            disabled={isAuthPending}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
+          <Button onClick={handleClose} color='secondary' disabled={isAuthPending}>
             {BTN_LABEL_CANCEL}
           </Button>
-          <Button onClick={handleLogin} color='primary'>
+          <Button onClick={handleLogin} color='primary' disabled={isAuthPending}>
             {BTN_LABEL_OK}
           </Button>
         </DialogActions>
