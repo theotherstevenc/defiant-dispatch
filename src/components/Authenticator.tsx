@@ -58,6 +58,13 @@ const Authenticator = () => {
     }
   }
 
+  const submitOnEnter = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleLogin()
+    }
+  }
+
   const authButtonLabel = user ? BTN_LABEL_LOGOUT : BTN_LABEL_LOGIN
 
   return (
@@ -90,12 +97,7 @@ const Authenticator = () => {
             fullWidth
             onChange={(e) => setUsername(e.target.value)}
             value={username}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleLogin()
-              }
-            }}
+            onKeyDown={submitOnEnter}
           />
           <TextField
             margin='dense'
@@ -104,12 +106,7 @@ const Authenticator = () => {
             fullWidth
             onChange={(e) => setPassword(e.target.value)}
             value={password}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleLogin()
-              }
-            }}
+            onKeyDown={submitOnEnter}
           />
         </DialogContent>
         <DialogActions>
