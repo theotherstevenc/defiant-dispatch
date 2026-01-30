@@ -15,26 +15,27 @@ const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
 
 const InputToggleEditorTheme = () => {
-  const { isDarkMode, setIsDarkMode } = useAppContext()
+  const { settings, dispatch } = useAppContext()
 
   const handleOpen = async () => {
     try {
-      const firestoreObj = { isDarkMode: !isDarkMode }
+      const newValue = !settings.isDarkMode
+      const firestoreObj = { isDarkMode: newValue }
+      dispatch({ type: 'UPDATE_SETTING', key: 'isDarkMode', value: newValue })
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setIsDarkMode(!isDarkMode)
     } catch (error) {
       logError('Failed to toggle editor theme:', 'InputToggleEditorTheme', error)
     }
   }
 
-  const handleToggleButtonLabel = isDarkMode ? TOGGLE_BTN_EDITOR_LIGHT_MODE : TOGGLE_BTN_EDITOR_DARK_MODE
+  const handleToggleButtonLabel = settings.isDarkMode ? TOGGLE_BTN_EDITOR_LIGHT_MODE : TOGGLE_BTN_EDITOR_DARK_MODE
 
   return (
     <>
       <Tooltip title={handleToggleButtonLabel}>
         <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
           <CodeIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+          {settings.isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
         </StyledIconButton>
       </Tooltip>
     </>

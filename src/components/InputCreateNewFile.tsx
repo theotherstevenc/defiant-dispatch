@@ -14,7 +14,7 @@ import { logError } from '../utils/logError'
 import { StyledIconButton } from './StyledIconButton'
 
 const InputCreateNewFile = () => {
-  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useAppContext()
+  const { dispatch } = useAppContext()
   const { setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
   const [fileName, setFileName] = useState('')
@@ -28,8 +28,10 @@ const InputCreateNewFile = () => {
   }
 
   const handleConfirm = async () => {
-    setIsMinifyEnabled(false)
-    setIsWordWrapEnabled(false)
+    dispatch({
+      type: 'SET_SETTINGS',
+      payload: { isMinifyEnabled: false, isWordWrapEnabled: false },
+    })
     setWorkingFileID('')
 
     try {

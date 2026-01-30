@@ -15,12 +15,13 @@ const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
 
 const InputToggleWorkingFiles = () => {
-  const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()
+  const { settings, dispatch } = useAppContext()
 
   const handleOpen = async () => {
     try {
-      const firestoreObj = { hideWorkingFiles: !hideWorkingFiles }
-      setHideWorkingFiles(!hideWorkingFiles)
+      const newValue = !settings.hideWorkingFiles
+      const firestoreObj = { hideWorkingFiles: newValue }
+      dispatch({ type: 'UPDATE_SETTING', key: 'hideWorkingFiles', value: newValue })
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
     } catch (error) {
       logError('Error updating Firestore document', 'InputToggleWorkingFiles', error)
@@ -32,13 +33,13 @@ const InputToggleWorkingFiles = () => {
     preventDefault: true,
   })
 
-  const handleToggleButtonLabel = hideWorkingFiles ? TOGGLE_BTN_SHOW_PROJECTS : TOGGLE_BTN_HIDE_PROJECTS
+  const handleToggleButtonLabel = settings.hideWorkingFiles ? TOGGLE_BTN_SHOW_PROJECTS : TOGGLE_BTN_HIDE_PROJECTS
 
   return (
     <>
       <Tooltip title={handleToggleButtonLabel}>
         <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
-          {hideWorkingFiles ? <ToggleOffIcon /> : <ToggleOnIcon />}
+          {settings.hideWorkingFiles ? <ToggleOffIcon /> : <ToggleOnIcon />}
         </StyledIconButton>
       </Tooltip>
     </>

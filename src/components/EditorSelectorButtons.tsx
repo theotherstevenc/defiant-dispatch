@@ -12,14 +12,14 @@ const DOCUMENT = 'editorSettings'
 type EditorType = typeof EDITOR_OPTION_HTML | typeof EDITOR_OPTION_TEXT | typeof EDITOR_OPTION_AMP
 
 const EditorSelectorButtons = () => {
-  const { activeEditor, setActiveEditor } = useAppContext()
+  const { settings, dispatch } = useAppContext()
 
   const handleClick = async (editorType: EditorType) => {
     const firestoreObj = { activeEditor: editorType }
 
     try {
+      dispatch({ type: 'UPDATE_SETTING', key: 'activeEditor', value: editorType })
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setActiveEditor(editorType)
     } catch (error) {
       logError('Unable to set active editor', 'EditorSelectorButtons', error)
     }
@@ -33,7 +33,7 @@ const EditorSelectorButtons = () => {
         return (
           <Button
             key={editorOption}
-            variant={activeEditor === editorOption ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
+            variant={settings.activeEditor === editorOption ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
             onClick={() => handleClick(editorOption)}>
             {editorOption.toUpperCase()}
           </Button>

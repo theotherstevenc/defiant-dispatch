@@ -11,10 +11,10 @@ import { StyledIconButton } from './StyledIconButton'
 
 const InputFormatHTML = () => {
   const { html, setHtml } = useEditorContext()
-  const { isMinifyEnabled } = useAppContext()
+  const { settings } = useAppContext()
 
   const handleClick = async () => {
-    if (isMinifyEnabled) {
+    if (settings.isMinifyEnabled) {
       logError('Formatting is disabled when minification is enabled', 'InputFormatHTML')
       return
     }

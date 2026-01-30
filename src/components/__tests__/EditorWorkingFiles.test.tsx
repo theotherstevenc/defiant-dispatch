@@ -20,7 +20,29 @@ vi.mock('../../context/EditorContext', () => ({
   }),
 }))
 vi.mock('../../context/AppContext', () => ({
-  useAppContext: () => ({ user: { uid: 'abc' } }),
+  useAppContext: () => ({
+    settings: {
+      subject: '',
+      host: '',
+      port: '',
+      username: '',
+      pass: '',
+      from: '',
+      isMinifyEnabled: false,
+      isWordWrapEnabled: false,
+      isPreventThreadingEnabled: false,
+      activeEditor: '',
+      emailAddresses: [],
+      hideWorkingFiles: false,
+      isDarkMode: false,
+      isPreviewDarkMode: false,
+      appColorScheme: '',
+    },
+    dispatch: vi.fn(),
+    loading: false,
+    error: null,
+    user: { uid: 'abc' },
+  }),
 }))
 
 describe('EditorWorkingFiles', () => {

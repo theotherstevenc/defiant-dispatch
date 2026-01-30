@@ -1,55 +1,59 @@
 /* eslint-disable react-refresh/only-export-components */
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useReducer, useState } from 'react'
 
 import { auth, db } from '../firebase'
-import { AppContextProps, SenderSettings } from '../interfaces'
+import { AppContextProps, EditorSettings, EditorSettingsAction } from '../interfaces'
 import { logError } from '../utils/logError'
 
 const AppContext = createContext<AppContextProps | undefined>(undefined)
 
+// Initial state for editor settings
+const initialSettings: EditorSettings = {
+  subject: '',
+  host: '',
+  port: '',
+  username: '',
+  pass: '',
+  from: '',
+  isMinifyEnabled: false,
+  isWordWrapEnabled: false,
+  isPreventThreadingEnabled: false,
+  activeEditor: '',
+  emailAddresses: [],
+  hideWorkingFiles: true,
+  isDarkMode: false,
+  isPreviewDarkMode: false,
+  appColorScheme: '',
+}
+
+// Reducer function for managing editor settings
+function editorSettingsReducer(state: EditorSettings, action: EditorSettingsAction): EditorSettings {
+  switch (action.type) {
+    case 'SET_SETTINGS':
+      return { ...state, ...action.payload }
+    case 'UPDATE_SETTING':
+      return { ...state, [action.key]: action.value }
+    case 'RESET_SETTINGS':
+      return initialSettings
+    default:
+      return state
+  }
+}
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [appColorScheme, setAppColorScheme] = useState<string>('')
-  const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
-  const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false)
-  const [isPreventThreadingEnabled, setIsPreventThreadingEnabled] = useState(false)
-  const [hideWorkingFiles, setHideWorkingFiles] = useState<boolean>(true)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [isPreviewDarkMode, setIsPreviewDarkMode] = useState(false)
-  const [activeEditor, setActiveEditor] = useState('')
-  const [subject, setSubject] = useState<string>('')
-  const [emailAddresses, setEmailAddresses] = useState<string[]>([])
-  const [inputSenderSettings, setInputSenderSettings] = useState<SenderSettings>({
-    host: '',
-    port: '',
-    username: '',
-    pass: '',
-    from: '',
-  })
+  const [settings, dispatch] = useReducer(editorSettingsReducer, initialSettings)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       if (!firebaseUser) {
-        setSubject('')
-        setIsMinifyEnabled(false)
-        setIsWordWrapEnabled(false)
-        setIsPreventThreadingEnabled(false)
-        setIsDarkMode(false)
-        setIsPreviewDarkMode(false)
-        setAppColorScheme('')
-        setHideWorkingFiles(true)
-        setActiveEditor('')
-        setEmailAddresses([])
-        setInputSenderSettings({
-          host: '',
-          port: '',
-          username: '',
-          pass: '',
-          from: '',
-        })
+        // Reset settings when user logs out
+        dispatch({ type: 'RESET_SETTINGS' })
       }
     })
     return () => unsubscribe()
@@ -57,47 +61,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     if (!user) {
+      setLoading(false)
+      setError(null)
       return
     }
 
+    setLoading(true)
     const editorSettings = doc(db, 'config', 'editorSettings')
     const unsubscribe = onSnapshot(
       editorSettings,
       (doc) => {
         const data = doc.data()
         if (data) {
-          const {
-            subject = '',
-            host = '',
-            port = '',
-            username = '',
-            pass = '',
-            from = '',
-            isMinifyEnabled = false,
-            isWordWrapEnabled = false,
-            isPreventThreadingEnabled = false,
-            activeEditor = '',
-            emailAddresses = [],
-            hideWorkingFiles = true,
-            isDarkMode = false,
-            isPreviewDarkMode = false,
-            appColorScheme = '',
-          } = data
-          setAppColorScheme(appColorScheme)
-          setSubject(subject)
-          setIsMinifyEnabled(isMinifyEnabled)
-          setIsWordWrapEnabled(isWordWrapEnabled)
-          setIsPreventThreadingEnabled(isPreventThreadingEnabled)
-          setIsDarkMode(isDarkMode)
-          setIsPreviewDarkMode(isPreviewDarkMode)
-          setHideWorkingFiles(hideWorkingFiles)
-          setActiveEditor(activeEditor)
-          setEmailAddresses(emailAddresses)
-          setInputSenderSettings({ host, port, username, pass, from })
+          // Single atomic update instead of multiple setter calls
+          dispatch({
+            type: 'SET_SETTINGS',
+            payload: {
+              subject: data.subject ?? '',
+              host: data.host ?? '',
+              port: data.port ?? '',
+              username: data.username ?? '',
+              pass: data.pass ?? '',
+              from: data.from ?? '',
+              isMinifyEnabled: data.isMinifyEnabled ?? false,
+              isWordWrapEnabled: data.isWordWrapEnabled ?? false,
+              isPreventThreadingEnabled: data.isPreventThreadingEnabled ?? false,
+              activeEditor: data.activeEditor ?? '',
+              emailAddresses: data.emailAddresses ?? [],
+              hideWorkingFiles: data.hideWorkingFiles ?? true,
+              isDarkMode: data.isDarkMode ?? false,
+              isPreviewDarkMode: data.isPreviewDarkMode ?? false,
+              appColorScheme: data.appColorScheme ?? '',
+            },
+          })
         }
+        setLoading(false)
+        setError(null)
       },
       (error) => {
         logError('An error occurred while fetching app context data', 'AppContext', error)
+        setLoading(false)
+        setError(error as Error)
       }
     )
 
@@ -107,28 +111,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider
       value={{
-        isMinifyEnabled,
-        setIsMinifyEnabled,
-        isWordWrapEnabled,
-        setIsWordWrapEnabled,
-        isPreventThreadingEnabled,
-        setIsPreventThreadingEnabled,
-        activeEditor,
-        setActiveEditor,
-        subject,
-        setSubject,
-        emailAddresses,
-        setEmailAddresses,
-        inputSenderSettings,
-        setInputSenderSettings,
-        hideWorkingFiles,
-        setHideWorkingFiles,
-        isDarkMode,
-        setIsDarkMode,
-        isPreviewDarkMode,
-        setIsPreviewDarkMode,
-        appColorScheme,
-        setAppColorScheme,
+        settings,
+        dispatch,
+        loading,
+        error,
         user,
       }}>
       {children}

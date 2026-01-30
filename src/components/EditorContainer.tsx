@@ -19,7 +19,7 @@ import EditorWorkspacePreview from './EditorWorkspacePreview'
 type SplitSizes = [number, number]
 
 const EditorContainer = () => {
-  const { setHideWorkingFiles } = useAppContext()
+  const { dispatch } = useAppContext()
 
   const [sizes, setSizes] = usePersistentValue<SplitSizes>(EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY, EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
 
@@ -28,8 +28,8 @@ const EditorContainer = () => {
 
   // Sync to AppContext whenever collapsed state changes
   useEffect(() => {
-    setHideWorkingFiles(isCollapsed)
-  }, [isCollapsed, setHideWorkingFiles])
+    dispatch({ type: 'UPDATE_SETTING', key: 'hideWorkingFiles', value: isCollapsed })
+  }, [isCollapsed, dispatch])
 
   const handleDrag = (newSizes: SplitSizes) => {
     setSizes(newSizes)

@@ -3,14 +3,14 @@ import { useState } from 'react'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-import { EmailData, SenderSettings } from '../interfaces'
+import { EmailData } from '../interfaces'
 import { BTN_LABEL_SEND, SEND_ALERT_FAILURE, SEND_ALERT_SUCCESS } from '../utils/constants'
 import { getCurrentDateTime } from '../utils/getCurrentDateTime'
 import { logError } from '../utils/logError'
 
 const EditorSendButton = () => {
   const { html, text, amp } = useEditorContext()
-  const { isPreventThreadingEnabled, subject, emailAddresses, inputSenderSettings } = useAppContext()
+  const { settings } = useAppContext()
   const [open, setOpen] = useState(false)
   const [openBackdrop, setOpenBackdrop] = useState(false)
   const [isSendSuccessful, setIsSendSuccessful] = useState(true)
@@ -22,11 +22,14 @@ const EditorSendButton = () => {
     text: string,
     amp: string,
     isPreventThreadingEnabled: boolean,
-    senderSettings: SenderSettings
+    host: string,
+    port: string,
+    username: string,
+    pass: string,
+    from: string
   ): EmailData => {
     const currentDateTime = getCurrentDateTime()
     const formattedSubject = isPreventThreadingEnabled ? `${subject} ${currentDateTime}` : subject
-    const { host, port, username, pass, from } = senderSettings
 
     return {
       testaddress: email,
@@ -42,7 +45,19 @@ const EditorSendButton = () => {
     }
   }
 
-  const emailData = createEmailData(emailAddresses, subject, html, text, amp, isPreventThreadingEnabled, inputSenderSettings)
+  const emailData = createEmailData(
+    settings.emailAddresses,
+    settings.subject,
+    html,
+    text,
+    amp,
+    settings.isPreventThreadingEnabled,
+    settings.host,
+    settings.port,
+    settings.username,
+    settings.pass,
+    settings.from
+  )
 
   const API_URL = '/api/send'
   const HTTP_METHOD = 'POST'

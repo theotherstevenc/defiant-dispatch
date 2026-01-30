@@ -30,13 +30,14 @@ const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolea
 )
 
 const InputThemeToggle = () => {
-  const { appColorScheme, setAppColorScheme } = useAppContext()
+  const { settings, dispatch } = useAppContext()
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const firestoreObj = { appColorScheme: event.target.value }
+      const newValue = event.target.value
+      const firestoreObj = { appColorScheme: newValue }
+      dispatch({ type: 'UPDATE_SETTING', key: 'appColorScheme', value: newValue })
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setAppColorScheme(event.target.value)
     } catch (error) {
       logError('Failed to update editor color scheme:', 'InputThemeToggle', error)
     }
@@ -45,7 +46,7 @@ const InputThemeToggle = () => {
   return (
     <Tooltip title='Toggle Theme'>
       <StyledIconButton>
-        <RadioGroup row value={appColorScheme || 'system'} onChange={handleChange} aria-label='theme mode' name='theme-mode'>
+        <RadioGroup row value={settings.appColorScheme || 'system'} onChange={handleChange} aria-label='theme mode' name='theme-mode'>
           <FormControlLabel
             value='light'
             control={

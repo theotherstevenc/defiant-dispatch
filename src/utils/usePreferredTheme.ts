@@ -4,10 +4,10 @@ import { useAppContext } from '../context/AppContext'
 import { darkTheme, lightTheme } from '../styles/global.theme'
 
 export const usePreferredTheme = () => {
-  const { appColorScheme } = useAppContext()
+  const { settings } = useAppContext()
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
-  const effectiveScheme = appColorScheme || 'system'
+  const effectiveScheme = settings.appColorScheme || 'system'
   if (effectiveScheme === 'system') {
     return prefersDarkMode ? darkTheme : lightTheme
   }

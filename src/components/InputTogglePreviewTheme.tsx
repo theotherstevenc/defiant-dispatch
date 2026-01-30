@@ -15,26 +15,27 @@ const COLLECTION = 'config'
 const DOCUMENT = 'editorSettings'
 
 const InputTogglePreviewTheme = () => {
-  const { isPreviewDarkMode, setIsPreviewDarkMode } = useAppContext()
+  const { settings, dispatch } = useAppContext()
 
   const handleOpen = async () => {
     try {
-      const firestoreObj = { isPreviewDarkMode: !isPreviewDarkMode }
+      const newValue = !settings.isPreviewDarkMode
+      const firestoreObj = { isPreviewDarkMode: newValue }
+      dispatch({ type: 'UPDATE_SETTING', key: 'isPreviewDarkMode', value: newValue })
       await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setIsPreviewDarkMode(!isPreviewDarkMode)
     } catch (error) {
       logError('Failed to toggle preview theme:', 'InputTogglePreviewTheme', error)
     }
   }
 
-  const handleToggleButtonLabel = isPreviewDarkMode ? TOGGLE_BTN_PREVIEW_LIGHT_MODE : TOGGLE_BTN_PREVIEW_DARK_MODE
+  const handleToggleButtonLabel = settings.isPreviewDarkMode ? TOGGLE_BTN_PREVIEW_LIGHT_MODE : TOGGLE_BTN_PREVIEW_DARK_MODE
 
   return (
     <>
       <Tooltip title={handleToggleButtonLabel}>
         <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
           <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          {isPreviewDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+          {settings.isPreviewDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
         </StyledIconButton>
       </Tooltip>
     </>

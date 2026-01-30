@@ -12,17 +12,15 @@ import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const InputMarkupSettings = () => {
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
-  const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
-    useAppContext()
+  const { settings, dispatch } = useAppContext()
 
-  const settings = [
-    { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: isMinifyEnabled, setter: setIsMinifyEnabled },
-    { name: 'isWordWrapEnabled', label: SETTINGS_CHECKBOX_LABEL_WORD_WRAP, checked: isWordWrapEnabled, setter: setIsWordWrapEnabled },
+  const settingsConfig = [
+    { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: settings.isMinifyEnabled },
+    { name: 'isWordWrapEnabled', label: SETTINGS_CHECKBOX_LABEL_WORD_WRAP, checked: settings.isWordWrapEnabled },
     {
       name: 'isPreventThreadingEnabled',
       label: SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING,
-      checked: isPreventThreadingEnabled,
-      setter: setIsPreventThreadingEnabled,
+      checked: settings.isPreventThreadingEnabled,
     },
   ]
 
@@ -33,15 +31,12 @@ const InputMarkupSettings = () => {
     const target = event.target as HTMLInputElement
     const { name } = target
 
-    // Find the setting object from the settings array that matches the name of the checkbox being toggled
-    const setting = settings.find((setting) => setting.name === name)
-
     // Update the UI first
-    if (setting) {
-      setting.setter(checked)
-    } else {
-      logError('No setting found for checkbox name: ' + name, 'InputMarkupSettings')
-    }
+    dispatch({
+      type: 'UPDATE_SETTING',
+      key: name as keyof typeof settings,
+      value: checked,
+    })
 
     const firestoreObj = { [name]: checked }
 
@@ -53,7 +48,7 @@ const InputMarkupSettings = () => {
   }
 
   const updateHtml = () => {
-    if (isMinifyEnabled) {
+    if (settings.isMinifyEnabled) {
       setOriginalHtml(html)
       setHtml(customMinifier(html))
     } else {
@@ -63,11 +58,11 @@ const InputMarkupSettings = () => {
 
   useEffect(() => {
     updateHtml()
-  }, [isMinifyEnabled])
+  }, [settings.isMinifyEnabled])
 
   return (
     <>
-      {settings.map(({ name, label, checked }) => (
+      {settingsConfig.map(({ name, label, checked }) => (
         <FormControlLabel key={name} control={<Checkbox name={name} color='primary' />} label={label} checked={checked} onChange={handleChange} />
       ))}
     </>

@@ -25,12 +25,14 @@ const VisuallyHiddenInput = styled('input')({
 
 const InputFileUpload = () => {
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setIsFileLocked } = useEditorContext()
-  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useAppContext()
+  const { dispatch } = useAppContext()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsMinifyEnabled(false)
-    setIsWordWrapEnabled(false)
+    dispatch({
+      type: 'SET_SETTINGS',
+      payload: { isMinifyEnabled: false, isWordWrapEnabled: false },
+    })
 
     const file = e.target.files?.[0]
 
