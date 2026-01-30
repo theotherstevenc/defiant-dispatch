@@ -4,59 +4,33 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import { auth, db } from '../firebase'
-import { AppContextProps, SenderSettings } from '../interfaces'
 import { logError } from '../utils/logError'
 
-const AppContext = createContext<AppContextProps | undefined>(undefined)
+import { EditorSettingsProvider, useEditorSettingsContext } from './EditorSettingsContext'
+import { EmailProvider, useEmailContext } from './EmailContext'
+import { ThemeProvider, useThemeContext } from './ThemeContext'
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [appColorScheme, setAppColorScheme] = useState<string>('')
-  const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
-  const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false)
-  const [isPreventThreadingEnabled, setIsPreventThreadingEnabled] = useState(false)
-  const [hideWorkingFiles, setHideWorkingFiles] = useState<boolean>(true)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [isPreviewDarkMode, setIsPreviewDarkMode] = useState(false)
-  const [activeEditor, setActiveEditor] = useState('')
-  const [subject, setSubject] = useState<string>('')
-  const [emailAddresses, setEmailAddresses] = useState<string[]>([])
-  const [inputSenderSettings, setInputSenderSettings] = useState<SenderSettings>({
-    host: '',
-    port: '',
-    username: '',
-    pass: '',
-    from: '',
-  })
-  const [user, setUser] = useState<User | null>(null)
+// Auth Context for user state
+export interface AuthContextProps {
+  user: User | null
+  loading: boolean
+  error: Error | null
+}
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser)
-      if (!firebaseUser) {
-        setSubject('')
-        setIsMinifyEnabled(false)
-        setIsWordWrapEnabled(false)
-        setIsPreventThreadingEnabled(false)
-        setIsDarkMode(false)
-        setIsPreviewDarkMode(false)
-        setAppColorScheme('')
-        setHideWorkingFiles(true)
-        setActiveEditor('')
-        setEmailAddresses([])
-        setInputSenderSettings({
-          host: '',
-          port: '',
-          username: '',
-          pass: '',
-          from: '',
-        })
-      }
-    })
-    return () => unsubscribe()
-  }, [])
+const AuthContext = createContext<AuthContextProps | undefined>(undefined)
+
+// Firestore Sync Component - handles syncing Firestore to contexts
+const FirestoreSync: React.FC<{ user: User | null }> = ({ user }) => {
+  const { dispatchTheme } = useThemeContext()
+  const { dispatchEditorConfig } = useEditorSettingsContext()
+  const { dispatchEmail } = useEmailContext()
 
   useEffect(() => {
     if (!user) {
+      // Reset all contexts when user logs out
+      dispatchTheme({ type: 'RESET_THEME_SETTINGS' })
+      dispatchEditorConfig({ type: 'RESET_EDITOR_CONFIG_SETTINGS' })
+      dispatchEmail({ type: 'RESET_EMAIL_SETTINGS' })
       return
     }
 
@@ -66,34 +40,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       (doc) => {
         const data = doc.data()
         if (data) {
-          const {
-            subject = '',
-            host = '',
-            port = '',
-            username = '',
-            pass = '',
-            from = '',
-            isMinifyEnabled = false,
-            isWordWrapEnabled = false,
-            isPreventThreadingEnabled = false,
-            activeEditor = '',
-            emailAddresses = [],
-            hideWorkingFiles = true,
-            isDarkMode = false,
-            isPreviewDarkMode = false,
-            appColorScheme = '',
-          } = data
-          setAppColorScheme(appColorScheme)
-          setSubject(subject)
-          setIsMinifyEnabled(isMinifyEnabled)
-          setIsWordWrapEnabled(isWordWrapEnabled)
-          setIsPreventThreadingEnabled(isPreventThreadingEnabled)
-          setIsDarkMode(isDarkMode)
-          setIsPreviewDarkMode(isPreviewDarkMode)
-          setHideWorkingFiles(hideWorkingFiles)
-          setActiveEditor(activeEditor)
-          setEmailAddresses(emailAddresses)
-          setInputSenderSettings({ host, port, username, pass, from })
+          // Update theme settings
+          dispatchTheme({
+            type: 'SET_THEME_SETTINGS',
+            payload: {
+              isDarkMode: data.isDarkMode ?? false,
+              isPreviewDarkMode: data.isPreviewDarkMode ?? false,
+              appColorScheme: data.appColorScheme ?? '',
+            },
+          })
+
+          // Update editor config settings
+          dispatchEditorConfig({
+            type: 'SET_EDITOR_CONFIG_SETTINGS',
+            payload: {
+              isMinifyEnabled: data.isMinifyEnabled ?? false,
+              isWordWrapEnabled: data.isWordWrapEnabled ?? false,
+              isPreventThreadingEnabled: data.isPreventThreadingEnabled ?? false,
+              activeEditor: data.activeEditor ?? '',
+              hideWorkingFiles: data.hideWorkingFiles ?? true,
+            },
+          })
+
+          // Update email settings
+          dispatchEmail({
+            type: 'SET_EMAIL_SETTINGS',
+            payload: {
+              subject: data.subject ?? '',
+              emailAddresses: data.emailAddresses ?? [],
+              host: data.host ?? '',
+              port: data.port ?? '',
+              username: data.username ?? '',
+              pass: data.pass ?? '',
+              from: data.from ?? '',
+            },
+          })
         }
       },
       (error) => {
@@ -102,48 +83,120 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     )
 
     return () => unsubscribe()
-  }, [user])
+  }, [user, dispatchTheme, dispatchEditorConfig, dispatchEmail])
+
+  return null
+}
+
+// Auth Provider Component
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser)
+      if (firebaseUser) {
+        setLoading(true)
+      } else {
+        setLoading(false)
+        setError(null)
+      }
+    })
+    return () => unsubscribe()
+  }, [])
 
   return (
-    <AppContext.Provider
-      value={{
-        isMinifyEnabled,
-        setIsMinifyEnabled,
-        isWordWrapEnabled,
-        setIsWordWrapEnabled,
-        isPreventThreadingEnabled,
-        setIsPreventThreadingEnabled,
-        activeEditor,
-        setActiveEditor,
-        subject,
-        setSubject,
-        emailAddresses,
-        setEmailAddresses,
-        inputSenderSettings,
-        setInputSenderSettings,
-        hideWorkingFiles,
-        setHideWorkingFiles,
-        isDarkMode,
-        setIsDarkMode,
-        isPreviewDarkMode,
-        setIsPreviewDarkMode,
-        appColorScheme,
-        setAppColorScheme,
-        user,
-      }}>
+    <AuthContext.Provider value={{ user, loading, error }}>
       {children}
-    </AppContext.Provider>
+      <FirestoreSync user={user} />
+    </AuthContext.Provider>
   )
 }
 
-export const useAppContext = (): AppContextProps => {
-  const context = useContext(AppContext)
+// Composed App Provider
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <ThemeProvider>
+      <EditorSettingsProvider>
+        <EmailProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </EmailProvider>
+      </EditorSettingsProvider>
+    </ThemeProvider>
+  )
+}
+
+// Hook to access Auth context
+export const useAuthContext = (): AuthContextProps => {
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    if (process.env.NODE_ENV === 'development') {
-      throw new Error('useAppContext must be used within an AppProvider')
-    } else {
-      throw new Error('App context is not available.')
-    }
+    throw new Error('useAuthContext must be used within an AppProvider')
   }
   return context
+}
+
+// Convenience hook for backward compatibility - provides merged settings object
+export const useAppContext = () => {
+  const auth = useAuthContext()
+  const theme = useThemeContext()
+  const editorConfig = useEditorSettingsContext()
+  const email = useEmailContext()
+
+  // Create merged settings object for backward compatibility
+  const settings = {
+    ...theme.themeSettings,
+    ...editorConfig.editorConfigSettings,
+    ...email.emailSettings,
+  }
+
+  // Create merged dispatch function
+  const dispatch = (action: any) => {
+    // Route dispatch to appropriate context based on action
+    if (action.type === 'UPDATE_SETTING' || action.type === 'SET_SETTINGS' || action.type === 'RESET_SETTINGS') {
+      const key = action.key || Object.keys(action.payload || {})[0]
+
+      // Theme settings
+      if (key === 'isDarkMode' || key === 'isPreviewDarkMode' || key === 'appColorScheme') {
+        theme.dispatchTheme(action)
+      }
+      // Editor config settings
+      else if (
+        key === 'isMinifyEnabled' ||
+        key === 'isWordWrapEnabled' ||
+        key === 'isPreventThreadingEnabled' ||
+        key === 'activeEditor' ||
+        key === 'hideWorkingFiles'
+      ) {
+        editorConfig.dispatchEditorConfig(action)
+      }
+      // Email settings
+      else if (
+        key === 'subject' ||
+        key === 'emailAddresses' ||
+        key === 'host' ||
+        key === 'port' ||
+        key === 'username' ||
+        key === 'pass' ||
+        key === 'from'
+      ) {
+        email.dispatchEmail(action)
+      }
+      // If SET_SETTINGS or RESET_SETTINGS with multiple keys, dispatch to all
+      else if (action.type === 'SET_SETTINGS' || action.type === 'RESET_SETTINGS') {
+        theme.dispatchTheme(action)
+        editorConfig.dispatchEditorConfig(action)
+        email.dispatchEmail(action)
+      }
+    }
+  }
+
+  return {
+    settings,
+    dispatch,
+    user: auth.user,
+    loading: auth.loading,
+    error: auth.error,
+  }
 }

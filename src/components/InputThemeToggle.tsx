@@ -7,14 +7,9 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 
 import { StyledIconButton } from './StyledIconButton'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolean }) => (
   <Box
@@ -30,22 +25,17 @@ const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolea
 )
 
 const InputThemeToggle = () => {
-  const { appColorScheme, setAppColorScheme } = useAppContext()
+  const { settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const firestoreObj = { appColorScheme: event.target.value }
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      setAppColorScheme(event.target.value)
-    } catch (error) {
-      logError('Failed to update editor color scheme:', 'InputThemeToggle', error)
-    }
+    await updateSetting('appColorScheme', event.target.value, 'InputThemeToggle')
   }
 
   return (
     <Tooltip title='Toggle Theme'>
       <StyledIconButton>
-        <RadioGroup row value={appColorScheme || 'system'} onChange={handleChange} aria-label='theme mode' name='theme-mode'>
+        <RadioGroup row value={settings.appColorScheme || 'system'} onChange={handleChange} aria-label='theme mode' name='theme-mode'>
           <FormControlLabel
             value='light'
             control={

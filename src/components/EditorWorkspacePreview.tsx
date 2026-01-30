@@ -27,7 +27,7 @@ import usePersistentValue from '../utils/usePersistentValue'
 
 const EditorWorkspacePreview = () => {
   const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } = useEditorContext()
-  const { isDarkMode, isPreviewDarkMode, isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
+  const { settings } = useAppContext()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [sizes, setSizes] = usePersistentValue(EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY, EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT)
@@ -122,9 +122,9 @@ const EditorWorkspacePreview = () => {
         <Box>
           {editors.map(
             (editor) =>
-              activeEditor === editor.type && (
+              settings.activeEditor === editor.type && (
                 <Editor
-                  theme={isDarkMode ? EDITOR_DARK_MODE : EDITOR_LIGHT_MODE}
+                  theme={settings.isDarkMode ? EDITOR_DARK_MODE : EDITOR_LIGHT_MODE}
                   key={editor.type}
                   defaultLanguage={editor.language}
                   defaultValue={editor.value}
@@ -132,8 +132,8 @@ const EditorWorkspacePreview = () => {
                   onChange={editor.onChange}
                   options={{
                     fontSize: editorFontSize,
-                    readOnly: isMinifyEnabled,
-                    wordWrap: isWordWrapEnabled ? MOSAIC_OPTION_ON : MOSAIC_OPTION_OFF,
+                    readOnly: settings.isMinifyEnabled,
+                    wordWrap: settings.isWordWrapEnabled ? MOSAIC_OPTION_ON : MOSAIC_OPTION_OFF,
                     lineNumbers: MOSAIC_OPTION_ON,
                     minimap: {
                       enabled: false,
@@ -146,10 +146,10 @@ const EditorWorkspacePreview = () => {
         <Box>
           {editors.map((editor) => {
             return (
-              activeEditor === editor.type && (
+              settings.activeEditor === editor.type && (
                 <iframe
                   ref={iframeRef}
-                  style={workspacePreviewIframeStyles(isPreviewDarkMode)}
+                  style={workspacePreviewIframeStyles(settings.isPreviewDarkMode)}
                   key={editor.type}
                   srcDoc={getSanitizedValue(editor)}
                 />

@@ -4,56 +4,35 @@ import { useEffect } from 'react'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
-import { db } from '../firebase'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
+import { EditorSettings } from '../interfaces'
 import { SETTINGS_CHECKBOX_LABEL_MINIFY, SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING, SETTINGS_CHECKBOX_LABEL_WORD_WRAP } from '../utils/constants'
 import { customMinifier } from '../utils/customMinifier'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const InputMarkupSettings = () => {
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
-  const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
-    useAppContext()
+  const { settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
-  const settings = [
-    { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: isMinifyEnabled, setter: setIsMinifyEnabled },
-    { name: 'isWordWrapEnabled', label: SETTINGS_CHECKBOX_LABEL_WORD_WRAP, checked: isWordWrapEnabled, setter: setIsWordWrapEnabled },
+  const settingsConfig = [
+    { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: settings.isMinifyEnabled },
+    { name: 'isWordWrapEnabled', label: SETTINGS_CHECKBOX_LABEL_WORD_WRAP, checked: settings.isWordWrapEnabled },
     {
       name: 'isPreventThreadingEnabled',
       label: SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING,
-      checked: isPreventThreadingEnabled,
-      setter: setIsPreventThreadingEnabled,
+      checked: settings.isPreventThreadingEnabled,
     },
   ]
-
-  const COLLECTION = 'config'
-  const DOCUMENT = 'editorSettings'
 
   const handleChange = async (event: React.SyntheticEvent, checked: boolean) => {
     const target = event.target as HTMLInputElement
     const { name } = target
 
-    // Find the setting object from the settings array that matches the name of the checkbox being toggled
-    const setting = settings.find((setting) => setting.name === name)
-
-    // Update the UI first
-    if (setting) {
-      setting.setter(checked)
-    } else {
-      logError('No setting found for checkbox name: ' + name, 'InputMarkupSettings')
-    }
-
-    const firestoreObj = { [name]: checked }
-
-    try {
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Error updating Firestore document', 'InputMarkupSettings', error)
-    }
+    await updateSetting(name as keyof EditorSettings, checked, 'InputMarkupSettings')
   }
 
   const updateHtml = () => {
-    if (isMinifyEnabled) {
+    if (settings.isMinifyEnabled) {
       setOriginalHtml(html)
       setHtml(customMinifier(html))
     } else {
@@ -63,11 +42,11 @@ const InputMarkupSettings = () => {
 
   useEffect(() => {
     updateHtml()
-  }, [isMinifyEnabled])
+  }, [settings.isMinifyEnabled])
 
   return (
     <>
-      {settings.map(({ name, label, checked }) => (
+      {settingsConfig.map(({ name, label, checked }) => (
         <FormControlLabel key={name} control={<Checkbox name={name} color='primary' />} label={label} checked={checked} onChange={handleChange} />
       ))}
     </>

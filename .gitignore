@@ -31,3 +31,5 @@ local
 .firebase
 .firebase/*
 functions/node_modules
+emulator-data
+PERFORMANCE.md

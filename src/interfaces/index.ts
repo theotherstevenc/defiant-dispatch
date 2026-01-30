@@ -53,28 +53,36 @@ export interface EditorContextProps {
   setEditorFontSize: (fontSize: number) => void
 }
 
-export interface AppContextProps {
-  isMinifyEnabled: boolean
-  setIsMinifyEnabled: (isMinifyEnabled: boolean) => void
-  isWordWrapEnabled: boolean
-  setIsWordWrapEnabled: (isWordWrapEnabled: boolean) => void
-  isPreventThreadingEnabled: boolean
-  setIsPreventThreadingEnabled: (isPreventThreadingEnabled: boolean) => void
-  activeEditor: string
-  setActiveEditor: (editor: string) => void
+// EditorSettings state object (replaces individual state variables)
+export interface EditorSettings {
   subject: string
-  setSubject: (subject: string) => void
+  host: string
+  port: string
+  username: string
+  pass: string
+  from: string
+  isMinifyEnabled: boolean
+  isWordWrapEnabled: boolean
+  isPreventThreadingEnabled: boolean
+  activeEditor: string
   emailAddresses: string[]
-  setEmailAddresses: React.Dispatch<React.SetStateAction<string[]>>
-  inputSenderSettings: SenderSettings
-  setInputSenderSettings: React.Dispatch<React.SetStateAction<SenderSettings>>
   hideWorkingFiles: boolean
-  setHideWorkingFiles: React.Dispatch<React.SetStateAction<boolean>>
   isDarkMode: boolean
-  setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
   isPreviewDarkMode: boolean
-  setIsPreviewDarkMode: React.Dispatch<React.SetStateAction<boolean>>
   appColorScheme: string
-  setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
+}
+
+// Action types for the EditorSettings reducer
+export type EditorSettingsAction =
+  | { type: 'SET_SETTINGS'; payload: Partial<EditorSettings> }
+  | { type: 'UPDATE_SETTING'; key: keyof EditorSettings; value: EditorSettings[keyof EditorSettings] }
+  | { type: 'RESET_SETTINGS' }
+
+// New AppContextProps using reducer pattern
+export interface AppContextProps {
+  settings: EditorSettings
+  dispatch: React.Dispatch<EditorSettingsAction>
+  loading: boolean
+  error: Error | null
   user: User | null
 }

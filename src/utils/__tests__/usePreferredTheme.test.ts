@@ -5,7 +5,27 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 function mockAppContext(appColorScheme: 'dark' | 'light' | 'system') {
   vi.doMock('../../context/AppContext', () => ({
     useAppContext: () => ({
-      appColorScheme,
+      settings: {
+        subject: '',
+        host: '',
+        port: '',
+        username: '',
+        pass: '',
+        from: '',
+        isMinifyEnabled: false,
+        isWordWrapEnabled: false,
+        isPreventThreadingEnabled: false,
+        activeEditor: '',
+        emailAddresses: [],
+        hideWorkingFiles: false,
+        isDarkMode: false,
+        isPreviewDarkMode: false,
+        appColorScheme,
+      },
+      dispatch: vi.fn(),
+      loading: false,
+      error: null,
+      user: null,
     }),
   }))
 }

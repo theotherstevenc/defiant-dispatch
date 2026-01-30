@@ -1,7 +1,7 @@
 {
   "name": "defiant-dispatch",
   "private": true,
-  "version": "6.0.3",
+  "version": "7.0.0",
   "type": "module",
   "engines": {
     "node": "22.x",
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "concurrently \"npm:dev:emulators\" \"npm:dev:frontend\"",
     "emulators": "firebase emulators:start",
-    "dev:emulators": "firebase emulators:start",
+    "dev:emulators": "firebase emulators:start --import=./emulator-data --export-on-exit",
     "dev:frontend": "vite",
     "depcheck": "depcheck",
     "deploy": "npm run build && firebase deploy --only hosting",
@@ -40,7 +40,7 @@
     "firebase": "^12.8.0",
     "i": "^0.3.7",
     "js-beautify": "^1.15.4",
-    "mailparser": "^3.9.1",
+    "mailparser": "^3.9.3",
     "nodemailer": "^7.0.13",
     "npm": "^11.8.0",
     "react": "^19.2.4",
@@ -64,7 +64,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
-    "firebase-tools": "^15.4.0",
+    "firebase-tools": "^15.5.1",
     "globals": "^17.2.0",
     "jsdom": "^27.4.0",
     "nodemon": "^3.1.11",

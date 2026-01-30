@@ -1,24 +1,23 @@
 import { TextField } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
-import { SenderSettings } from '../interfaces'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
+import { EditorSettings, SenderSettings } from '../interfaces'
 import { SETTINGS_FROM, SETTINGS_HOST, SETTINGS_PASS, SETTINGS_PORT, SETTINGS_USER } from '../utils/constants'
 import { encryptString } from '../utils/encryptString'
 import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const InputSenderSettings = () => {
-  const { inputSenderSettings, setInputSenderSettings } = useAppContext()
+  const { settings, dispatch } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleInputChange = (id: keyof SenderSettings, value: string) => {
-    setInputSenderSettings((prev: SenderSettings) => ({
-      ...prev,
-      [id]: value,
-    }))
+    dispatch({
+      type: 'SET_SETTINGS',
+      payload: {
+        [id]: value,
+      },
+    })
   }
 
   const handleInput = async (id: string, value: string, isBlur: boolean) => {
@@ -26,12 +25,7 @@ const InputSenderSettings = () => {
     handleInputChange(id as keyof SenderSettings, processedValue)
 
     if (isBlur) {
-      const firestoreObj = { ...inputSenderSettings, [id]: processedValue }
-      try {
-        await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      } catch (error) {
-        logError('Error updating Firestore document', 'InputSenderSettings', error)
-      }
+      await updateSetting(id as keyof EditorSettings, processedValue, 'InputSenderSettings')
     }
   }
 
@@ -65,7 +59,7 @@ const InputSenderSettings = () => {
           type={field.type}
           variant='outlined'
           size='small'
-          value={inputSenderSettings[field.id as keyof SenderSettings]}
+          value={settings[field.id as keyof SenderSettings]}
           onChange={(e) => handleEvent(e, false)}
           onBlur={(e) => handleEvent(e, true)}
           sx={field.sx}
