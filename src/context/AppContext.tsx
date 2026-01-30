@@ -1,135 +1,202 @@
 /* eslint-disable react-refresh/only-export-components */
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
-import React, { createContext, useContext, useEffect, useReducer, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import { auth, db } from '../firebase'
-import { AppContextProps, EditorSettings, EditorSettingsAction } from '../interfaces'
 import { logError } from '../utils/logError'
 
-const AppContext = createContext<AppContextProps | undefined>(undefined)
+import { EditorSettingsProvider, useEditorSettingsContext } from './EditorSettingsContext'
+import { EmailProvider, useEmailContext } from './EmailContext'
+import { ThemeProvider, useThemeContext } from './ThemeContext'
 
-// Initial state for editor settings
-const initialSettings: EditorSettings = {
-  subject: '',
-  host: '',
-  port: '',
-  username: '',
-  pass: '',
-  from: '',
-  isMinifyEnabled: false,
-  isWordWrapEnabled: false,
-  isPreventThreadingEnabled: false,
-  activeEditor: '',
-  emailAddresses: [],
-  hideWorkingFiles: true,
-  isDarkMode: false,
-  isPreviewDarkMode: false,
-  appColorScheme: '',
+// Auth Context for user state
+export interface AuthContextProps {
+  user: User | null
+  loading: boolean
+  error: Error | null
 }
 
-// Reducer function for managing editor settings
-function editorSettingsReducer(state: EditorSettings, action: EditorSettingsAction): EditorSettings {
-  switch (action.type) {
-    case 'SET_SETTINGS':
-      return { ...state, ...action.payload }
-    case 'UPDATE_SETTING':
-      return { ...state, [action.key]: action.value }
-    case 'RESET_SETTINGS':
-      return initialSettings
-    default:
-      return state
-  }
-}
+const AuthContext = createContext<AuthContextProps | undefined>(undefined)
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, dispatch] = useReducer(editorSettingsReducer, initialSettings)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<Error | null>(null)
-  const [user, setUser] = useState<User | null>(null)
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser)
-      if (!firebaseUser) {
-        // Reset settings when user logs out
-        dispatch({ type: 'RESET_SETTINGS' })
-      }
-    })
-    return () => unsubscribe()
-  }, [])
+// Firestore Sync Component - handles syncing Firestore to contexts
+const FirestoreSync: React.FC<{ user: User | null }> = ({ user }) => {
+  const { dispatchTheme } = useThemeContext()
+  const { dispatchEditorConfig } = useEditorSettingsContext()
+  const { dispatchEmail } = useEmailContext()
 
   useEffect(() => {
     if (!user) {
-      setLoading(false)
-      setError(null)
+      // Reset all contexts when user logs out
+      dispatchTheme({ type: 'RESET_THEME_SETTINGS' })
+      dispatchEditorConfig({ type: 'RESET_EDITOR_CONFIG_SETTINGS' })
+      dispatchEmail({ type: 'RESET_EMAIL_SETTINGS' })
       return
     }
 
-    setLoading(true)
     const editorSettings = doc(db, 'config', 'editorSettings')
     const unsubscribe = onSnapshot(
       editorSettings,
       (doc) => {
         const data = doc.data()
         if (data) {
-          // Single atomic update instead of multiple setter calls
-          dispatch({
-            type: 'SET_SETTINGS',
+          // Update theme settings
+          dispatchTheme({
+            type: 'SET_THEME_SETTINGS',
             payload: {
-              subject: data.subject ?? '',
-              host: data.host ?? '',
-              port: data.port ?? '',
-              username: data.username ?? '',
-              pass: data.pass ?? '',
-              from: data.from ?? '',
-              isMinifyEnabled: data.isMinifyEnabled ?? false,
-              isWordWrapEnabled: data.isWordWrapEnabled ?? false,
-              isPreventThreadingEnabled: data.isPreventThreadingEnabled ?? false,
-              activeEditor: data.activeEditor ?? '',
-              emailAddresses: data.emailAddresses ?? [],
-              hideWorkingFiles: data.hideWorkingFiles ?? true,
               isDarkMode: data.isDarkMode ?? false,
               isPreviewDarkMode: data.isPreviewDarkMode ?? false,
               appColorScheme: data.appColorScheme ?? '',
             },
           })
+
+          // Update editor config settings
+          dispatchEditorConfig({
+            type: 'SET_EDITOR_CONFIG_SETTINGS',
+            payload: {
+              isMinifyEnabled: data.isMinifyEnabled ?? false,
+              isWordWrapEnabled: data.isWordWrapEnabled ?? false,
+              isPreventThreadingEnabled: data.isPreventThreadingEnabled ?? false,
+              activeEditor: data.activeEditor ?? '',
+              hideWorkingFiles: data.hideWorkingFiles ?? true,
+            },
+          })
+
+          // Update email settings
+          dispatchEmail({
+            type: 'SET_EMAIL_SETTINGS',
+            payload: {
+              subject: data.subject ?? '',
+              emailAddresses: data.emailAddresses ?? [],
+              host: data.host ?? '',
+              port: data.port ?? '',
+              username: data.username ?? '',
+              pass: data.pass ?? '',
+              from: data.from ?? '',
+            },
+          })
         }
-        setLoading(false)
-        setError(null)
       },
       (error) => {
         logError('An error occurred while fetching app context data', 'AppContext', error)
-        setLoading(false)
-        setError(error as Error)
       }
     )
 
     return () => unsubscribe()
-  }, [user])
+  }, [user, dispatchTheme, dispatchEditorConfig, dispatchEmail])
+
+  return null
+}
+
+// Auth Provider Component
+const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser)
+      if (firebaseUser) {
+        setLoading(true)
+      } else {
+        setLoading(false)
+        setError(null)
+      }
+    })
+    return () => unsubscribe()
+  }, [])
 
   return (
-    <AppContext.Provider
-      value={{
-        settings,
-        dispatch,
-        loading,
-        error,
-        user,
-      }}>
+    <AuthContext.Provider value={{ user, loading, error }}>
       {children}
-    </AppContext.Provider>
+      <FirestoreSync user={user} />
+    </AuthContext.Provider>
   )
 }
 
-export const useAppContext = (): AppContextProps => {
-  const context = useContext(AppContext)
+// Composed App Provider
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <ThemeProvider>
+      <EditorSettingsProvider>
+        <EmailProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </EmailProvider>
+      </EditorSettingsProvider>
+    </ThemeProvider>
+  )
+}
+
+// Hook to access Auth context
+export const useAuthContext = (): AuthContextProps => {
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    if (process.env.NODE_ENV === 'development') {
-      throw new Error('useAppContext must be used within an AppProvider')
-    } else {
-      throw new Error('App context is not available.')
-    }
+    throw new Error('useAuthContext must be used within an AppProvider')
   }
   return context
+}
+
+// Convenience hook for backward compatibility - provides merged settings object
+export const useAppContext = () => {
+  const auth = useAuthContext()
+  const theme = useThemeContext()
+  const editorConfig = useEditorSettingsContext()
+  const email = useEmailContext()
+
+  // Create merged settings object for backward compatibility
+  const settings = {
+    ...theme.themeSettings,
+    ...editorConfig.editorConfigSettings,
+    ...email.emailSettings,
+  }
+
+  // Create merged dispatch function
+  const dispatch = (action: any) => {
+    // Route dispatch to appropriate context based on action
+    if (action.type === 'UPDATE_SETTING' || action.type === 'SET_SETTINGS' || action.type === 'RESET_SETTINGS') {
+      const key = action.key || Object.keys(action.payload || {})[0]
+
+      // Theme settings
+      if (key === 'isDarkMode' || key === 'isPreviewDarkMode' || key === 'appColorScheme') {
+        theme.dispatchTheme(action)
+      }
+      // Editor config settings
+      else if (
+        key === 'isMinifyEnabled' ||
+        key === 'isWordWrapEnabled' ||
+        key === 'isPreventThreadingEnabled' ||
+        key === 'activeEditor' ||
+        key === 'hideWorkingFiles'
+      ) {
+        editorConfig.dispatchEditorConfig(action)
+      }
+      // Email settings
+      else if (
+        key === 'subject' ||
+        key === 'emailAddresses' ||
+        key === 'host' ||
+        key === 'port' ||
+        key === 'username' ||
+        key === 'pass' ||
+        key === 'from'
+      ) {
+        email.dispatchEmail(action)
+      }
+      // If SET_SETTINGS or RESET_SETTINGS with multiple keys, dispatch to all
+      else if (action.type === 'SET_SETTINGS' || action.type === 'RESET_SETTINGS') {
+        theme.dispatchTheme(action)
+        editorConfig.dispatchEditorConfig(action)
+        email.dispatchEmail(action)
+      }
+    }
+  }
+
+  return {
+    settings,
+    dispatch,
+    user: auth.user,
+    loading: auth.loading,
+    error: auth.error,
+  }
 }
