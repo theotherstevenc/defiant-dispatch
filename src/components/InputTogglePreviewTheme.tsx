@@ -4,28 +4,18 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import { Tooltip } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import { TOGGLE_BTN_PREVIEW_DARK_MODE, TOGGLE_BTN_PREVIEW_LIGHT_MODE } from '../utils/constants'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
 
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
-
 const InputTogglePreviewTheme = () => {
-  const { settings, dispatch } = useAppContext()
+  const { settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleOpen = async () => {
-    try {
-      const newValue = !settings.isPreviewDarkMode
-      const firestoreObj = { isPreviewDarkMode: newValue }
-      dispatch({ type: 'UPDATE_SETTING', key: 'isPreviewDarkMode', value: newValue })
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Failed to toggle preview theme:', 'InputTogglePreviewTheme', error)
-    }
+    const newValue = !settings.isPreviewDarkMode
+    await updateSetting('isPreviewDarkMode', newValue, 'InputTogglePreviewTheme')
   }
 
   const handleToggleButtonLabel = settings.isPreviewDarkMode ? TOGGLE_BTN_PREVIEW_LIGHT_MODE : TOGGLE_BTN_PREVIEW_DARK_MODE

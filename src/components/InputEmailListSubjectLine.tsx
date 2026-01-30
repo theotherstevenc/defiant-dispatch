@@ -2,24 +2,20 @@ import { Box, TextField } from '@mui/material'
 import Split from 'react-split'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import {
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_DEFAULT,
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,
   SUBJECT_LINE_INPUT_LABEL,
   SUBJECT_LINE_INPUT_LABEL_NON_THREADED,
 } from '../utils/constants'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import usePersistentValue from '../utils/usePersistentValue'
 
 import InputChips from './InputChips'
 
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
-
 const InputEmailListSubjectLine = () => {
   const { settings, dispatch } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
   const [sizes, setSizes] = usePersistentValue(
     INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,
     INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_DEFAULT
@@ -30,22 +26,11 @@ const InputEmailListSubjectLine = () => {
   }
 
   const handleBlur = async () => {
-    try {
-      const firestoreObj = { subject: settings.subject }
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Error updating subject in Firestore', 'InputEmailListSubjectLine', error)
-    }
+    await updateSetting('subject', settings.subject, 'InputEmailListSubjectLine')
   }
 
   const handleEmailAddressesChange = async (newEmailAddresses: string[]) => {
-    try {
-      const firestoreObj = { emailAddresses: newEmailAddresses }
-      dispatch({ type: 'UPDATE_SETTING', key: 'emailAddresses', value: newEmailAddresses })
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Error updating email addresses in Firestore', 'InputEmailListSubjectLine', error)
-    }
+    await updateSetting('emailAddresses', newEmailAddresses, 'InputEmailListSubjectLine')
   }
 
   // Wrapper to handle both value and function updates from InputChips

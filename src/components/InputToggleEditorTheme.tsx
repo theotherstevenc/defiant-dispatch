@@ -4,28 +4,18 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import { Tooltip } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import { TOGGLE_BTN_EDITOR_DARK_MODE, TOGGLE_BTN_EDITOR_LIGHT_MODE } from '../utils/constants'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
 
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
-
 const InputToggleEditorTheme = () => {
-  const { settings, dispatch } = useAppContext()
+  const { settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleOpen = async () => {
-    try {
-      const newValue = !settings.isDarkMode
-      const firestoreObj = { isDarkMode: newValue }
-      dispatch({ type: 'UPDATE_SETTING', key: 'isDarkMode', value: newValue })
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Failed to toggle editor theme:', 'InputToggleEditorTheme', error)
-    }
+    const newValue = !settings.isDarkMode
+    await updateSetting('isDarkMode', newValue, 'InputToggleEditorTheme')
   }
 
   const handleToggleButtonLabel = settings.isDarkMode ? TOGGLE_BTN_EDITOR_LIGHT_MODE : TOGGLE_BTN_EDITOR_DARK_MODE

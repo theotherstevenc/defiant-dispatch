@@ -3,8 +3,8 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { Tooltip } from '@mui/material'
 import { useRef } from 'react'
 
-import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import { BTN_UPLOAD_LABEL } from '../utils/constants'
 import { createNewFile } from '../utils/createNewFile'
 import { logError } from '../utils/logError'
@@ -25,14 +25,11 @@ const VisuallyHiddenInput = styled('input')({
 
 const InputFileUpload = () => {
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setIsFileLocked } = useEditorContext()
-  const { dispatch } = useAppContext()
+  const { updateMultipleSettings } = useFirestoreSettings()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({
-      type: 'SET_SETTINGS',
-      payload: { isMinifyEnabled: false, isWordWrapEnabled: false },
-    })
+    await updateMultipleSettings({ isMinifyEnabled: false, isWordWrapEnabled: false }, 'InputFileUpload')
 
     const file = e.target.files?.[0]
 

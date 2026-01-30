@@ -1,18 +1,15 @@
 import { TextField } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
-import { SenderSettings } from '../interfaces'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
+import { EditorSettings, SenderSettings } from '../interfaces'
 import { SETTINGS_FROM, SETTINGS_HOST, SETTINGS_PASS, SETTINGS_PORT, SETTINGS_USER } from '../utils/constants'
 import { encryptString } from '../utils/encryptString'
 import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const InputSenderSettings = () => {
   const { settings, dispatch } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleInputChange = (id: keyof SenderSettings, value: string) => {
     dispatch({
@@ -28,19 +25,7 @@ const InputSenderSettings = () => {
     handleInputChange(id as keyof SenderSettings, processedValue)
 
     if (isBlur) {
-      const firestoreObj = {
-        host: settings.host,
-        port: settings.port,
-        username: settings.username,
-        pass: settings.pass,
-        from: settings.from,
-        [id]: processedValue,
-      }
-      try {
-        await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-      } catch (error) {
-        logError('Error updating Firestore document', 'InputSenderSettings', error)
-      }
+      await updateSetting(id as keyof EditorSettings, processedValue, 'InputSenderSettings')
     }
   }
 

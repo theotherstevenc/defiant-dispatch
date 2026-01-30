@@ -3,8 +3,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox, Tooltip } from '@mui/material'
 import { useState } from 'react'
 
-import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import { iconButtonStyles } from '../styles/global.styles'
 import { boilerPlateMarkup } from '../utils/boilerPlateMarkup'
 import { BTN_LABEL_CANCEL, BTN_LABEL_CREATE, BTN_LABEL_CREATE_CHECKBOX, BTN_LABEL_CREATE_DIALOG, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
@@ -14,7 +14,7 @@ import { logError } from '../utils/logError'
 import { StyledIconButton } from './StyledIconButton'
 
 const InputCreateNewFile = () => {
-  const { dispatch } = useAppContext()
+  const { updateMultipleSettings } = useFirestoreSettings()
   const { setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
   const [fileName, setFileName] = useState('')
@@ -28,10 +28,7 @@ const InputCreateNewFile = () => {
   }
 
   const handleConfirm = async () => {
-    dispatch({
-      type: 'SET_SETTINGS',
-      payload: { isMinifyEnabled: false, isWordWrapEnabled: false },
-    })
+    await updateMultipleSettings({ isMinifyEnabled: false, isWordWrapEnabled: false }, 'InputCreateNewFile')
     setWorkingFileID('')
 
     try {

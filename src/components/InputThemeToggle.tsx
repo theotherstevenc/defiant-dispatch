@@ -7,14 +7,9 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 
 import { useAppContext } from '../context/AppContext'
-import { db } from '../firebase'
-import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 
 import { StyledIconButton } from './StyledIconButton'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolean }) => (
   <Box
@@ -30,17 +25,11 @@ const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolea
 )
 
 const InputThemeToggle = () => {
-  const { settings, dispatch } = useAppContext()
+  const { settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const newValue = event.target.value
-      const firestoreObj = { appColorScheme: newValue }
-      dispatch({ type: 'UPDATE_SETTING', key: 'appColorScheme', value: newValue })
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
-    } catch (error) {
-      logError('Failed to update editor color scheme:', 'InputThemeToggle', error)
-    }
+    await updateSetting('appColorScheme', event.target.value, 'InputThemeToggle')
   }
 
   return (
