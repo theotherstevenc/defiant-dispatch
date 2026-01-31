@@ -3,9 +3,10 @@ import { defineSecret } from 'firebase-functions/params'
 import CryptoJS from 'crypto-js'
 import cors from 'cors'
 import express from 'express'
-import fileUpload from 'express-fileupload'
 import nodemailer from 'nodemailer'
 import { simpleParser } from 'mailparser'
+import Busboy from 'busboy'
+import { Readable } from 'stream'
 
 const app = express()
 
@@ -14,10 +15,8 @@ const encryptionKey = defineSecret('ENCRYPTION_KEY')
 const mailUsername = defineSecret('MAIL_USERNAME')
 const mailPass = defineSecret('MAIL_PASS')
 
-app.use(express.urlencoded({ limit: '50mb', extended: true }))
-app.use(express.json({ limit: '50mb' }))
+// Apply CORS globally
 app.use(cors({ origin: '*' }))
-app.use(fileUpload())
 
 const encryptText = (text, key) => {
   return CryptoJS.AES.encrypt(text, key).toString()
@@ -47,7 +46,7 @@ const parseUpload = async (file) => {
   }
 }
 
-app.post('/encrypt', async (req, res) => {
+app.post('/encrypt', express.json(), async (req, res) => {
   const { text } = req.body
 
   if (!text) {
@@ -62,7 +61,7 @@ app.post('/encrypt', async (req, res) => {
   }
 })
 
-app.post('/send', async (req, res) => {
+app.post('/send', express.json({ limit: '50mb' }), async (req, res) => {
   try {
     const { testaddress, testsubject, ampversion, textversion, htmlversion } = req.body
     const user = req.body.username || mailUsername.value()
@@ -100,10 +99,59 @@ app.post('/send', async (req, res) => {
   }
 })
 
-app.post('/upload', async (req, res) => {
-  const file = req.files.file
-  const parsedContent = await parseUpload(file)
-  res.json(parsedContent)
+app.post('/upload', express.raw({ type: 'multipart/form-data', limit: '50mb' }), async (req, res) => {
+  if (!req.body || req.body.length === 0) {
+    return res.status(400).json({ error: 'No file uploaded' })
+  }
+
+  return new Promise((resolve) => {
+    const busboy = Busboy({ headers: req.headers })
+    let fileBuffer = null
+
+    busboy.on('file', (fieldname, file, info) => {
+      const chunks = []
+      
+      file.on('data', (chunk) => {
+        chunks.push(chunk)
+      })
+      
+      file.on('end', () => {
+        fileBuffer = Buffer.concat(chunks)
+      })
+    })
+
+    busboy.on('finish', async () => {
+      if (!fileBuffer) {
+        res.status(400).json({ error: 'No file uploaded' })
+        resolve()
+        return
+      }
+
+      try {
+        const parsedContent = await parseUpload({ data: fileBuffer })
+        res.json(parsedContent)
+        resolve()
+      } catch (error) {
+        console.error('Upload parsing error:', error)
+        res.status(500).json({ error: 'Failed to parse file', details: error.message })
+        resolve()
+      }
+    })
+
+    busboy.on('error', (error) => {
+      console.error('Busboy error:', error)
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Upload failed', details: error.message })
+      }
+      resolve()
+    })
+
+    // Create a readable stream from the buffer and pipe to busboy
+    const bufferStream = new Readable()
+    bufferStream.push(req.body)
+    bufferStream.push(null)
+    bufferStream.pipe(busboy)
+  })
 })
 
 app.get('/version', (req, res) => {
