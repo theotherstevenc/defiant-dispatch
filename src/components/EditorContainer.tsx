@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { clsx } from 'clsx'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Split from 'react-split'
 
 import { useAppContext } from '../context/AppContext'
@@ -22,9 +22,11 @@ const EditorContainer = () => {
   const { dispatch, settings } = useAppContext()
 
   const [sizes, setSizes] = usePersistentValue<SplitSizes>(EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY, EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
+  const prevHideWorkingFilesRef = useRef(settings.hideWorkingFiles)
 
   // Derive collapsed state from sizes (single source of truth)
-  const isCollapsed = sizes[0] < EDITOR_SPLIT_COLLAPSE_THRESHOLD
+  // Only consider it collapsed if it's actually at 0, not just below threshold
+  const isCollapsed = sizes[0] === 0
 
   // Sync to AppContext whenever collapsed state changes from drag operations
   useEffect(() => {
@@ -33,10 +35,17 @@ const EditorContainer = () => {
 
   // Sync sizes when hideWorkingFiles changes from external sources (like toggle button)
   useEffect(() => {
+    // Only respond if hideWorkingFiles actually changed (not from drag operations updating it)
+    if (prevHideWorkingFilesRef.current === settings.hideWorkingFiles) {
+      return
+    }
+    
+    prevHideWorkingFilesRef.current = settings.hideWorkingFiles
+    
     const shouldBeCollapsed = settings.hideWorkingFiles
-    const currentlyCollapsed = sizes[0] < EDITOR_SPLIT_COLLAPSE_THRESHOLD
+    const currentlyCollapsed = sizes[0] === 0
 
-    // Only update if there's a mismatch to avoid infinite loops
+    // Only update if there's a mismatch
     if (shouldBeCollapsed && !currentlyCollapsed) {
       setSizes(EDITOR_SPLIT_COLLAPSED_STATE)
     } else if (!shouldBeCollapsed && currentlyCollapsed) {
