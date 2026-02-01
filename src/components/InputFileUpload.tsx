@@ -38,41 +38,58 @@ const InputFileUpload = () => {
       return
     }
 
-    const formData = new FormData()
-    formData.append('file', file)
+    // Read file as base64
+    const reader = new FileReader()
+    reader.onload = async () => {
+      try {
+        const base64String = reader.result as string
+        // Remove the data:... prefix to get just the base64 content
+        const base64Data = base64String.split(',')[1]
 
-    const options = {
-      method: 'POST',
-      body: formData,
+        const response = await fetch('https://us-central1-defiant-dispatch-6d153.cloudfunctions.net/api/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ file: base64Data }),
+        })
+
+        if (!response.ok) {
+          logError('File upload failed with status ' + response.status, 'InputFileUpload')
+          return
+        }
+
+        const boilerPlateMarkup = await response.json()
+
+        if (!boilerPlateMarkup) {
+          logError('Empty response body from file upload', 'InputFileUpload')
+          return
+        }
+
+        const isBoilerplateApplied = true
+        const fileName = file.name.replace(/\.[^/.]+$/, '')
+
+        await createNewFile(
+          fileName,
+          boilerPlateMarkup,
+          isBoilerplateApplied,
+          setWorkingFileID,
+          setWorkingFileName,
+          setHtml,
+          setText,
+          setAmp,
+          setIsFileLocked
+        )
+      } catch (error) {
+        logError('Error processing file upload: ' + error, 'InputFileUpload')
+      }
     }
 
-    const response = await fetch('/api/upload', options)
-
-    if (!response.ok) {
-      logError('File upload failed with status ' + response.status, 'InputFileUpload')
+    reader.onerror = () => {
+      logError('Failed to read file', 'InputFileUpload')
     }
 
-    const text = await response.text()
-
-    if (!text) {
-      logError('Empty response body from file upload', 'InputFileUpload')
-    }
-
-    const isBoilerplateApplied = true
-    const fileName = file.name.replace(/\.[^/.]+$/, '')
-    const boilerPlateMarkup = JSON.parse(text)
-
-    await createNewFile(
-      fileName,
-      boilerPlateMarkup,
-      isBoilerplateApplied,
-      setWorkingFileID,
-      setWorkingFileName,
-      setHtml,
-      setText,
-      setAmp,
-      setIsFileLocked
-    )
+    reader.readAsDataURL(file)
   }
 
   const handleButtonClick = () => {
