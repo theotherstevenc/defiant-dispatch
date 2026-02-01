@@ -3,7 +3,6 @@ import { defineSecret } from 'firebase-functions/params'
 import CryptoJS from 'crypto-js'
 import cors from 'cors'
 import express from 'express'
-import fileUpload from 'express-fileupload'
 import nodemailer from 'nodemailer'
 import { simpleParser } from 'mailparser'
 
@@ -14,10 +13,8 @@ const encryptionKey = defineSecret('ENCRYPTION_KEY')
 const mailUsername = defineSecret('MAIL_USERNAME')
 const mailPass = defineSecret('MAIL_PASS')
 
-app.use(express.urlencoded({ limit: '50mb', extended: true }))
-app.use(express.json({ limit: '50mb' }))
+// Apply CORS globally
 app.use(cors({ origin: '*' }))
-app.use(fileUpload())
 
 const encryptText = (text, key) => {
   return CryptoJS.AES.encrypt(text, key).toString()
@@ -47,7 +44,7 @@ const parseUpload = async (file) => {
   }
 }
 
-app.post('/encrypt', async (req, res) => {
+app.post('/encrypt', express.json(), async (req, res) => {
   const { text } = req.body
 
   if (!text) {
@@ -62,7 +59,7 @@ app.post('/encrypt', async (req, res) => {
   }
 })
 
-app.post('/send', async (req, res) => {
+app.post('/send', express.json({ limit: '50mb' }), async (req, res) => {
   try {
     const { testaddress, testsubject, ampversion, textversion, htmlversion } = req.body
     const user = req.body.username || mailUsername.value()
@@ -100,10 +97,23 @@ app.post('/send', async (req, res) => {
   }
 })
 
-app.post('/upload', async (req, res) => {
-  const file = req.files.file
-  const parsedContent = await parseUpload(file)
-  res.json(parsedContent)
+app.post('/upload', express.json({ limit: '50mb' }), async (req, res) => {
+  try {
+    if (!req.body.file) {
+      return res.status(400).json({ error: 'No file data provided' })
+    }
+
+    // Decode base64 to buffer
+    const fileBuffer = Buffer.from(req.body.file, 'base64')
+    
+    // Parse the .eml file
+    const parsedContent = await parseUpload({ data: fileBuffer })
+    
+    return res.json(parsedContent)
+  } catch (error) {
+    console.error('Upload parsing error:', error)
+    return res.status(500).json({ error: 'Failed to parse file', details: error.message })
+  }
 })
 
 app.get('/version', (req, res) => {

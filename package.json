@@ -1,7 +1,7 @@
 {
   "name": "defiant-dispatch",
   "private": true,
-  "version": "7.0.0",
+  "version": "7.1.0",
   "type": "module",
   "engines": {
     "node": "22.x",
@@ -13,8 +13,9 @@
     "dev:emulators": "firebase emulators:start --import=./emulator-data --export-on-exit",
     "dev:frontend": "vite",
     "depcheck": "depcheck",
-    "deploy": "npm run build && firebase deploy --only hosting",
-    "firebase:deploy": "firebase deploy --only hosting",
+    "deploy": "npm run build && firebase deploy",
+    "deploy:hosting": "npm run build && firebase deploy --only hosting",
+    "deploy:functions": "firebase deploy --only functions",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
     "build": "tsc -b && vite build",
