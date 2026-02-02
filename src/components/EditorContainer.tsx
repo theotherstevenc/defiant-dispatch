@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Split from 'react-split'
 
 import { useAppContext } from '../context/AppContext'
+import { useFirestoreSettings } from '../hooks/useFirestoreSettings'
 import {
   EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT,
   EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM,
@@ -20,6 +21,7 @@ type SplitSizes = [number, number]
 
 const EditorContainer = () => {
   const { dispatch, settings } = useAppContext()
+  const { updateSetting } = useFirestoreSettings()
 
   const [sizes, setSizes] = usePersistentValue<SplitSizes>(EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY, EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
   const prevHideWorkingFilesRef = useRef(settings.hideWorkingFiles)
@@ -39,9 +41,9 @@ const EditorContainer = () => {
     if (prevHideWorkingFilesRef.current === settings.hideWorkingFiles) {
       return
     }
-    
+
     prevHideWorkingFilesRef.current = settings.hideWorkingFiles
-    
+
     const shouldBeCollapsed = settings.hideWorkingFiles
     const currentlyCollapsed = sizes[0] === 0
 
@@ -57,9 +59,11 @@ const EditorContainer = () => {
     setSizes(newSizes)
   }
 
-  const handleDragEnd = (newSizes: SplitSizes) => {
+  const handleDragEnd = async (newSizes: SplitSizes) => {
     const willCollapse = newSizes[0] < EDITOR_SPLIT_COLLAPSE_THRESHOLD
     setSizes(willCollapse ? EDITOR_SPLIT_COLLAPSED_STATE : newSizes)
+    const newValue = willCollapse && settings.hideWorkingFiles
+    await updateSetting('hideWorkingFiles', newValue, 'InputToggleWorkingFiles')
   }
 
   const workingFilesClassName = clsx({
