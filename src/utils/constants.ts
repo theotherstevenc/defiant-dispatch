@@ -24,6 +24,7 @@ export const EDITOR_DECREASE_FONT_SIZE_LABEL = 'Decrease Editor Font Size'
 export const EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT: [number, number] = [10, 90]
 export const EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM: [number, number] = [10, 100]
 export const EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY = 'EditorContainerSplitSizes'
+export const EDITOR_CONTAINER_SPLIT_SIZES_PREVIOUS_KEY = 'EditorContainerSplitSizesPrevious'
 export const EDITOR_SPLIT_COLLAPSE_THRESHOLD = 5
 export const EDITOR_SPLIT_COLLAPSED_STATE: [number, number] = [0, 100]
 export const EDITOR_DARK_MODE = 'vs-dark'

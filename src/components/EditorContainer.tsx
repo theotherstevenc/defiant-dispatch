@@ -9,6 +9,7 @@ import {
   EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT,
   EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM,
   EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY,
+  EDITOR_CONTAINER_SPLIT_SIZES_PREVIOUS_KEY,
   EDITOR_SPLIT_COLLAPSE_THRESHOLD,
   EDITOR_SPLIT_COLLAPSED_STATE,
 } from '../utils/constants'
@@ -24,6 +25,10 @@ const EditorContainer = () => {
   const { updateSetting } = useFirestoreSettings()
 
   const [sizes, setSizes] = usePersistentValue<SplitSizes>(EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY, EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
+  const [previousSizes, setPreviousSizes] = usePersistentValue<SplitSizes>(
+    EDITOR_CONTAINER_SPLIT_SIZES_PREVIOUS_KEY,
+    EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT
+  )
   const prevHideWorkingFilesRef = useRef(settings.hideWorkingFiles)
 
   // Derive collapsed state from sizes (single source of truth)
@@ -49,9 +54,13 @@ const EditorContainer = () => {
 
     // Only update if there's a mismatch
     if (shouldBeCollapsed && !currentlyCollapsed) {
+      // Save the current non-collapsed sizes so we can restore them later
+      setPreviousSizes(sizes)
       setSizes(EDITOR_SPLIT_COLLAPSED_STATE)
     } else if (!shouldBeCollapsed && currentlyCollapsed) {
-      setSizes(EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
+      // Restore previously saved sizes if available, otherwise fall back to defaults
+      const restore = previousSizes && previousSizes[0] !== 0 ? previousSizes : EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT
+      setSizes(restore)
     }
   }, [settings.hideWorkingFiles, sizes, setSizes])
 
