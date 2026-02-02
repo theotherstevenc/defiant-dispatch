@@ -62,7 +62,7 @@ const EditorContainer = () => {
       const restore = previousSizes && previousSizes[0] !== 0 ? previousSizes : EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT
       setSizes(restore)
     }
-  }, [settings.hideWorkingFiles, sizes, setSizes])
+  }, [settings.hideWorkingFiles, sizes, setSizes, previousSizes, setPreviousSizes])
 
   const handleDrag = (newSizes: SplitSizes) => {
     setSizes(newSizes)
