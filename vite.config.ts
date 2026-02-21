@@ -40,7 +40,6 @@ export default defineConfig({
         assetFileNames: `assets/[name].v${pkg.version}.[ext]`,
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('crypto-js')) return 'crypto'
             if (id.includes('firebase')) return 'firebase'
             if (id.includes('monaco-editor')) return 'monaco'
             if (id.includes('@mui/icons-material')) return 'mui-icons'
