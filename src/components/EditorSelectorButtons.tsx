@@ -2,12 +2,17 @@ import { Button } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
 import { db } from '../firebase'
-import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED, EDITOR_OPTION_AMP, EDITOR_OPTION_HTML, EDITOR_OPTION_TEXT } from '../utils/constants'
+import {
+  BTN_VARIANT_CONTAINED,
+  BTN_VARIANT_OUTLINED,
+  EDITOR_OPTION_AMP,
+  EDITOR_OPTION_HTML,
+  EDITOR_OPTION_TEXT,
+  FIRESTORE_COLLECTION_CONFIG,
+  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
+} from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 type EditorType = typeof EDITOR_OPTION_HTML | typeof EDITOR_OPTION_TEXT | typeof EDITOR_OPTION_AMP
 
@@ -18,7 +23,7 @@ const EditorSelectorButtons = () => {
     const firestoreObj = { activeEditor: editorType }
 
     try {
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
       setActiveEditor(editorType)
     } catch (error) {
       logError('Unable to set active editor', 'EditorSelectorButtons', error)

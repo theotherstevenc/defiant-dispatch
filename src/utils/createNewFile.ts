@@ -2,6 +2,7 @@ import { addDoc, collection } from 'firebase/firestore'
 
 import { db } from '../firebase'
 
+import { FIRESTORE_COLLECTION_WORKING_FILES } from './constants'
 import { logError } from './logError'
 
 export const createNewFile = async (
@@ -44,7 +45,7 @@ export const createNewFile = async (
       isFileLocked: false, // Default value for new files
     }
 
-    const newFileRef = await addDoc(collection(db, 'workingFiles'), newFileData)
+    const newFileRef = await addDoc(collection(db, FIRESTORE_COLLECTION_WORKING_FILES), newFileData)
 
     setWorkingFileID(newFileRef.id)
     setWorkingFileName(newFileData.fileName)

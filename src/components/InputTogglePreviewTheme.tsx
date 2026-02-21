@@ -5,14 +5,16 @@ import { Tooltip } from '@mui/material'
 
 import { useAppContext } from '../context/AppContext'
 import { db } from '../firebase'
-import { TOGGLE_BTN_PREVIEW_DARK_MODE, TOGGLE_BTN_PREVIEW_LIGHT_MODE } from '../utils/constants'
+import {
+  FIRESTORE_COLLECTION_CONFIG,
+  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
+  TOGGLE_BTN_PREVIEW_DARK_MODE,
+  TOGGLE_BTN_PREVIEW_LIGHT_MODE,
+} from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const InputTogglePreviewTheme = () => {
   const { isPreviewDarkMode, setIsPreviewDarkMode } = useAppContext()
@@ -20,7 +22,7 @@ const InputTogglePreviewTheme = () => {
   const handleOpen = async () => {
     try {
       const firestoreObj = { isPreviewDarkMode: !isPreviewDarkMode }
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
       setIsPreviewDarkMode(!isPreviewDarkMode)
     } catch (error) {
       logError('Failed to toggle preview theme:', 'InputTogglePreviewTheme', error)

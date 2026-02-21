@@ -15,6 +15,7 @@ import {
   DIALOG_CANNOT_BE_UNDONE,
   LABEL_CLOSE,
 } from '../utils/constants'
+import { FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
 
 import { StyledIconButton } from './StyledIconButton'
@@ -22,9 +23,6 @@ import { StyledIconButton } from './StyledIconButton'
 const InputDeleteFile = () => {
   const { deletedWorkingFileID, workingFileID, setHtml, setText, setAmp, workingFileName, setDeletedWorkingFileID, isFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
-
-  const COLLECTION = 'workingFiles'
-  const DOCUMENT = workingFileID
 
   const handleOpen = () => {
     if (isFileLocked || !workingFileID || workingFileID === deletedWorkingFileID) {
@@ -43,8 +41,8 @@ const InputDeleteFile = () => {
     }
 
     try {
-      const workingFiles = doc(db, COLLECTION, DOCUMENT)
-      await deleteDoc(workingFiles)
+      const workingFileRef = doc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID)
+      await deleteDoc(workingFileRef)
 
       setHtml('')
       setText('')

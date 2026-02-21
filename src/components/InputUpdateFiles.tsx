@@ -7,6 +7,7 @@ import { useEditorContext } from '../context/EditorContext'
 import { db } from '../firebase'
 import { iconButtonStyles } from '../styles/global.styles'
 import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
+import { FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
@@ -30,16 +31,13 @@ const InputUpdateFiles = () => {
     setFileName('')
   }
 
-  const COLLECTION = 'workingFiles'
-  const DOCUMENT = workingFileID
-  const firestoreObj = { fileName }
-
   const handleConfirm = async () => {
     if (!workingFileID) return
 
     if (fileName) {
       try {
-        await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+        const firestoreObj = { fileName }
+        await updateFirestoreDoc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID, firestoreObj)
         setWorkingFileName(fileName)
         handleClose()
       } catch (error) {

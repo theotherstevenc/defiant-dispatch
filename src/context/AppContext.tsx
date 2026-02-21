@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import { auth, db } from '../firebase'
 import { AppContextProps, SenderSettings } from '../interfaces'
+import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 
 const AppContext = createContext<AppContextProps | undefined>(undefined)
@@ -60,7 +61,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return
     }
 
-    const editorSettings = doc(db, 'config', 'editorSettings')
+    const editorSettings = doc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS)
     const unsubscribe = onSnapshot(
       editorSettings,
       (doc) => {

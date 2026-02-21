@@ -5,12 +5,20 @@ import { useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
 import { db } from '../firebase'
-import { SETTINGS_CHECKBOX_LABEL_MINIFY, SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING, SETTINGS_CHECKBOX_LABEL_WORD_WRAP } from '../utils/constants'
+import {
+  FIRESTORE_COLLECTION_CONFIG,
+  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
+  SETTINGS_CHECKBOX_LABEL_MINIFY,
+  SETTINGS_CHECKBOX_LABEL_PREVENT_THREADING,
+  SETTINGS_CHECKBOX_LABEL_WORD_WRAP,
+} from '../utils/constants'
 import { customMinifier } from '../utils/customMinifier'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { useRenderCount } from '../utils/useRenderCount'
 
 const InputMarkupSettings = () => {
+  useRenderCount('InputMarkupSettings')
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
   const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
     useAppContext()
@@ -25,9 +33,6 @@ const InputMarkupSettings = () => {
       setter: setIsPreventThreadingEnabled,
     },
   ]
-
-  const COLLECTION = 'config'
-  const DOCUMENT = 'editorSettings'
 
   const handleChange = async (event: React.SyntheticEvent, checked: boolean) => {
     const target = event.target as HTMLInputElement
@@ -46,7 +51,7 @@ const InputMarkupSettings = () => {
     const firestoreObj = { [name]: checked }
 
     try {
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
     } catch (error) {
       logError('Error updating Firestore document', 'InputMarkupSettings', error)
     }

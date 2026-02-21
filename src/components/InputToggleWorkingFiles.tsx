@@ -5,14 +5,16 @@ import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useAppContext } from '../context/AppContext'
 import { db } from '../firebase'
-import { TOGGLE_BTN_HIDE_PROJECTS, TOGGLE_BTN_SHOW_PROJECTS } from '../utils/constants'
+import {
+  FIRESTORE_COLLECTION_CONFIG,
+  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
+  TOGGLE_BTN_HIDE_PROJECTS,
+  TOGGLE_BTN_SHOW_PROJECTS,
+} from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const InputToggleWorkingFiles = () => {
   const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()
@@ -21,7 +23,7 @@ const InputToggleWorkingFiles = () => {
     try {
       const firestoreObj = { hideWorkingFiles: !hideWorkingFiles }
       setHideWorkingFiles(!hideWorkingFiles)
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
     } catch (error) {
       logError('Error updating Firestore document', 'InputToggleWorkingFiles', error)
     }

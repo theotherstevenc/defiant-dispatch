@@ -7,8 +7,10 @@ import { EmailData, SenderSettings } from '../interfaces'
 import { BTN_LABEL_SEND, SEND_ALERT_FAILURE, SEND_ALERT_SUCCESS } from '../utils/constants'
 import { getCurrentDateTime } from '../utils/getCurrentDateTime'
 import { logError } from '../utils/logError'
+import { useRenderCount } from '../utils/useRenderCount'
 
 const EditorSendButton = () => {
+  useRenderCount('EditorSendButton')
   const { html, text, amp } = useEditorContext()
   const { isPreventThreadingEnabled, subject, emailAddresses, inputSenderSettings } = useAppContext()
   const [open, setOpen] = useState(false)

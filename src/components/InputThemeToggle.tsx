@@ -8,13 +8,11 @@ import RadioGroup from '@mui/material/RadioGroup'
 
 import { useAppContext } from '../context/AppContext'
 import { db } from '../firebase'
+import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolean }) => (
   <Box
@@ -35,7 +33,7 @@ const InputThemeToggle = () => {
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const firestoreObj = { appColorScheme: event.target.value }
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
       setAppColorScheme(event.target.value)
     } catch (error) {
       logError('Failed to update editor color scheme:', 'InputThemeToggle', error)

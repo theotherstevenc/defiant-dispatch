@@ -4,6 +4,8 @@ import Split from 'react-split'
 import { useAppContext } from '../context/AppContext'
 import { db } from '../firebase'
 import {
+  FIRESTORE_COLLECTION_CONFIG,
+  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_DEFAULT,
   INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,
   SUBJECT_LINE_INPUT_LABEL,
@@ -11,14 +13,13 @@ import {
 } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { useRenderCount } from '../utils/useRenderCount'
 import usePersistentValue from '../utils/usePersistentValue'
 
 import InputChips from './InputChips'
 
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
-
 const InputEmailListSubjectLine = () => {
+  useRenderCount('InputEmailListSubjectLine')
   const { isPreventThreadingEnabled, subject, setSubject, emailAddresses, setEmailAddresses } = useAppContext()
   const [sizes, setSizes] = usePersistentValue(
     INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,
@@ -32,7 +33,7 @@ const InputEmailListSubjectLine = () => {
   const handleBlur = async () => {
     try {
       const firestoreObj = { subject }
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
     } catch (error) {
       logError('Error updating subject in Firestore', 'InputEmailListSubjectLine', error)
     }
@@ -42,7 +43,7 @@ const InputEmailListSubjectLine = () => {
     try {
       const firestoreObj = { emailAddresses: newEmailAddresses }
       setEmailAddresses(newEmailAddresses)
-      await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
     } catch (error) {
       logError('Error updating email addresses in Firestore', 'InputEmailListSubjectLine', error)
     }

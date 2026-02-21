@@ -16,6 +16,7 @@ import {
   EDITOR_OPTION_TEXT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY,
+  FIRESTORE_COLLECTION_WORKING_FILES,
   MOSAIC_OPTION_OFF,
   MOSAIC_OPTION_ON,
 } from '../utils/constants'
@@ -23,9 +24,11 @@ import forceIframeReflow from '../utils/forceIframeReflow'
 import getSanitizedValue from '../utils/getSanitizedValue'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+import { useRenderCount } from '../utils/useRenderCount'
 import usePersistentValue from '../utils/usePersistentValue'
 
 const EditorWorkspacePreview = () => {
+  useRenderCount('EditorWorkspacePreview')
   const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } = useEditorContext()
   const { isDarkMode, isPreviewDarkMode, isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
 
@@ -93,14 +96,12 @@ const EditorWorkspacePreview = () => {
       return
     }
 
-    const COLLECTION = 'workingFiles'
-    const DOCUMENT = workingFileID
     const firestoreObj = { html, text, amp }
     const DEBOUNCE_DELAY = 2000
 
     const debounceSave = setTimeout(async () => {
       try {
-        await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+        await updateFirestoreDoc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID, firestoreObj)
       } catch (error) {
         logError('Error auto updating Firestore', 'EditorWorkspacePreview', error)
       }

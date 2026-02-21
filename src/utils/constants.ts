@@ -60,3 +60,8 @@ export const TOGGLE_BTN_SHOW_PROJECTS = 'Show Projects'
 export const WORKING_FILE_ID_KEY = 'workingFileID'
 export const INPUT_LOCK_FILE_LABEL_LOCK = 'Lock file'
 export const INPUT_LOCK_FILE_LABEL_UNLOCK = 'Unlock file'
+
+// Firestore path constants
+export const FIRESTORE_COLLECTION_CONFIG = 'config'
+export const FIRESTORE_DOCUMENT_EDITOR_SETTINGS = 'editorSettings'
+export const FIRESTORE_COLLECTION_WORKING_FILES = 'workingFiles'

@@ -8,10 +8,12 @@ import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
 import { db } from '../firebase'
 import { WorkingFile } from '../interfaces'
-import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED } from '../utils/constants'
+import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED, FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
+import { useRenderCount } from '../utils/useRenderCount'
 
 const EditorWorkingFiles = () => {
+  useRenderCount('EditorWorkingFiles')
   const { setHtml, setText, setAmp, workingFileID, setWorkingFileID, setWorkingFileName, files, setFiles, setIsFileLocked } = useEditorContext()
   const { user } = useAppContext()
 
@@ -26,9 +28,9 @@ const EditorWorkingFiles = () => {
 
   useEffect(() => {
     if (!user) return
-    const workingFiles = collection(db, 'workingFiles')
+    const workingFilesRef = collection(db, FIRESTORE_COLLECTION_WORKING_FILES)
     const unsubscribe = onSnapshot(
-      workingFiles,
+      workingFilesRef,
       (snapshot) => {
         const workingFilesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
         setFiles(workingFilesData as WorkingFile[])

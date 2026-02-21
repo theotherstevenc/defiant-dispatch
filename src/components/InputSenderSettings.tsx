@@ -5,11 +5,9 @@ import { db } from '../firebase'
 import { SenderSettings } from '../interfaces'
 import { SETTINGS_FROM, SETTINGS_HOST, SETTINGS_PASS, SETTINGS_PORT, SETTINGS_USER } from '../utils/constants'
 import { encryptString } from '../utils/encryptString'
+import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-const COLLECTION = 'config'
-const DOCUMENT = 'editorSettings'
 
 const InputSenderSettings = () => {
   const { inputSenderSettings, setInputSenderSettings } = useAppContext()
@@ -28,7 +26,7 @@ const InputSenderSettings = () => {
     if (isBlur) {
       const firestoreObj = { ...inputSenderSettings, [id]: processedValue }
       try {
-        await updateFirestoreDoc(db, COLLECTION, DOCUMENT, firestoreObj)
+        await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
       } catch (error) {
         logError('Error updating Firestore document', 'InputSenderSettings', error)
       }
