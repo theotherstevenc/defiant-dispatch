@@ -3,7 +3,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import { Tooltip } from '@mui/material'
 
-import { useAppContext } from '../context/AppContext'
+import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
 import {
   FIRESTORE_COLLECTION_CONFIG,
@@ -17,7 +17,7 @@ import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { StyledIconButton } from './StyledIconButton'
 
 const InputToggleEditorTheme = () => {
-  const { isDarkMode, setIsDarkMode } = useAppContext()
+  const { isDarkMode, setIsDarkMode } = useThemeSettingsContext()
 
   const handleOpen = async () => {
     try {

@@ -1,10 +1,10 @@
 import { useMediaQuery } from '@mui/material'
 
-import { useAppContext } from '../context/AppContext'
+import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { darkTheme, lightTheme } from '../styles/global.theme'
 
 export const usePreferredTheme = () => {
-  const { appColorScheme } = useAppContext()
+  const { appColorScheme } = useThemeSettingsContext()
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
 
   if (appColorScheme === 'system') {

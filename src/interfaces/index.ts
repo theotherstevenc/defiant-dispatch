@@ -51,6 +51,15 @@ export interface EditorContextProps {
   setEditorFontSize: (fontSize: number) => void
 }
 
+export interface ThemeSettingsContextProps {
+  isDarkMode: boolean
+  setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
+  isPreviewDarkMode: boolean
+  setIsPreviewDarkMode: React.Dispatch<React.SetStateAction<boolean>>
+  appColorScheme: string
+  setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
+}
+
 export interface AppContextProps {
   isMinifyEnabled: boolean
   setIsMinifyEnabled: (isMinifyEnabled: boolean) => void
@@ -68,10 +77,4 @@ export interface AppContextProps {
   setInputSenderSettings: React.Dispatch<React.SetStateAction<SenderSettings>>
   hideWorkingFiles: boolean
   setHideWorkingFiles: React.Dispatch<React.SetStateAction<boolean>>
-  isDarkMode: boolean
-  setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>
-  isPreviewDarkMode: boolean
-  setIsPreviewDarkMode: React.Dispatch<React.SetStateAction<boolean>>
-  appColorScheme: string
-  setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
 }

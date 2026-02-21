@@ -6,6 +6,7 @@ import Split from 'react-split'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
+import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
 import { workspaceEditorStyles, workspacePreviewIframeStyles } from '../styles/global.styles'
 import {
@@ -30,7 +31,8 @@ import usePersistentValue from '../utils/usePersistentValue'
 const EditorWorkspacePreview = () => {
   useRenderCount('EditorWorkspacePreview')
   const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } = useEditorContext()
-  const { isDarkMode, isPreviewDarkMode, isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
+  const { isDarkMode, isPreviewDarkMode } = useThemeSettingsContext()
+  const { isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [sizes, setSizes] = usePersistentValue(EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY, EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT)

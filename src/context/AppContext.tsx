@@ -14,13 +14,10 @@ const AppContext = createContext<AppContextProps | undefined>(undefined)
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuthContext()
 
-  const [appColorScheme, setAppColorScheme] = useState<string>('')
   const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false)
   const [isPreventThreadingEnabled, setIsPreventThreadingEnabled] = useState(false)
   const [hideWorkingFiles, setHideWorkingFiles] = useState<boolean>(true)
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [isPreviewDarkMode, setIsPreviewDarkMode] = useState(false)
   const [activeEditor, setActiveEditor] = useState('')
   const [subject, setSubject] = useState<string>('')
   const [emailAddresses, setEmailAddresses] = useState<string[]>([])
@@ -54,21 +51,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             activeEditor = '',
             emailAddresses = [],
             hideWorkingFiles = true,
-            isDarkMode = false,
-            isPreviewDarkMode = false,
-            appColorScheme = '',
           } = data
-          setAppColorScheme(appColorScheme)
-          setSubject(subject)
-          setIsMinifyEnabled(isMinifyEnabled)
-          setIsWordWrapEnabled(isWordWrapEnabled)
-          setIsPreventThreadingEnabled(isPreventThreadingEnabled)
-          setIsDarkMode(isDarkMode)
-          setIsPreviewDarkMode(isPreviewDarkMode)
-          setHideWorkingFiles(hideWorkingFiles)
-          setActiveEditor(activeEditor)
-          setEmailAddresses(emailAddresses)
-          setInputSenderSettings({ host, port, username, pass, from })
+          setSubject((prev) => (prev === subject ? prev : subject))
+          setIsMinifyEnabled((prev) => (prev === isMinifyEnabled ? prev : isMinifyEnabled))
+          setIsWordWrapEnabled((prev) => (prev === isWordWrapEnabled ? prev : isWordWrapEnabled))
+          setIsPreventThreadingEnabled((prev) => (prev === isPreventThreadingEnabled ? prev : isPreventThreadingEnabled))
+          setHideWorkingFiles((prev) => (prev === hideWorkingFiles ? prev : hideWorkingFiles))
+          setActiveEditor((prev) => (prev === activeEditor ? prev : activeEditor))
+          setEmailAddresses((prev) => {
+            const next = emailAddresses as string[]
+            return prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next
+          })
+          setInputSenderSettings((prev) => {
+            const next = { host, port, username, pass, from }
+            return prev.host === next.host &&
+              prev.port === next.port &&
+              prev.username === next.username &&
+              prev.pass === next.pass &&
+              prev.from === next.from
+              ? prev
+              : next
+          })
         }
       },
       (error) => {
@@ -82,9 +85,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsMinifyEnabled(false)
       setIsWordWrapEnabled(false)
       setIsPreventThreadingEnabled(false)
-      setIsDarkMode(false)
-      setIsPreviewDarkMode(false)
-      setAppColorScheme('')
       setHideWorkingFiles(true)
       setActiveEditor('')
       setEmailAddresses([])
@@ -117,12 +117,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setInputSenderSettings,
         hideWorkingFiles,
         setHideWorkingFiles,
-        isDarkMode,
-        setIsDarkMode,
-        isPreviewDarkMode,
-        setIsPreviewDarkMode,
-        appColorScheme,
-        setAppColorScheme,
       }}>
       {children}
     </AppContext.Provider>

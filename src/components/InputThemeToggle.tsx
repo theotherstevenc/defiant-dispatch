@@ -6,7 +6,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 
-import { useAppContext } from '../context/AppContext'
+import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
 import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
@@ -28,7 +28,7 @@ const IconRadio = ({ icon, selected }: { icon: React.ReactNode; selected: boolea
 )
 
 const InputThemeToggle = () => {
-  const { appColorScheme, setAppColorScheme } = useAppContext()
+  const { appColorScheme, setAppColorScheme } = useThemeSettingsContext()
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
