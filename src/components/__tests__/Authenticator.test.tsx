@@ -1,81 +1,95 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { beforeEach, describe, it, expect, vi } from 'vitest'
 
 import { Authenticator } from '../../components'
-import * as AppContext from '../../context/AppContext'
+import * as AuthContext from '../../context/AuthContext'
 import * as EditorContext from '../../context/EditorContext'
-import { AppContextProps, EditorContextProps } from '../../interfaces'
+import { EditorContextProps } from '../../interfaces'
 
-const mockAppContext: AppContextProps = {
-  isMinifyEnabled: false,
-  setIsMinifyEnabled: vi.fn(),
-  isWordWrapEnabled: false,
-  setIsWordWrapEnabled: vi.fn(),
-  isPreventThreadingEnabled: false,
-  setIsPreventThreadingEnabled: vi.fn(),
-  activeEditor: '',
-  setActiveEditor: vi.fn(),
-  subject: '',
-  setSubject: vi.fn(),
-  emailAddresses: [],
-  setEmailAddresses: vi.fn(),
-  inputSenderSettings: {
-    host: '',
-    port: '',
-    username: '',
-    pass: '',
-    from: '',
-  },
-  setInputSenderSettings: vi.fn(),
-  hideWorkingFiles: false,
-  setHideWorkingFiles: vi.fn(),
-  isDarkMode: false,
-  setIsDarkMode: vi.fn(),
-  isPreviewDarkMode: false,
-  setIsPreviewDarkMode: vi.fn(),
-  appColorScheme: '',
-  setAppColorScheme: vi.fn(),
-  user: null,
-}
-
-vi.spyOn(AppContext, 'useAppContext').mockReturnValue(mockAppContext)
+const mockSetHtml = vi.fn()
+const mockSetText = vi.fn()
+const mockSetAmp = vi.fn()
+const mockSetWorkingFileID = vi.fn()
+const mockSetWorkingFileName = vi.fn()
+const mockSetFiles = vi.fn()
 
 const mockEditorContext: EditorContextProps = {
   html: '',
-  setHtml: vi.fn(),
+  setHtml: mockSetHtml,
   originalHtml: '',
   setOriginalHtml: vi.fn(),
   text: '',
-  setText: vi.fn(),
+  setText: mockSetText,
   amp: '',
-  setAmp: vi.fn(),
+  setAmp: mockSetAmp,
   workingFileID: '',
-  setWorkingFileID: vi.fn(),
+  setWorkingFileID: mockSetWorkingFileID,
   deletedWorkingFileID: '',
   setDeletedWorkingFileID: vi.fn(),
   workingFileName: '',
-  setWorkingFileName: vi.fn(),
+  setWorkingFileName: mockSetWorkingFileName,
   files: [],
-  setFiles: vi.fn(),
+  setFiles: mockSetFiles,
   isFileLocked: false,
   setIsFileLocked: vi.fn(),
   editorFontSize: 0,
   setEditorFontSize: vi.fn(),
 }
 
-vi.spyOn(EditorContext, 'useEditorContext').mockReturnValue(mockEditorContext)
-
 describe('Authenticator', () => {
   beforeEach(() => {
-    render(<Authenticator />)
+    vi.clearAllMocks()
   })
 
-  it('renders without crashing', () => {
-    expect(true).toBe(true)
+  describe('when user is NOT authenticated', () => {
+    beforeEach(() => {
+      vi.spyOn(AuthContext, 'useAuthContext').mockReturnValue({ user: null })
+      vi.spyOn(EditorContext, 'useEditorContext').mockReturnValue(mockEditorContext)
+    })
+
+    it('renders without crashing', () => {
+      render(<Authenticator />)
+      expect(true).toBe(true)
+    })
+
+    it('shows the Login button', () => {
+      render(<Authenticator />)
+      const loginButtons = screen.getAllByRole('button', { name: 'Login' })
+      expect(loginButtons.length).toBeGreaterThan(0)
+    })
+
+    it('shows LoginIcon (not LogoutIcon)', () => {
+      render(<Authenticator />)
+      expect(screen.queryByTestId('LoginIcon')).toBeInTheDocument()
+      expect(screen.queryByTestId('LogoutIcon')).not.toBeInTheDocument()
+    })
+
+    it('opens login dialog on click', () => {
+      render(<Authenticator />)
+      fireEvent.click(screen.getAllByRole('button', { name: 'Login' })[0])
+      expect(screen.getByLabelText('username')).toBeInTheDocument()
+      expect(screen.getByLabelText('password')).toBeInTheDocument()
+    })
   })
 
-  it('shows the login button when user is not authenticated', () => {
-    const loginIconButtons = screen.getAllByRole('button', { name: 'Login' })
-    expect(loginIconButtons.length).toBeGreaterThan(0)
+  describe('when user IS authenticated', () => {
+    beforeEach(() => {
+      vi.spyOn(AuthContext, 'useAuthContext').mockReturnValue({
+        user: { uid: 'test-uid' } as any,
+      })
+      vi.spyOn(EditorContext, 'useEditorContext').mockReturnValue(mockEditorContext)
+    })
+
+    it('shows the Logout button', () => {
+      render(<Authenticator />)
+      const logoutButtons = screen.getAllByRole('button', { name: 'Logout' })
+      expect(logoutButtons.length).toBeGreaterThan(0)
+    })
+
+    it('shows LogoutIcon (not LoginIcon)', () => {
+      render(<Authenticator />)
+      expect(screen.queryByTestId('LogoutIcon')).toBeInTheDocument()
+      expect(screen.queryByTestId('LoginIcon')).not.toBeInTheDocument()
+    })
   })
 })

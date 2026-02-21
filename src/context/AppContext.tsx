@@ -1,16 +1,19 @@
 /* eslint-disable react-refresh/only-export-components */
-import { onAuthStateChanged, User } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-import { auth, db } from '../firebase'
+import { db } from '../firebase'
 import { AppContextProps, SenderSettings } from '../interfaces'
 import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 
+import { useAuthContext } from './AuthContext'
+
 const AppContext = createContext<AppContextProps | undefined>(undefined)
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuthContext()
+
   const [appColorScheme, setAppColorScheme] = useState<string>('')
   const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
   const [isWordWrapEnabled, setIsWordWrapEnabled] = useState(false)
@@ -28,38 +31,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     pass: '',
     from: '',
   })
-  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser)
-      if (!firebaseUser) {
-        setSubject('')
-        setIsMinifyEnabled(false)
-        setIsWordWrapEnabled(false)
-        setIsPreventThreadingEnabled(false)
-        setIsDarkMode(false)
-        setIsPreviewDarkMode(false)
-        setAppColorScheme('')
-        setHideWorkingFiles(true)
-        setActiveEditor('')
-        setEmailAddresses([])
-        setInputSenderSettings({
-          host: '',
-          port: '',
-          username: '',
-          pass: '',
-          from: '',
-        })
-      }
-    })
-    return () => unsubscribe()
-  }, [])
-
-  useEffect(() => {
-    if (!user) {
-      return
-    }
+    if (!user) return
 
     const editorSettings = doc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS)
     const unsubscribe = onSnapshot(
@@ -102,7 +76,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     )
 
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      setSubject('')
+      setIsMinifyEnabled(false)
+      setIsWordWrapEnabled(false)
+      setIsPreventThreadingEnabled(false)
+      setIsDarkMode(false)
+      setIsPreviewDarkMode(false)
+      setAppColorScheme('')
+      setHideWorkingFiles(true)
+      setActiveEditor('')
+      setEmailAddresses([])
+      setInputSenderSettings({
+        host: '',
+        port: '',
+        username: '',
+        pass: '',
+        from: '',
+      })
+    }
   }, [user])
 
   return (
@@ -130,7 +123,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsPreviewDarkMode,
         appColorScheme,
         setAppColorScheme,
-        user,
       }}>
       {children}
     </AppContext.Provider>

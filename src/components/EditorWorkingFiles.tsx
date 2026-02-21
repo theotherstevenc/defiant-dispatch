@@ -4,7 +4,7 @@ import { Box, Button, Tooltip } from '@mui/material'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { useEffect } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
 import { db } from '../firebase'
 import { WorkingFile } from '../interfaces'
@@ -15,7 +15,7 @@ import { useRenderCount } from '../utils/useRenderCount'
 const EditorWorkingFiles = () => {
   useRenderCount('EditorWorkingFiles')
   const { setHtml, setText, setAmp, workingFileID, setWorkingFileID, setWorkingFileName, files, setFiles, setIsFileLocked } = useEditorContext()
-  const { user } = useAppContext()
+  const { user } = useAuthContext()
 
   const handleClick = (file: WorkingFile) => {
     setHtml(file.html)

@@ -5,7 +5,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, 
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { useState } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
 import { iconButtonStyles } from '../styles/global.styles'
 import { BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
@@ -15,7 +15,7 @@ import { StyledIconButton } from './StyledIconButton'
 
 const Authenticator = () => {
   const auth = getAuth()
-  const { user } = useAppContext()
+  const { user } = useAuthContext()
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setFiles } = useEditorContext()
 
   const [open, setOpen] = useState(false)

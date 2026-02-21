@@ -1,5 +1,3 @@
-import { User } from 'firebase/auth'
-
 export interface SenderSettings {
   host: string
   port: string
@@ -76,5 +74,4 @@ export interface AppContextProps {
   setIsPreviewDarkMode: React.Dispatch<React.SetStateAction<boolean>>
   appColorScheme: string
   setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
-  user: User | null
 }
