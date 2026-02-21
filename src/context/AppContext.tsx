@@ -3,7 +3,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import { db } from '../firebase'
-import { AppContextProps, SenderSettings } from '../interfaces'
+import { AppContextProps } from '../interfaces'
 import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 
@@ -19,15 +19,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isPreventThreadingEnabled, setIsPreventThreadingEnabled] = useState(false)
   const [hideWorkingFiles, setHideWorkingFiles] = useState<boolean>(true)
   const [activeEditor, setActiveEditor] = useState('')
-  const [subject, setSubject] = useState<string>('')
-  const [emailAddresses, setEmailAddresses] = useState<string[]>([])
-  const [inputSenderSettings, setInputSenderSettings] = useState<SenderSettings>({
-    host: '',
-    port: '',
-    username: '',
-    pass: '',
-    from: '',
-  })
 
   useEffect(() => {
     if (!user) return
@@ -39,39 +30,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const data = doc.data()
         if (data) {
           const {
-            subject = '',
-            host = '',
-            port = '',
-            username = '',
-            pass = '',
-            from = '',
             isMinifyEnabled = false,
             isWordWrapEnabled = false,
             isPreventThreadingEnabled = false,
             activeEditor = '',
-            emailAddresses = [],
             hideWorkingFiles = true,
           } = data
-          setSubject((prev) => (prev === subject ? prev : subject))
           setIsMinifyEnabled((prev) => (prev === isMinifyEnabled ? prev : isMinifyEnabled))
           setIsWordWrapEnabled((prev) => (prev === isWordWrapEnabled ? prev : isWordWrapEnabled))
           setIsPreventThreadingEnabled((prev) => (prev === isPreventThreadingEnabled ? prev : isPreventThreadingEnabled))
           setHideWorkingFiles((prev) => (prev === hideWorkingFiles ? prev : hideWorkingFiles))
           setActiveEditor((prev) => (prev === activeEditor ? prev : activeEditor))
-          setEmailAddresses((prev) => {
-            const next = emailAddresses as string[]
-            return prev.length === next.length && prev.every((v, i) => v === next[i]) ? prev : next
-          })
-          setInputSenderSettings((prev) => {
-            const next = { host, port, username, pass, from }
-            return prev.host === next.host &&
-              prev.port === next.port &&
-              prev.username === next.username &&
-              prev.pass === next.pass &&
-              prev.from === next.from
-              ? prev
-              : next
-          })
         }
       },
       (error) => {
@@ -81,20 +50,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     return () => {
       unsubscribe()
-      setSubject('')
       setIsMinifyEnabled(false)
       setIsWordWrapEnabled(false)
       setIsPreventThreadingEnabled(false)
       setHideWorkingFiles(true)
       setActiveEditor('')
-      setEmailAddresses([])
-      setInputSenderSettings({
-        host: '',
-        port: '',
-        username: '',
-        pass: '',
-        from: '',
-      })
     }
   }, [user])
 
@@ -109,12 +69,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsPreventThreadingEnabled,
         activeEditor,
         setActiveEditor,
-        subject,
-        setSubject,
-        emailAddresses,
-        setEmailAddresses,
-        inputSenderSettings,
-        setInputSenderSettings,
         hideWorkingFiles,
         setHideWorkingFiles,
       }}>

@@ -19,6 +19,17 @@ vi.mock('./context/ThemeSettingsContext', () => ({
   }),
 }))
 
+vi.mock('./context/EmailSettingsContext', () => ({
+  useEmailSettingsContext: () => ({
+    subject: '',
+    setSubject: vi.fn(),
+    emailAddresses: [],
+    setEmailAddresses: vi.fn(),
+    inputSenderSettings: { host: '', port: '', username: '', pass: '', from: '' },
+    setInputSenderSettings: vi.fn(),
+  }),
+}))
+
 describe('App', () => {
   it('renders without crashing', () => {
     render(

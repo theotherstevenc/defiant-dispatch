@@ -60,6 +60,15 @@ export interface ThemeSettingsContextProps {
   setAppColorScheme: React.Dispatch<React.SetStateAction<string>>
 }
 
+export interface EmailSettingsContextProps {
+  subject: string
+  setSubject: (subject: string) => void
+  emailAddresses: string[]
+  setEmailAddresses: React.Dispatch<React.SetStateAction<string[]>>
+  inputSenderSettings: SenderSettings
+  setInputSenderSettings: React.Dispatch<React.SetStateAction<SenderSettings>>
+}
+
 export interface AppContextProps {
   isMinifyEnabled: boolean
   setIsMinifyEnabled: (isMinifyEnabled: boolean) => void
@@ -69,12 +78,6 @@ export interface AppContextProps {
   setIsPreventThreadingEnabled: (isPreventThreadingEnabled: boolean) => void
   activeEditor: string
   setActiveEditor: (editor: string) => void
-  subject: string
-  setSubject: (subject: string) => void
-  emailAddresses: string[]
-  setEmailAddresses: React.Dispatch<React.SetStateAction<string[]>>
-  inputSenderSettings: SenderSettings
-  setInputSenderSettings: React.Dispatch<React.SetStateAction<SenderSettings>>
   hideWorkingFiles: boolean
   setHideWorkingFiles: React.Dispatch<React.SetStateAction<boolean>>
 }

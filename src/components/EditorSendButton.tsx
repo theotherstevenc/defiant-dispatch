@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import { useAppContext } from '../context/AppContext'
 import { useEditorContext } from '../context/EditorContext'
+import { useEmailSettingsContext } from '../context/EmailSettingsContext'
 import { EmailData, SenderSettings } from '../interfaces'
 import { BTN_LABEL_SEND, SEND_ALERT_FAILURE, SEND_ALERT_SUCCESS } from '../utils/constants'
 import { getCurrentDateTime } from '../utils/getCurrentDateTime'
@@ -12,7 +13,8 @@ import { useRenderCount } from '../utils/useRenderCount'
 const EditorSendButton = () => {
   useRenderCount('EditorSendButton')
   const { html, text, amp } = useEditorContext()
-  const { isPreventThreadingEnabled, subject, emailAddresses, inputSenderSettings } = useAppContext()
+  const { isPreventThreadingEnabled } = useAppContext()
+  const { subject, emailAddresses, inputSenderSettings } = useEmailSettingsContext()
   const [open, setOpen] = useState(false)
   const [openBackdrop, setOpenBackdrop] = useState(false)
   const [isSendSuccessful, setIsSendSuccessful] = useState(true)

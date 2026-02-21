@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 
-import { useAppContext } from '../context/AppContext'
+import { useEmailSettingsContext } from '../context/EmailSettingsContext'
 import { db } from '../firebase'
 import { SenderSettings } from '../interfaces'
 import { SETTINGS_FROM, SETTINGS_HOST, SETTINGS_PASS, SETTINGS_PORT, SETTINGS_USER } from '../utils/constants'
@@ -10,7 +10,7 @@ import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 const InputSenderSettings = () => {
-  const { inputSenderSettings, setInputSenderSettings } = useAppContext()
+  const { inputSenderSettings, setInputSenderSettings } = useEmailSettingsContext()
 
   const handleInputChange = (id: keyof SenderSettings, value: string) => {
     setInputSenderSettings((prev: SenderSettings) => ({
