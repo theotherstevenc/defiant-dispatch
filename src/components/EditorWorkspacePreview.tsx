@@ -6,7 +6,7 @@ import Split from 'react-split'
 import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
-import { db } from '../firebase'
+import { updateWorkingFile } from '../services/workingFilesService'
 import { workspaceEditorStyles, workspacePreviewIframeStyles } from '../styles/global.styles'
 import {
   EDITOR_DARK_MODE,
@@ -16,14 +16,12 @@ import {
   EDITOR_OPTION_TEXT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY,
-  FIRESTORE_COLLECTION_WORKING_FILES,
   MOSAIC_OPTION_OFF,
   MOSAIC_OPTION_ON,
 } from '../utils/constants'
 import forceIframeReflow from '../utils/forceIframeReflow'
 import getSanitizedValue from '../utils/getSanitizedValue'
 import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { useRenderCount } from '../utils/useRenderCount'
 import usePersistentValue from '../utils/usePersistentValue'
 
@@ -89,7 +87,7 @@ const EditorWorkspacePreview = () => {
 
     const debounceSave = setTimeout(async () => {
       try {
-        await updateFirestoreDoc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID, firestoreObj)
+        await updateWorkingFile(workingFileID, firestoreObj)
       } catch (error) {
         logError('Error auto updating Firestore', 'EditorWorkspacePreview', error)
       }

@@ -4,12 +4,10 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, I
 import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
-import { db } from '../firebase'
 import { iconButtonStyles } from '../styles/global.styles'
+import { updateWorkingFile } from '../services/workingFilesService'
 import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
-import { FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
 
@@ -37,7 +35,7 @@ const InputUpdateFiles = () => {
     if (fileName) {
       try {
         const firestoreObj = { fileName }
-        await updateFirestoreDoc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID, firestoreObj)
+        await updateWorkingFile(workingFileID, firestoreObj)
         setWorkingFileName(fileName)
         handleClose()
       } catch (error) {

@@ -3,11 +3,9 @@ import LockOpenIcon from '@mui/icons-material/LockOpen'
 import { Tooltip } from '@mui/material'
 
 import { useEditorContext } from '../context/EditorContext'
-import { db } from '../firebase'
+import { updateWorkingFile } from '../services/workingFilesService'
 import { INPUT_LOCK_FILE_LABEL_LOCK, INPUT_LOCK_FILE_LABEL_UNLOCK } from '../utils/constants'
-import { FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
-import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
 import { StyledIconButton } from './StyledIconButton'
 
@@ -17,7 +15,7 @@ const InputLockFile = () => {
   const handleClick = async () => {
     try {
       const firestoreObj = { isFileLocked: !isFileLocked }
-      await updateFirestoreDoc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID, firestoreObj)
+      await updateWorkingFile(workingFileID, firestoreObj)
       setIsFileLocked(!isFileLocked)
     } catch (error) {
       logError('Failed to toggle file lock:', 'InputLockFile', error)

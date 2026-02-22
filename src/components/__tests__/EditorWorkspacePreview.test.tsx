@@ -17,9 +17,9 @@ vi.mock('react-split', () => ({
 
 vi.mock('../../firebase', () => ({ db: {} }))
 
-const mockUpdateFirestoreDoc = vi.fn().mockResolvedValue(undefined)
-vi.mock('../../utils/updateFirestoreDoc', () => ({
-  updateFirestoreDoc: (...args: unknown[]) => mockUpdateFirestoreDoc(...args),
+const mockUpdateWorkingFile = vi.fn().mockResolvedValue(undefined)
+vi.mock('../../services/workingFilesService', () => ({
+  updateWorkingFile: (...args: unknown[]) => mockUpdateWorkingFile(...args),
 }))
 
 vi.mock('../../utils/usePersistentValue', () => ({
@@ -111,7 +111,7 @@ describe('EditorWorkspacePreview', () => {
       vi.advanceTimersByTime(2000)
     })
 
-    expect(mockUpdateFirestoreDoc).toHaveBeenCalledWith(expect.anything(), 'workingFiles', 'file-1', {
+    expect(mockUpdateWorkingFile).toHaveBeenCalledWith('file-1', {
       html: '<p>Hello</p>',
       text: 'Hello Text',
       amp: '<amp>Test</amp>',
@@ -130,7 +130,7 @@ describe('EditorWorkspacePreview', () => {
       vi.advanceTimersByTime(2000)
     })
 
-    expect(mockUpdateFirestoreDoc).not.toHaveBeenCalled()
+    expect(mockUpdateWorkingFile).not.toHaveBeenCalled()
   })
 
   it('does not save when workingFileID is empty', async () => {
@@ -145,7 +145,7 @@ describe('EditorWorkspacePreview', () => {
       vi.advanceTimersByTime(2000)
     })
 
-    expect(mockUpdateFirestoreDoc).not.toHaveBeenCalled()
+    expect(mockUpdateWorkingFile).not.toHaveBeenCalled()
   })
 
   it('restores content from files when editor is empty', () => {

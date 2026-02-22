@@ -2,13 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import { createNewFile } from '../createNewFile'
 
-vi.mock('firebase/firestore', () => ({
-  addDoc: vi.fn(() => Promise.resolve({ id: 'test-id' })),
-  collection: vi.fn(() => 'mockCollection'),
-  getFirestore: vi.fn(() => ({})),
-  connectFirestoreEmulator: vi.fn(),
+vi.mock('../../services/workingFilesService', () => ({
+  createWorkingFile: vi.fn(() => Promise.resolve('test-id')),
 }))
-vi.mock('../firebase', () => ({ db: {} }))
 vi.mock('./logError', () => ({ logError: vi.fn() }))
 
 describe('createNewFile', () => {

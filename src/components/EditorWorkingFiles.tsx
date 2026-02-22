@@ -1,14 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import LockIcon from '@mui/icons-material/Lock'
 import { Box, Button, Tooltip } from '@mui/material'
-import { collection, onSnapshot } from 'firebase/firestore'
 import { useEffect } from 'react'
 
 import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
-import { db } from '../firebase'
 import { WorkingFile } from '../interfaces'
-import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED, FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
+import { subscribeToWorkingFiles } from '../services/workingFilesService'
+import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { useRenderCount } from '../utils/useRenderCount'
 
@@ -28,24 +26,17 @@ const EditorWorkingFiles = () => {
 
   useEffect(() => {
     if (!user) return
-    const workingFilesRef = collection(db, FIRESTORE_COLLECTION_WORKING_FILES)
-    const unsubscribe = onSnapshot(
-      workingFilesRef,
-      (snapshot) => {
-        const workingFilesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-        setFiles(workingFilesData as WorkingFile[])
-      },
-      (error) => {
-        logError('An error occurred while fetching working files', 'EditorWorkingFiles', error)
-      }
+    const unsubscribe = subscribeToWorkingFiles(
+      (workingFiles) => setFiles(workingFiles),
+      (error) => logError('An error occurred while fetching working files', 'EditorWorkingFiles', error)
     )
     return () => unsubscribe()
-  }, [user])
+  }, [user, setFiles])
 
   useEffect(() => {
     const currentFile = files.find((file) => file.id === workingFileID)
     setIsFileLocked(currentFile?.isFileLocked || false)
-  }, [files])
+  }, [files, workingFileID, setIsFileLocked])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, padding: 0.5 }} className='editor-working-files'>

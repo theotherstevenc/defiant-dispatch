@@ -1,8 +1,5 @@
-import { addDoc, collection } from 'firebase/firestore'
+import { createWorkingFile } from '../services/workingFilesService'
 
-import { db } from '../firebase'
-
-import { FIRESTORE_COLLECTION_WORKING_FILES } from './constants'
 import { logError } from './logError'
 
 interface CreateNewFileInput {
@@ -39,10 +36,10 @@ export const createNewFile = async ({
       isFileLocked: false,
     }
 
-    const newFileRef = await addDoc(collection(db, FIRESTORE_COLLECTION_WORKING_FILES), newFileData)
+    const id = await createWorkingFile(newFileData)
 
     return {
-      id: newFileRef.id,
+      id,
       fileName,
       html,
       text,

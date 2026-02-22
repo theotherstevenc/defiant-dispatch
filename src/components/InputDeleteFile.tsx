@@ -1,12 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tooltip } from '@mui/material'
-import { deleteDoc, doc } from 'firebase/firestore'
 import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
-import { db } from '../firebase'
 import { iconButtonStyles } from '../styles/global.styles'
+import { deleteWorkingFile } from '../services/workingFilesService'
 import {
   BTN_LABEL_CANCEL,
   BTN_LABEL_CONFIRM,
@@ -15,7 +14,6 @@ import {
   DIALOG_CANNOT_BE_UNDONE,
   LABEL_CLOSE,
 } from '../utils/constants'
-import { FIRESTORE_COLLECTION_WORKING_FILES } from '../utils/constants'
 import { logError } from '../utils/logError'
 
 import { StyledIconButton } from './StyledIconButton'
@@ -41,8 +39,7 @@ const InputDeleteFile = () => {
     }
 
     try {
-      const workingFileRef = doc(db, FIRESTORE_COLLECTION_WORKING_FILES, workingFileID)
-      await deleteDoc(workingFileRef)
+      await deleteWorkingFile(workingFileID)
 
       setHtml('')
       setText('')
