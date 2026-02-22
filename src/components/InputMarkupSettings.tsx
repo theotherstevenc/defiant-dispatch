@@ -67,8 +67,9 @@ const InputMarkupSettings = () => {
 
   useEffect(() => {
     updateHtml()
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs only when isMinifyEnabled toggles;
-    // html and originalHtml are guaranteed current because the editor is readOnly while minified
+
+    // html and originalHtml are guaranteed current because the editor is readOnly while minified, so we can safely ignore the exhaustive-deps rule here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMinifyEnabled])
 
   return (

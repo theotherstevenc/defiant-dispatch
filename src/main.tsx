@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client'
 
 import App from './App.tsx'
-import { EditorConfigProvider } from './context/EditorConfigContext.tsx'
 import { AuthProvider } from './context/AuthContext.tsx'
+import { EditorConfigProvider } from './context/EditorConfigContext.tsx'
 import { EmailSettingsProvider } from './context/EmailSettingsContext.tsx'
 import { ThemeSettingsProvider } from './context/ThemeSettingsContext.tsx'
 

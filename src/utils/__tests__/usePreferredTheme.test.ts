@@ -1,8 +1,10 @@
+import { useMediaQuery } from '@mui/material'
 import { renderHook } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 
-import { usePreferredTheme } from '../usePreferredTheme'
+import { useThemeSettingsContext } from '../../context/ThemeSettingsContext'
 import { darkTheme, lightTheme } from '../../styles/global.theme'
+import { usePreferredTheme } from '../usePreferredTheme'
 
 vi.mock('../../context/ThemeSettingsContext', () => ({
   useThemeSettingsContext: vi.fn(),
@@ -15,9 +17,6 @@ vi.mock('@mui/material', async (importOriginal) => {
     useMediaQuery: vi.fn().mockReturnValue(false),
   }
 })
-
-import { useThemeSettingsContext } from '../../context/ThemeSettingsContext'
-import { useMediaQuery } from '@mui/material'
 
 describe('usePreferredTheme', () => {
   it('returns lightTheme when appColorScheme is "light"', () => {

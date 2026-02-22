@@ -14,8 +14,8 @@ import {
 } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-import { useRenderCount } from '../utils/useRenderCount'
 import usePersistentValue from '../utils/usePersistentValue'
+import { useRenderCount } from '../utils/useRenderCount'
 
 import InputChips from './InputChips'
 

@@ -4,8 +4,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
-import { iconButtonStyles } from '../styles/global.styles'
 import { deleteWorkingFile } from '../services/workingFilesService'
+import { iconButtonStyles } from '../styles/global.styles'
 import {
   BTN_LABEL_CANCEL,
   BTN_LABEL_CONFIRM,
