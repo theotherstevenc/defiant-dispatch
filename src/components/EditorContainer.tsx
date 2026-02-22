@@ -40,7 +40,8 @@ const EditorContainer = () => {
     if (!hideWorkingFiles && sizes[0] < minThreshold) {
       setSizes(EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
     }
-  }, [hideWorkingFiles, sizes, setSizes])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Only restore sizes when hideWorkingFiles toggles off (via the toggle button). Including sizes would fight handleDragEnd.
+  }, [hideWorkingFiles])
 
   return (
     <Split className='split-component' sizes={sizes} minSize={EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM} onDragEnd={handleDragEnd} onDrag={handleDrag}>
