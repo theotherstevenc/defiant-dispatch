@@ -61,4 +61,12 @@ describe('usePersistentValue', () => {
     expect(result.current[0]).toBe(7)
     expect(logError).toHaveBeenCalledWith('Failed to parse from localStorage:', 'usePersistentValue', expect.any(Error))
   })
+
+  it('returns a referentially stable setter across re-renders', () => {
+    const { result, rerender } = renderHook(() => usePersistentValue('stableKey', 0))
+    const setter1 = result.current[1]
+    rerender()
+    const setter2 = result.current[1]
+    expect(setter1).toBe(setter2)
+  })
 })

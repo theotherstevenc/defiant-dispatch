@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Editor } from '@monaco-editor/react'
 import { Box } from '@mui/material'
 import { useEffect, useRef } from 'react'
@@ -73,28 +72,38 @@ const EditorWorkspacePreview = () => {
 
   const editors = getEditorsConfig(html, setHtml, text, setText, amp, setAmp)
 
+  // Restore content from files when the editor is empty (initial load / file switch)
   useEffect(() => {
-    if (!workingFileID || workingFileID === deletedWorkingFileID) {
-      return
-    }
-
-    if (!files || files.length === 0) {
+    if (!workingFileID || !files || files.length === 0) {
       return
     }
 
     const isEditorContentEmpty = html === '' && text === '' && amp === ''
 
-    if (workingFileID && isEditorContentEmpty) {
-      const currentFile = files.find((file) => file.id === workingFileID)
+    if (!isEditorContentEmpty) {
+      return
+    }
 
-      if (!currentFile) {
-        return
-      }
+    const currentFile = files.find((file) => file.id === workingFileID)
 
-      setHtml(currentFile.html)
-      setText(currentFile.text)
-      setAmp(currentFile.amp)
+    if (!currentFile) {
+      return
+    }
 
+    setHtml(currentFile.html)
+    setText(currentFile.text)
+    setAmp(currentFile.amp)
+  }, [html, text, amp, files, workingFileID, setHtml, setText, setAmp])
+
+  // Debounce save content to Firestore after typing stops
+  useEffect(() => {
+    if (!workingFileID || workingFileID === deletedWorkingFileID) {
+      return
+    }
+
+    const isEditorContentEmpty = html === '' && text === '' && amp === ''
+
+    if (isEditorContentEmpty) {
       return
     }
 
@@ -112,7 +121,7 @@ const EditorWorkspacePreview = () => {
     return () => {
       clearTimeout(debounceSave)
     }
-  }, [html, text, amp, files])
+  }, [html, text, amp, workingFileID, deletedWorkingFileID])
 
   const handleDragEnd = (newSizes: number[]) => {
     setSizes(newSizes)

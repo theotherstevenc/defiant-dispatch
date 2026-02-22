@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Box } from '@mui/material'
 import { clsx } from 'clsx'
 import { useEffect } from 'react'
@@ -41,7 +40,7 @@ const EditorContainer = () => {
     if (!hideWorkingFiles && sizes[0] < minThreshold) {
       setSizes(EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
     }
-  }, [hideWorkingFiles])
+  }, [hideWorkingFiles, sizes, setSizes])
 
   return (
     <Split className='split-component' sizes={sizes} minSize={EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM} onDragEnd={handleDragEnd} onDrag={handleDrag}>

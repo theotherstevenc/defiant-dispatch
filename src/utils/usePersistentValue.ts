@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { logError } from './logError'
 
@@ -16,10 +16,13 @@ function usePersistentValue<T>(key: string, defaultValue: T) {
     return defaultValue
   })
 
-  const updateValue = (newValue: T) => {
-    setValue(newValue)
-    localStorage.setItem(key, JSON.stringify(newValue))
-  }
+  const updateValue = useCallback(
+    (newValue: T) => {
+      setValue(newValue)
+      localStorage.setItem(key, JSON.stringify(newValue))
+    },
+    [key]
+  )
 
   return [value, updateValue] as const
 }
