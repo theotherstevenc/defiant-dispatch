@@ -2,6 +2,8 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
     "lint": "eslint .",
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
@@ -9,10 +11,11 @@
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
+  "type": "module",
   "engines": {
     "node": "24"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "cors": "^2.8.6",
     "crypto-js": "^4.2.0",
@@ -24,9 +27,15 @@
     "nodemailer": "^7.0.12"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/crypto-js": "^4.2.2",
+    "@types/express-fileupload": "^1.5.1",
+    "@types/mailparser": "^3.4.6",
+    "@types/nodemailer": "^7.0.11",
     "eslint": "^8.15.0",
     "eslint-config-google": "^0.14.0",
-    "firebase-functions-test": "^3.4.1"
+    "firebase-functions-test": "^3.4.1",
+    "typescript": "^5.9.3"
   },
   "private": true
 }
