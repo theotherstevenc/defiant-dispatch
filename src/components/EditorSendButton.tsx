@@ -1,10 +1,10 @@
 import { Alert, Backdrop, Button, CircularProgress, Snackbar } from '@mui/material'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { useEmailSettingsContext } from '../context/EmailSettingsContext'
-import { EmailData, SenderSettings } from '../interfaces'
+import { EmailData } from '../interfaces'
 import { BTN_LABEL_SEND, SEND_ALERT_FAILURE, SEND_ALERT_SUCCESS } from '../utils/constants'
 import { getCurrentDateTime } from '../utils/getCurrentDateTime'
 import { logError } from '../utils/logError'
@@ -19,22 +19,12 @@ const EditorSendButton = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false)
   const [isSendSuccessful, setIsSendSuccessful] = useState(true)
 
-  const createEmailData = (
-    email: string[],
-    subject: string,
-    html: string,
-    text: string,
-    amp: string,
-    isPreventThreadingEnabled: boolean,
-    senderSettings: SenderSettings
-  ): EmailData => {
-    const currentDateTime = getCurrentDateTime()
-    const formattedSubject = isPreventThreadingEnabled ? `${subject} ${currentDateTime}` : subject
-    const { host, port, username, pass, from } = senderSettings
+  const emailData = useMemo((): EmailData => {
+    const { host, port, username, pass, from } = inputSenderSettings
 
     return {
-      testaddress: email,
-      testsubject: formattedSubject,
+      testaddress: emailAddresses,
+      testsubject: subject,
       htmlversion: html,
       textversion: text,
       ampversion: amp,
@@ -44,9 +34,7 @@ const EditorSendButton = () => {
       pass,
       from,
     }
-  }
-
-  const emailData = createEmailData(emailAddresses, subject, html, text, amp, isPreventThreadingEnabled, inputSenderSettings)
+  }, [emailAddresses, subject, html, text, amp, inputSenderSettings])
 
   const API_URL = '/api/send'
   const HTTP_METHOD = 'POST'
@@ -75,7 +63,9 @@ const EditorSendButton = () => {
     setOpenBackdrop(true)
 
     try {
-      const response = await handleRequest(emailData)
+      const formattedSubject = isPreventThreadingEnabled ? `${emailData.testsubject} ${getCurrentDateTime()}` : emailData.testsubject
+      const sendData = { ...emailData, testsubject: formattedSubject }
+      const response = await handleRequest(sendData)
       const isSuccess = handleResponse(response)
       setIsSendSuccessful(isSuccess)
     } catch (error) {

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useMemo, useState } from 'react'
 
 import { EditorContextProps, WorkingFile } from '../interfaces'
 import { EDITOR_DEFAULT_FONT_SIZE, EDITOR_DEFAULT_FONT_SIZE_KEY, WORKING_FILE_ID_KEY } from '../utils/constants'
@@ -19,33 +19,46 @@ export const EditorProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [isFileLocked, setIsFileLocked] = useState<boolean>(false)
   const [editorFontSize, setEditorFontSize] = usePersistentValue<number>(EDITOR_DEFAULT_FONT_SIZE_KEY, EDITOR_DEFAULT_FONT_SIZE)
 
-  return (
-    <EditorContext.Provider
-      value={{
-        html,
-        setHtml,
-        originalHtml,
-        setOriginalHtml,
-        text,
-        setText,
-        amp,
-        setAmp,
-        workingFileID,
-        setWorkingFileID,
-        deletedWorkingFileID,
-        setDeletedWorkingFileID,
-        workingFileName,
-        setWorkingFileName,
-        files,
-        setFiles,
-        isFileLocked,
-        setIsFileLocked,
-        editorFontSize,
-        setEditorFontSize,
-      }}>
-      {children}
-    </EditorContext.Provider>
+  const value = useMemo(
+    () => ({
+      html,
+      setHtml,
+      originalHtml,
+      setOriginalHtml,
+      text,
+      setText,
+      amp,
+      setAmp,
+      workingFileID,
+      setWorkingFileID,
+      deletedWorkingFileID,
+      setDeletedWorkingFileID,
+      workingFileName,
+      setWorkingFileName,
+      files,
+      setFiles,
+      isFileLocked,
+      setIsFileLocked,
+      editorFontSize,
+      setEditorFontSize,
+    }),
+    [
+      html,
+      originalHtml,
+      text,
+      amp,
+      workingFileID,
+      setWorkingFileID,
+      deletedWorkingFileID,
+      workingFileName,
+      files,
+      isFileLocked,
+      editorFontSize,
+      setEditorFontSize,
+    ]
   )
+
+  return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>
 }
 
 export const useEditorContext = (): EditorContextProps => {

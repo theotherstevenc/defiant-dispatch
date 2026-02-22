@@ -11,37 +11,42 @@ vi.mock('firebase/firestore', () => ({
 vi.mock('../firebase', () => ({ db: {} }))
 vi.mock('./logError', () => ({ logError: vi.fn() }))
 
-const setWorkingFileID = vi.fn<(id: string) => void>()
-const setWorkingFileName = vi.fn<(name: string) => void>()
-const setHtml = vi.fn<(v: string) => void>()
-const setText = vi.fn<(v: string) => void>()
-const setAmp = vi.fn<(v: string) => void>()
-const setIsFileLocked = vi.fn<(locked: boolean) => void>()
-
 describe('createNewFile', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('calls setter functions with correct values', async () => {
-    await createNewFile('My File', { html: '<h1>Hello</h1>', text: 'Hello', amp: '<amp>' }, true, setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked)
+  it('returns new file data with boilerplate content', async () => {
+    const result = await createNewFile({
+      fileName: 'My File',
+      boilerPlateMarkup: { html: '<h1>Hello</h1>', text: 'Hello', amp: '<amp>' },
+      isBoilerplateApplied: true,
+    })
 
-    expect(setWorkingFileID).toHaveBeenCalledWith('test-id')
-    expect(setWorkingFileName).toHaveBeenCalledWith('My File')
-    expect(setHtml).toHaveBeenCalledWith('<h1>Hello</h1>')
-    expect(setText).toHaveBeenCalledWith('Hello')
-    expect(setAmp).toHaveBeenCalledWith('<amp>')
-    expect(setIsFileLocked).toHaveBeenCalledWith(false)
+    expect(result).toEqual({
+      id: 'test-id',
+      fileName: 'My File',
+      html: '<h1>Hello</h1>',
+      text: 'Hello',
+      amp: '<amp>',
+      isFileLocked: false,
+    })
   })
 
-  it('creates a file with empty markup when boilerplate is false', async () => {
-    await createNewFile('No Boilerplate', { html: '', text: '', amp: '' }, false, setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked)
+  it('returns new file data with empty content when boilerplate is false', async () => {
+    const result = await createNewFile({
+      fileName: 'No Boilerplate',
+      boilerPlateMarkup: { html: '', text: '', amp: '' },
+      isBoilerplateApplied: false,
+    })
 
-    expect(setWorkingFileID).toHaveBeenCalledWith('test-id')
-    expect(setWorkingFileName).toHaveBeenCalledWith('No Boilerplate')
-    expect(setHtml).toHaveBeenCalledWith('')
-    expect(setText).toHaveBeenCalledWith('')
-    expect(setAmp).toHaveBeenCalledWith('')
-    expect(setIsFileLocked).toHaveBeenCalledWith(false)
+    expect(result).toEqual({
+      id: 'test-id',
+      fileName: 'No Boilerplate',
+      html: '',
+      text: '',
+      amp: '',
+      isFileLocked: false,
+    })
   })
 })

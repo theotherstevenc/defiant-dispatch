@@ -63,17 +63,20 @@ const InputFileUpload = () => {
     const fileName = file.name.replace(/\.[^/.]+$/, '')
     const boilerPlateMarkup = JSON.parse(text)
 
-    await createNewFile(
+    const result = await createNewFile({
       fileName,
       boilerPlateMarkup,
       isBoilerplateApplied,
-      setWorkingFileID,
-      setWorkingFileName,
-      setHtml,
-      setText,
-      setAmp,
-      setIsFileLocked
-    )
+    })
+
+    if (result) {
+      setWorkingFileID(result.id)
+      setWorkingFileName(result.fileName)
+      setHtml(result.html)
+      setText(result.text)
+      setAmp(result.amp)
+      setIsFileLocked(result.isFileLocked)
+    }
   }
 
   const handleButtonClick = () => {

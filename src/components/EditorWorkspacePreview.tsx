@@ -1,6 +1,6 @@
 import { Editor } from '@monaco-editor/react'
 import { Box } from '@mui/material'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import Split from 'react-split'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
@@ -36,41 +36,18 @@ const EditorWorkspacePreview = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [sizes, setSizes] = usePersistentValue(EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY, EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT)
 
-  const getEditorsConfig = (
-    html: string,
-    setHtml: (html: string) => void,
-    text: string,
-    setText: (text: string) => void,
-    amp: string,
-    setAmp: (amp: string) => void
-  ) => [
-    {
-      type: EDITOR_OPTION_HTML,
-      language: 'html',
-      value: html,
-      onChange: (newValue: string | undefined) => {
-        setHtml(newValue || '')
-      },
-    },
-    {
-      type: EDITOR_OPTION_TEXT,
-      language: 'text',
-      value: text,
-      onChange: (newValue: string | undefined) => {
-        setText(newValue || '')
-      },
-    },
-    {
-      type: EDITOR_OPTION_AMP,
-      language: 'html',
-      value: amp,
-      onChange: (newValue: string | undefined) => {
-        setAmp(newValue || '')
-      },
-    },
-  ]
+  const handleHtmlChange = useCallback((newValue: string | undefined) => setHtml(newValue || ''), [setHtml])
+  const handleTextChange = useCallback((newValue: string | undefined) => setText(newValue || ''), [setText])
+  const handleAmpChange = useCallback((newValue: string | undefined) => setAmp(newValue || ''), [setAmp])
 
-  const editors = getEditorsConfig(html, setHtml, text, setText, amp, setAmp)
+  const editors = useMemo(
+    () => [
+      { type: EDITOR_OPTION_HTML, language: 'html', value: html, onChange: handleHtmlChange },
+      { type: EDITOR_OPTION_TEXT, language: 'text', value: text, onChange: handleTextChange },
+      { type: EDITOR_OPTION_AMP, language: 'html', value: amp, onChange: handleAmpChange },
+    ],
+    [html, text, amp, handleHtmlChange, handleTextChange, handleAmpChange]
+  )
 
   // Restore content from files when the editor is empty (initial load / file switch)
   useEffect(() => {
@@ -123,6 +100,17 @@ const EditorWorkspacePreview = () => {
     }
   }, [html, text, amp, workingFileID, deletedWorkingFileID])
 
+  const editorOptions = useMemo(
+    () => ({
+      fontSize: editorFontSize,
+      readOnly: isMinifyEnabled,
+      wordWrap: isWordWrapEnabled ? MOSAIC_OPTION_ON : MOSAIC_OPTION_OFF,
+      lineNumbers: MOSAIC_OPTION_ON as const,
+      minimap: { enabled: false },
+    }),
+    [editorFontSize, isMinifyEnabled, isWordWrapEnabled]
+  )
+
   const handleDragEnd = (newSizes: number[]) => {
     setSizes(newSizes)
     forceIframeReflow(iframeRef.current)
@@ -142,15 +130,7 @@ const EditorWorkspacePreview = () => {
                   defaultValue={editor.value}
                   value={editor.value}
                   onChange={editor.onChange}
-                  options={{
-                    fontSize: editorFontSize,
-                    readOnly: isMinifyEnabled,
-                    wordWrap: isWordWrapEnabled ? MOSAIC_OPTION_ON : MOSAIC_OPTION_OFF,
-                    lineNumbers: MOSAIC_OPTION_ON,
-                    minimap: {
-                      enabled: false,
-                    },
-                  }}
+                  options={editorOptions}
                 />
               )
           )}
