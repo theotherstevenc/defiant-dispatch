@@ -47,11 +47,11 @@ const InputCreateNewFile = () => {
         setAmp(result.amp)
         setIsFileLocked(result.isFileLocked)
       }
-
-      setFileName('')
-      handleClose()
     } catch (error) {
       logError('Error creating new file', 'InputCreateNewFile', error)
+    } finally {
+      setFileName('')
+      handleClose()
     }
   }
 

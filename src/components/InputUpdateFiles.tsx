@@ -37,9 +37,10 @@ const InputUpdateFiles = () => {
         const firestoreObj = { fileName }
         await updateWorkingFile(workingFileID, firestoreObj)
         setWorkingFileName(fileName)
-        handleClose()
       } catch (error) {
         logError('Failed to rename file:', 'InputUpdateFiles', error)
+      } finally {
+        handleClose()
       }
     }
   }
