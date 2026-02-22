@@ -4,7 +4,7 @@ import { clsx } from 'clsx'
 import { useEffect } from 'react'
 import Split from 'react-split'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import {
   EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT,
   EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM,
@@ -16,7 +16,7 @@ import EditorWorkingFiles from './EditorWorkingFiles'
 import EditorWorkspacePreview from './EditorWorkspacePreview'
 
 const EditorContainer = () => {
-  const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()
+  const { hideWorkingFiles, setHideWorkingFiles } = useEditorConfigContext()
 
   const [sizes, setSizes] = usePersistentValue(EDITOR_CONTAINER_SPLIT_SIZES_STORAGE_KEY, EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT)
   const minThreshold = 5

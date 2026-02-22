@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { db } from '../firebase'
 import {
   BTN_VARIANT_CONTAINED,
@@ -17,7 +17,7 @@ import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 type EditorType = typeof EDITOR_OPTION_HTML | typeof EDITOR_OPTION_TEXT | typeof EDITOR_OPTION_AMP
 
 const EditorSelectorButtons = () => {
-  const { activeEditor, setActiveEditor } = useAppContext()
+  const { activeEditor, setActiveEditor } = useEditorConfigContext()
 
   const handleClick = async (editorType: EditorType) => {
     const firestoreObj = { activeEditor: editorType }

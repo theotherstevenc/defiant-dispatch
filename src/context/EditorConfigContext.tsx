@@ -1,17 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import { doc, onSnapshot } from 'firebase/firestore'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { db } from '../firebase'
-import { AppContextProps } from '../interfaces'
+import { EditorConfigContextProps } from '../interfaces'
 import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS } from '../utils/constants'
 import { logError } from '../utils/logError'
 
 import { useAuthContext } from './AuthContext'
 
-const AppContext = createContext<AppContextProps | undefined>(undefined)
+const EditorConfigContext = createContext<EditorConfigContextProps | undefined>(undefined)
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const EditorConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuthContext()
 
   const [isMinifyEnabled, setIsMinifyEnabled] = useState(false)
@@ -44,7 +44,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       },
       (error) => {
-        logError('An error occurred while fetching app context data', 'AppContext', error)
+        logError('An error occurred while fetching editor config data', 'EditorConfigContext', error)
       }
     )
 
@@ -58,32 +58,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [user])
 
-  return (
-    <AppContext.Provider
-      value={{
-        isMinifyEnabled,
-        setIsMinifyEnabled,
-        isWordWrapEnabled,
-        setIsWordWrapEnabled,
-        isPreventThreadingEnabled,
-        setIsPreventThreadingEnabled,
-        activeEditor,
-        setActiveEditor,
-        hideWorkingFiles,
-        setHideWorkingFiles,
-      }}>
-      {children}
-    </AppContext.Provider>
+  const value = useMemo<EditorConfigContextProps>(
+    () => ({
+      isMinifyEnabled,
+      setIsMinifyEnabled,
+      isWordWrapEnabled,
+      setIsWordWrapEnabled,
+      isPreventThreadingEnabled,
+      setIsPreventThreadingEnabled,
+      activeEditor,
+      setActiveEditor,
+      hideWorkingFiles,
+      setHideWorkingFiles,
+    }),
+    [isMinifyEnabled, isWordWrapEnabled, isPreventThreadingEnabled, activeEditor, hideWorkingFiles]
   )
+
+  return <EditorConfigContext.Provider value={value}>{children}</EditorConfigContext.Provider>
 }
 
-export const useAppContext = (): AppContextProps => {
-  const context = useContext(AppContext)
+export const useEditorConfigContext = (): EditorConfigContextProps => {
+  const context = useContext(EditorConfigContext)
   if (context === undefined) {
     if (process.env.NODE_ENV === 'development') {
-      throw new Error('useAppContext must be used within an AppProvider')
+      throw new Error('useEditorConfigContext must be used within an EditorConfigProvider')
     } else {
-      throw new Error('App context is not available.')
+      throw new Error('Editor config context is not available.')
     }
   }
   return context

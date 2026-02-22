@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 import EditorSendButton from '../EditorSendButton'
 
-vi.mock('../../context/AppContext', () => ({
-  useAppContext: () => ({
+vi.mock('../../context/EditorConfigContext', () => ({
+  useEditorConfigContext: () => ({
     isPreventThreadingEnabled: false,
   }),
 }))

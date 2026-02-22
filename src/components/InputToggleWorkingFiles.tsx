@@ -3,7 +3,7 @@ import ToggleOnIcon from '@mui/icons-material/ToggleOn'
 import { Tooltip } from '@mui/material'
 import { useHotkeys } from 'react-hotkeys-hook'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { db } from '../firebase'
 import {
   FIRESTORE_COLLECTION_CONFIG,
@@ -17,7 +17,7 @@ import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { StyledIconButton } from './StyledIconButton'
 
 const InputToggleWorkingFiles = () => {
-  const { hideWorkingFiles, setHideWorkingFiles } = useAppContext()
+  const { hideWorkingFiles, setHideWorkingFiles } = useEditorConfigContext()
 
   const handleOpen = async () => {
     try {

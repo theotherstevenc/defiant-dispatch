@@ -69,7 +69,7 @@ export interface EmailSettingsContextProps {
   setInputSenderSettings: React.Dispatch<React.SetStateAction<SenderSettings>>
 }
 
-export interface AppContextProps {
+export interface EditorConfigContextProps {
   isMinifyEnabled: boolean
   setIsMinifyEnabled: (isMinifyEnabled: boolean) => void
   isWordWrapEnabled: boolean

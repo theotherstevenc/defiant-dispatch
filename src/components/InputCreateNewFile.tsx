@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox, Tooltip } from '@mui/material'
 import { useState } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { iconButtonStyles } from '../styles/global.styles'
 import { boilerPlateMarkup } from '../utils/boilerPlateMarkup'
@@ -14,7 +14,7 @@ import { logError } from '../utils/logError'
 import { StyledIconButton } from './StyledIconButton'
 
 const InputCreateNewFile = () => {
-  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useAppContext()
+  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useEditorConfigContext()
   const { setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
   const [fileName, setFileName] = useState('')

@@ -6,8 +6,8 @@ import InputEmailListSubjectLine from '../InputEmailListSubjectLine'
 const mockSetSubject = vi.fn()
 const mockSetEmailAddresses = vi.fn()
 
-vi.mock('../../context/AppContext', () => ({
-  useAppContext: () => ({
+vi.mock('../../context/EditorConfigContext', () => ({
+  useEditorConfigContext: () => ({
     isPreventThreadingEnabled: false,
   }),
 }))

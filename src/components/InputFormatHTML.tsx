@@ -2,7 +2,7 @@ import CodeIcon from '@mui/icons-material/Code'
 import { Tooltip } from '@mui/material'
 import beautify from 'js-beautify'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { INPUT_FORMAT_HTML_LABEL } from '../utils/constants'
 import { logError } from '../utils/logError'
@@ -11,7 +11,7 @@ import { StyledIconButton } from './StyledIconButton'
 
 const InputFormatHTML = () => {
   const { html, setHtml } = useEditorContext()
-  const { isMinifyEnabled } = useAppContext()
+  const { isMinifyEnabled } = useEditorConfigContext()
 
   const handleClick = async () => {
     if (isMinifyEnabled) {

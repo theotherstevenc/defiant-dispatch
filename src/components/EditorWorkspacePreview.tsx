@@ -4,7 +4,7 @@ import { Box } from '@mui/material'
 import { useEffect, useRef } from 'react'
 import Split from 'react-split'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
@@ -32,7 +32,7 @@ const EditorWorkspacePreview = () => {
   useRenderCount('EditorWorkspacePreview')
   const { html, setHtml, text, setText, amp, setAmp, workingFileID, deletedWorkingFileID, files, editorFontSize } = useEditorContext()
   const { isDarkMode, isPreviewDarkMode } = useThemeSettingsContext()
-  const { isMinifyEnabled, isWordWrapEnabled, activeEditor } = useAppContext()
+  const { isMinifyEnabled, isWordWrapEnabled, activeEditor } = useEditorConfigContext()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [sizes, setSizes] = usePersistentValue(EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY, EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT)

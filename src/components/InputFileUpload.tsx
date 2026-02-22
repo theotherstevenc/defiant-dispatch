@@ -3,7 +3,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import { Tooltip } from '@mui/material'
 import { useRef } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { BTN_UPLOAD_LABEL } from '../utils/constants'
 import { createNewFile } from '../utils/createNewFile'
@@ -25,7 +25,7 @@ const VisuallyHiddenInput = styled('input')({
 
 const InputFileUpload = () => {
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setIsFileLocked } = useEditorContext()
-  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useAppContext()
+  const { setIsMinifyEnabled, setIsWordWrapEnabled } = useEditorConfigContext()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

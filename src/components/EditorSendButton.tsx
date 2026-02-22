@@ -1,7 +1,7 @@
 import { Alert, Backdrop, Button, CircularProgress, Snackbar } from '@mui/material'
 import { useState } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { useEmailSettingsContext } from '../context/EmailSettingsContext'
 import { EmailData, SenderSettings } from '../interfaces'
@@ -13,7 +13,7 @@ import { useRenderCount } from '../utils/useRenderCount'
 const EditorSendButton = () => {
   useRenderCount('EditorSendButton')
   const { html, text, amp } = useEditorContext()
-  const { isPreventThreadingEnabled } = useAppContext()
+  const { isPreventThreadingEnabled } = useEditorConfigContext()
   const { subject, emailAddresses, inputSenderSettings } = useEmailSettingsContext()
   const [open, setOpen] = useState(false)
   const [openBackdrop, setOpenBackdrop] = useState(false)

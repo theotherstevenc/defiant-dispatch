@@ -1,7 +1,7 @@
 import { Box, TextField } from '@mui/material'
 import Split from 'react-split'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEmailSettingsContext } from '../context/EmailSettingsContext'
 import { db } from '../firebase'
 import {
@@ -21,7 +21,7 @@ import InputChips from './InputChips'
 
 const InputEmailListSubjectLine = () => {
   useRenderCount('InputEmailListSubjectLine')
-  const { isPreventThreadingEnabled } = useAppContext()
+  const { isPreventThreadingEnabled } = useEditorConfigContext()
   const { subject, setSubject, emailAddresses, setEmailAddresses } = useEmailSettingsContext()
   const [sizes, setSizes] = usePersistentValue(
     INPUT_EMAIL_LIST_SUBJECT_LINE_SPLIT_SIZES_STORAGE_KEY,

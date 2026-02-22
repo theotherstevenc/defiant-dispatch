@@ -2,7 +2,7 @@
 import { Checkbox, FormControlLabel } from '@mui/material'
 import { useEffect } from 'react'
 
-import { useAppContext } from '../context/AppContext'
+import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
 import { db } from '../firebase'
 import {
@@ -21,7 +21,7 @@ const InputMarkupSettings = () => {
   useRenderCount('InputMarkupSettings')
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
   const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
-    useAppContext()
+    useEditorConfigContext()
 
   const settings = [
     { name: 'isMinifyEnabled', label: SETTINGS_CHECKBOX_LABEL_MINIFY, checked: isMinifyEnabled, setter: setIsMinifyEnabled },
