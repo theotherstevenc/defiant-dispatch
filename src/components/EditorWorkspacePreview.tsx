@@ -16,14 +16,12 @@ import {
   EDITOR_OPTION_TEXT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_DEFAULT,
   EDITOR_WORKSPACE_PREVIEW_SPLIT_SIZES_STORAGE_KEY,
-  MOSAIC_OPTION_OFF,
-  MOSAIC_OPTION_ON,
 } from '../utils/constants'
 import forceIframeReflow from '../utils/forceIframeReflow'
 import getSanitizedValue from '../utils/getSanitizedValue'
 import { logError } from '../utils/logError'
-import { useRenderCount } from '../utils/useRenderCount'
 import usePersistentValue from '../utils/usePersistentValue'
+import { useRenderCount } from '../utils/useRenderCount'
 
 const EditorWorkspacePreview = () => {
   useRenderCount('EditorWorkspacePreview')
@@ -102,8 +100,8 @@ const EditorWorkspacePreview = () => {
     () => ({
       fontSize: editorFontSize,
       readOnly: isMinifyEnabled,
-      wordWrap: isWordWrapEnabled ? MOSAIC_OPTION_ON : MOSAIC_OPTION_OFF,
-      lineNumbers: MOSAIC_OPTION_ON as const,
+      wordWrap: isWordWrapEnabled ? ('on' as const) : ('off' as const),
+      lineNumbers: 'on' as const,
       minimap: { enabled: false },
     }),
     [editorFontSize, isMinifyEnabled, isWordWrapEnabled]
