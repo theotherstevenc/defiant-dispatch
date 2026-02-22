@@ -3,9 +3,10 @@ import { defineSecret } from 'firebase-functions/params'
 import CryptoJS from 'crypto-js'
 import cors from 'cors'
 import express, { type Request, type Response } from 'express'
-import fileUpload from 'express-fileupload'
 import nodemailer from 'nodemailer'
 import { simpleParser } from 'mailparser'
+import Busboy from 'busboy'
+import { Readable } from 'stream'
 
 // ---------------------------------------------------------------------------
 // Express app
@@ -25,9 +26,13 @@ const mailPass = defineSecret('MAIL_PASS')
 // Middleware
 // ---------------------------------------------------------------------------
 
-app.use(express.urlencoded({ limit: '50mb', extended: true }))
-app.use(express.json({ limit: '50mb' }))
-app.use(fileUpload())
+// Body parsing applied per-route, NOT globally.
+// Firebase Cloud Functions v2 pre-consumes the request stream, so global
+// body parsers (express.json, express.urlencoded, express-fileupload) would
+// consume the stream before the /upload handler can access it.
+
+const jsonParser = express.json({ limit: '50mb' })
+const urlencodedParser = express.urlencoded({ limit: '50mb', extended: true })
 
 // CORS — allow Firebase hosting domains + local dev origins
 const allowedOrigins = [
@@ -80,8 +85,8 @@ const ampVersion = (parsed: Awaited<ReturnType<typeof simpleParser>>): string | 
   }
 }
 
-const parseUpload = async (file: fileUpload.UploadedFile): Promise<ParsedEmail> => {
-  const parsed = await simpleParser(file.data)
+const parseUpload = async (fileBuffer: Buffer): Promise<ParsedEmail> => {
+  const parsed = await simpleParser(fileBuffer)
 
   return {
     html: parsed.html || '',
@@ -92,11 +97,40 @@ const parseUpload = async (file: fileUpload.UploadedFile): Promise<ParsedEmail> 
 
 const isValidEmail = (value: unknown): boolean => typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
+const parseMultipartFile = (req: Request): Promise<{ fileName: string; fileBuffer: Buffer }> => {
+  return new Promise((resolve, reject) => {
+    const busboy = Busboy({ headers: req.headers })
+    const chunks: Buffer[] = []
+    let fileName = ''
+
+    busboy.on('file', (_fieldname: string, file: Readable, info: { filename: string }) => {
+      fileName = info.filename
+      file.on('data', (data: Buffer) => chunks.push(data))
+      file.on('end', () => {
+        resolve({ fileName, fileBuffer: Buffer.concat(chunks) })
+      })
+    })
+
+    busboy.on('error', (error: Error) => reject(error))
+
+    // Firebase pre-consumes the stream. Use rawBody if available, otherwise pipe.
+    const rawBody = (req as Request & { rawBody?: Buffer }).rawBody
+    if (rawBody) {
+      const readable = new Readable()
+      readable.push(rawBody)
+      readable.push(null)
+      readable.pipe(busboy)
+    } else {
+      req.pipe(busboy)
+    }
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Routes
 // ---------------------------------------------------------------------------
 
-app.post('/encrypt', async (req: Request, res: Response) => {
+app.post('/encrypt', jsonParser, urlencodedParser, async (req: Request, res: Response) => {
   const { text } = req.body
 
   if (!text || typeof text !== 'string') {
@@ -112,7 +146,7 @@ app.post('/encrypt', async (req: Request, res: Response) => {
   }
 })
 
-app.post('/send', async (req: Request, res: Response) => {
+app.post('/send', jsonParser, urlencodedParser, async (req: Request, res: Response) => {
   const { testaddress, testsubject, htmlversion } = req.body
   const ampversion = req.body.ampversion ?? ''
   const textversion = req.body.textversion ?? ''
@@ -135,8 +169,6 @@ app.post('/send', async (req: Request, res: Response) => {
   }
 
   try {
-    // Use ?? instead of || so empty-string or 0 aren't replaced by defaults.
-    // Use ternary for pass so decryptText is never called on undefined/empty input.
     const user = req.body.username ?? mailUsername.value()
     const pass = req.body.pass ? decryptText(req.body.pass) : mailPass.value()
     const from = req.body.from ?? process.env.MAIL_FROM_NAME
@@ -173,22 +205,18 @@ app.post('/send', async (req: Request, res: Response) => {
 })
 
 app.post('/upload', async (req: Request, res: Response) => {
-  if (!req.files?.file) {
-    return res.status(400).json({ error: 'No file uploaded' })
-  }
-
-  const file = req.files.file as fileUpload.UploadedFile
-
-  if (!file.name.toLowerCase().endsWith('.eml')) {
-    return res.status(400).json({ error: 'File must be .eml format' })
-  }
-
-  if (file.size === 0) {
-    return res.status(400).json({ error: 'File is empty' })
-  }
-
   try {
-    const parsedContent = await parseUpload(file)
+    const { fileName, fileBuffer } = await parseMultipartFile(req)
+
+    if (!fileName.toLowerCase().endsWith('.eml')) {
+      return res.status(400).json({ error: 'File must be .eml format' })
+    }
+
+    if (fileBuffer.length === 0) {
+      return res.status(400).json({ error: 'File is empty' })
+    }
+
+    const parsedContent = await parseUpload(fileBuffer)
     return res.json(parsedContent)
   } catch (error) {
     console.error('Error parsing upload:', error)
