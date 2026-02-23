@@ -57,6 +57,13 @@ app.use(
   })
 )
 
+// Firebase Hosting rewrites forward the full original path (e.g. /api/send).
+// Strip the /api prefix so routes match in both prod and the local emulator.
+app.use((req, _res, next) => {
+  req.url = req.url.replace(/^\/api(?=\/)/, '')
+  next()
+})
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
