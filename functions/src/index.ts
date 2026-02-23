@@ -104,8 +104,7 @@ const parseUpload = async (fileBuffer: Buffer): Promise<ParsedEmail> => {
 
 const isValidEmail = (value: unknown): boolean => typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
-const isValidEmailOrList = (value: unknown): boolean =>
-  isValidEmail(value) || (Array.isArray(value) && value.length > 0 && value.every(isValidEmail))
+const isValidEmailOrList = (value: unknown): boolean => isValidEmail(value) || (Array.isArray(value) && value.length > 0 && value.every(isValidEmail))
 
 const parseMultipartFile = (req: Request): Promise<{ fileName: string; fileBuffer: Buffer }> => {
   return new Promise((resolve, reject) => {
@@ -179,11 +178,11 @@ app.post('/send', jsonParser, urlencodedParser, async (req: Request, res: Respon
   }
 
   try {
-    const user = req.body.username ?? mailUsername.value()
+    const user = req.body.username || mailUsername.value()
     const pass = req.body.pass ? decryptText(req.body.pass) : mailPass.value()
-    const from = req.body.from ?? process.env.MAIL_FROM_NAME
-    const host = req.body.host ?? process.env.MAIL_HOST
-    const port = req.body.port ?? process.env.MAIL_PORT
+    const from = req.body.from || process.env.MAIL_FROM_NAME
+    const host = req.body.host || process.env.MAIL_HOST
+    const port = req.body.port || process.env.MAIL_PORT
 
     const transporter = nodemailer.createTransport({
       host: host,
