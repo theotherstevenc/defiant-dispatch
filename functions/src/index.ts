@@ -97,6 +97,9 @@ const parseUpload = async (fileBuffer: Buffer): Promise<ParsedEmail> => {
 
 const isValidEmail = (value: unknown): boolean => typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
+const isValidEmailOrList = (value: unknown): boolean =>
+  isValidEmail(value) || (Array.isArray(value) && value.length > 0 && value.every(isValidEmail))
+
 const parseMultipartFile = (req: Request): Promise<{ fileName: string; fileBuffer: Buffer }> => {
   return new Promise((resolve, reject) => {
     const busboy = Busboy({ headers: req.headers })
@@ -152,7 +155,7 @@ app.post('/send', jsonParser, urlencodedParser, async (req: Request, res: Respon
   const textversion = req.body.textversion ?? ''
 
   // --- Input validation ---
-  if (!isValidEmail(testaddress)) {
+  if (!isValidEmailOrList(testaddress)) {
     return res.status(400).json({ error: 'Valid email address is required' })
   }
   if (!testsubject || typeof testsubject !== 'string') {
