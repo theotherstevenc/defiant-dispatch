@@ -4,6 +4,12 @@
 
 Favor "boring" code. Prefer explicit, flat, readable control flow and clear interfaces over clever abstractions. Introduce architectural complexity only when the existing component, context, service, and util patterns cannot solve the problem clearly.
 
+## Git operations
+
+- Never run `git push` or otherwise update a remote Git ref while in Autopilot mode unless the current user explicitly authorizes that specific push.
+- Authorization applies only to the commits that existed when permission was given. Creating additional commits requires new authorization.
+- A request to investigate or fix a problem does not authorize a push.
+
 ## Runtime and dependency boundaries
 
 - The client uses Node.js 22.x / npm 10.x as declared in the root `package.json` `engines` field. Cloud Functions declare Node.js 24 in `functions/package.json`.
