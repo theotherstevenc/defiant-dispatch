@@ -23,7 +23,7 @@
     "express": "^5.2.1",
     "firebase-admin": "^13.6.1",
     "firebase-functions": "^7.0.5",
-    "mailparser": "^3.9.3",
+    "mailparser": "^3.9.20",
     "nodemailer": "^7.0.12"
   },
   "devDependencies": {
