@@ -36,7 +36,7 @@
     "firebase": "^12.8.0",
     "js-beautify": "^1.15.4",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
+    "react-dom": "^19.2.8",
     "react-hotkeys-hook": "^5.3.3",
     "react-split": "^2.0.14"
   },
@@ -46,7 +46,7 @@
     "@testing-library/react": "^16.3.3",
     "@types/js-beautify": "^1.14.3",
     "@types/react": "^19.2.10",
-    "@types/react-dom": "^19.2.3",
+    "@types/react-dom": "^19.2.5",
     "@types/testing-library__jest-dom": "^5.14.9",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.1.11",
