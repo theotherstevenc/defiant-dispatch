@@ -30,7 +30,7 @@
   "dependencies": {
     "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
-    "@mui/icons-material": "^7.3.7",
+    "@mui/icons-material": "^9.4.0",
     "@mui/material": "^7.3.7",
     "clsx": "^2.1.1",
     "firebase": "^12.8.0",
