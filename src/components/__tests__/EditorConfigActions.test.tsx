@@ -107,7 +107,10 @@ describe('EditorConfigActions', () => {
     expect(within(options).getByRole('checkbox', { name: 'Word Wrap' })).toBeInTheDocument()
     expect(within(options).getByRole('checkbox', { name: 'Prevent Threading' })).toBeInTheDocument()
     expect(within(screen.getByRole('region', { name: 'Sending' })).getByRole('textbox', { name: 'host' })).toBeVisible()
-    expect(within(screen.getByRole('region', { name: 'Appearance' })).getByRole('radiogroup', { name: 'App theme' })).toBeVisible()
+    const appearance = screen.getByRole('region', { name: 'Appearance' })
+    expect(within(appearance).getByRole('radiogroup', { name: 'App interface' })).toBeVisible()
+    expect(within(appearance).getByRole('radiogroup', { name: 'Code editor' })).toBeVisible()
+    expect(within(appearance).getByRole('radiogroup', { name: 'Email preview' })).toBeVisible()
   })
 
   it('does not reapply minification when opening or reopening settings', async () => {

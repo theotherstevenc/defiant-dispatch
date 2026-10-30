@@ -11,6 +11,7 @@ import {
   SETTINGS_CONTENT_OPTIONS_LABEL,
   SETTINGS_FONT_SIZE_LABEL,
   SETTINGS_SENDING_LABEL,
+  SETTINGS_THEME_HELPER_TEXT,
   TOOLBAR_SETTINGS_LABEL,
 } from '../utils/constants'
 
@@ -85,6 +86,9 @@ const EditorSettingsDrawer = (): ReactElement => {
             <InputThemeToggle />
             <InputToggleEditorTheme />
             <InputTogglePreviewTheme />
+            <Typography variant='body2' color='text.secondary'>
+              {SETTINGS_THEME_HELPER_TEXT}
+            </Typography>
           </Stack>
           <Typography variant='body2' color='text.secondary'>
             {SETTINGS_AUTOSAVE_LABEL}

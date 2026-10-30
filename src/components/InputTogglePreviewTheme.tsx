@@ -1,45 +1,29 @@
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import { Button } from '@mui/material'
-
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
-import {
-  FIRESTORE_COLLECTION_CONFIG,
-  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
-  TOGGLE_BTN_PREVIEW_DARK_MODE,
-  TOGGLE_BTN_PREVIEW_LIGHT_MODE,
-} from '../utils/constants'
+import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, SETTINGS_PREVIEW_THEME_LABEL } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
+
+import ThemeSelector from './ThemeSelector'
+
+import type { ThemeMode } from '../interfaces'
 
 const InputTogglePreviewTheme = () => {
   const { isPreviewDarkMode, setIsPreviewDarkMode } = useThemeSettingsContext()
 
-  const handleOpen = async () => {
+  const handleChange = async (value: ThemeMode) => {
+    const isNextDarkMode = value === 'dark'
     try {
-      const firestoreObj = { isPreviewDarkMode: !isPreviewDarkMode }
+      const firestoreObj = { isPreviewDarkMode: isNextDarkMode }
       await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
-      setIsPreviewDarkMode(!isPreviewDarkMode)
+      setIsPreviewDarkMode(isNextDarkMode)
     } catch (error) {
       logError('Failed to toggle preview theme:', 'InputTogglePreviewTheme', error)
     }
   }
 
-  const handleToggleButtonLabel = isPreviewDarkMode ? TOGGLE_BTN_PREVIEW_LIGHT_MODE : TOGGLE_BTN_PREVIEW_DARK_MODE
-
   return (
-    <>
-      <Button
-        onClick={handleOpen}
-        aria-label={handleToggleButtonLabel}
-        startIcon={<VisibilityIcon />}
-        sx={{ minHeight: 44, justifyContent: 'flex-start' }}>
-        {isPreviewDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        {handleToggleButtonLabel}
-      </Button>
-    </>
+    <ThemeSelector id='preview-theme' label={SETTINGS_PREVIEW_THEME_LABEL} value={isPreviewDarkMode ? 'dark' : 'light'} onChange={handleChange} />
   )
 }
 export default InputTogglePreviewTheme

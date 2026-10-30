@@ -72,6 +72,25 @@ export const settingsDrawerStyles = {
   overflow: 'hidden',
 }
 
+export const themeOptionStyles = {
+  flex: 1,
+  minWidth: 0,
+  minHeight: 44,
+  m: 0,
+  px: 0.5,
+  justifyContent: 'center',
+  border: 1,
+  borderColor: 'divider',
+  borderRadius: 1,
+  '&:hover': { bgcolor: 'action.hover' },
+  '&:focus-within': {
+    outline: '2px solid',
+    outlineColor: 'primary.main',
+    outlineOffset: 2,
+  },
+  '& .MuiFormControlLabel-label': { fontWeight: 'inherit', whiteSpace: 'nowrap' },
+}
+
 export const visuallyHiddenStyles = {
   position: 'absolute',
   width: '1px',

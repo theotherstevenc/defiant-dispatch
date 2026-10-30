@@ -4,12 +4,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import InputTogglePreviewTheme from '../InputTogglePreviewTheme'
 
 const mockSetIsPreviewDarkMode = vi.fn()
+let mockIsPreviewDarkMode = false
 
 vi.mock('../../context/ThemeSettingsContext', () => ({
   useThemeSettingsContext: () => ({
     isDarkMode: false,
     setIsDarkMode: vi.fn(),
-    isPreviewDarkMode: false,
+    isPreviewDarkMode: mockIsPreviewDarkMode,
     setIsPreviewDarkMode: mockSetIsPreviewDarkMode,
     appColorScheme: '',
     setAppColorScheme: vi.fn(),
@@ -25,32 +26,35 @@ vi.mock('../../firebase', () => ({ db: {} }))
 describe('InputTogglePreviewTheme', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockIsPreviewDarkMode = false
   })
 
-  it('renders with preview dark mode label when isPreviewDarkMode is false', () => {
+  it('shows the current email preview mode with no System option', () => {
     render(<InputTogglePreviewTheme />)
-    expect(screen.getByLabelText('Enable Preview Dark Mode')).toBeInTheDocument()
+    expect(screen.getByRole('radiogroup', { name: 'Email preview' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Light' })).toBeChecked()
+    expect(screen.queryByRole('radio', { name: 'System' })).not.toBeInTheDocument()
   })
 
-  it('shows DarkModeIcon when isPreviewDarkMode is false', () => {
+  it('persists Dark using the existing preview boolean only', async () => {
+    const { updateFirestoreDoc } = await import('../../utils/updateFirestoreDoc')
     render(<InputTogglePreviewTheme />)
-    expect(screen.getByTestId('DarkModeIcon')).toBeInTheDocument()
-  })
-
-  it('calls setIsPreviewDarkMode on click', async () => {
-    render(<InputTogglePreviewTheme />)
-    fireEvent.click(screen.getByLabelText('Enable Preview Dark Mode'))
+    fireEvent.click(screen.getByRole('radio', { name: 'Dark' }))
     await vi.waitFor(() => {
       expect(mockSetIsPreviewDarkMode).toHaveBeenCalledWith(true)
+      expect(updateFirestoreDoc).toHaveBeenCalledWith({}, 'config', 'editorSettings', { isPreviewDarkMode: true })
     })
   })
 
-  it('calls updateFirestoreDoc on click', async () => {
+  it('reflects a saved Dark mode and explicitly switches back to Light', async () => {
     const { updateFirestoreDoc } = await import('../../utils/updateFirestoreDoc')
+    mockIsPreviewDarkMode = true
     render(<InputTogglePreviewTheme />)
-    fireEvent.click(screen.getByLabelText('Enable Preview Dark Mode'))
+    expect(screen.getByRole('radio', { name: 'Dark' })).toBeChecked()
+    fireEvent.click(screen.getByRole('radio', { name: 'Light' }))
     await vi.waitFor(() => {
-      expect(updateFirestoreDoc).toHaveBeenCalledWith({}, 'config', 'editorSettings', { isPreviewDarkMode: true })
+      expect(mockSetIsPreviewDarkMode).toHaveBeenCalledWith(false)
+      expect(updateFirestoreDoc).toHaveBeenCalledWith({}, 'config', 'editorSettings', { isPreviewDarkMode: false })
     })
   })
 })
