@@ -1,38 +1,22 @@
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 
-import {
-  Authenticator,
-  EditorFileMenu,
-  EditorSettingsDrawer,
-  EditorToolsMenu,
-  InputFormatHTML,
-  InputLockFile,
-  InputToggleWorkingFiles,
-} from '../components'
-import { inputConfigStyles } from '../styles/global.styles'
+import { Authenticator, EditorFileMenu, EditorSettingsDrawer, InputFormatHTML, InputLockFile, InputToggleWorkingFiles } from '../components'
+import { commandGroupStyles, inputConfigStyles, settingsGroupStyles } from '../styles/global.styles'
 import { TOOLBAR_LABEL } from '../utils/constants'
 
-const EditorConfigActions = () => {
-  const theme = useTheme()
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
-
-  return (
-    <Box component='nav' aria-label={TOOLBAR_LABEL} sx={inputConfigStyles}>
+const EditorConfigActions = () => (
+  <Box component='nav' aria-label={TOOLBAR_LABEL} sx={inputConfigStyles}>
+    <Box sx={commandGroupStyles}>
       <EditorFileMenu />
-      {isSmallScreen ? (
-        <EditorToolsMenu />
-      ) : (
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <InputFormatHTML />
-          <InputLockFile />
-          <InputToggleWorkingFiles />
-        </Box>
-      )}
-      <Box sx={{ flexGrow: 1 }} />
+      <InputFormatHTML />
+      <InputLockFile />
+      <InputToggleWorkingFiles />
+    </Box>
+    <Box sx={settingsGroupStyles}>
       <EditorSettingsDrawer />
       <Authenticator />
     </Box>
-  )
-}
+  </Box>
+)
 
 export default EditorConfigActions

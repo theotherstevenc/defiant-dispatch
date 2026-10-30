@@ -1,14 +1,14 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Button, Divider, Menu } from '@mui/material'
+import FolderOpenIcon from '@mui/icons-material/FolderOpen'
+import { Divider, Menu, Tooltip } from '@mui/material'
 import { useState } from 'react'
 
-import { toolbarButtonStyles } from '../styles/global.styles'
 import { TOOLBAR_FILE_LABEL } from '../utils/constants'
 
 import InputCreateNewFile from './InputCreateNewFile'
 import InputDeleteFile from './InputDeleteFile'
 import InputFileUpload from './InputFileUpload'
 import InputUpdateFiles from './InputUpdateFiles'
+import { StyledIconButton } from './StyledIconButton'
 
 import type { ReactElement } from 'react'
 
@@ -19,17 +19,17 @@ const EditorFileMenu = (): ReactElement => {
 
   return (
     <>
-      <Button
-        id='editor-file-button'
-        aria-label={TOOLBAR_FILE_LABEL}
-        aria-haspopup='menu'
-        aria-expanded={isOpen}
-        aria-controls={isOpen ? 'editor-file-menu' : undefined}
-        onClick={(event) => setAnchorEl(event.currentTarget)}
-        endIcon={<ExpandMoreIcon />}
-        sx={toolbarButtonStyles}>
-        {TOOLBAR_FILE_LABEL}
-      </Button>
+      <Tooltip title={TOOLBAR_FILE_LABEL}>
+        <StyledIconButton
+          id='editor-file-button'
+          aria-label={TOOLBAR_FILE_LABEL}
+          aria-haspopup='menu'
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? 'editor-file-menu' : undefined}
+          onClick={(event) => setAnchorEl(event.currentTarget)}>
+          <FolderOpenIcon />
+        </StyledIconButton>
+      </Tooltip>
       <Menu
         id='editor-file-menu'
         anchorEl={anchorEl}

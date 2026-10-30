@@ -1,8 +1,9 @@
 import './App.css'
-import { CssBaseline, ThemeProvider } from '@mui/material'
+import { Box, CssBaseline, ThemeProvider } from '@mui/material'
 
 import { EditorContainer, EditorConfigActions, EditorContentDelivery } from './components'
 import { EditorProvider } from './context/EditorContext'
+import { editorWorkspaceStyles } from './styles/global.styles'
 import { usePreferredTheme } from './utils/usePreferredTheme'
 
 function App() {
@@ -12,9 +13,13 @@ function App() {
     <EditorProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <EditorConfigActions />
-        <EditorContentDelivery />
-        <EditorContainer />
+        <Box sx={{ pt: 1, flexShrink: 0 }}>
+          <EditorContentDelivery />
+        </Box>
+        <Box component='main' sx={editorWorkspaceStyles}>
+          <EditorConfigActions />
+          <EditorContainer />
+        </Box>
       </ThemeProvider>
     </EditorProvider>
   )

@@ -1,9 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { Box, Button, Divider, Drawer, IconButton, Stack, Typography } from '@mui/material'
+import { Box, Divider, Drawer, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 
-import { settingsDrawerStyles, toolbarButtonStyles } from '../styles/global.styles'
+import { settingsDrawerStyles } from '../styles/global.styles'
 import {
   LABEL_CLOSE,
   SETTINGS_APPEARANCE_LABEL,
@@ -20,6 +20,7 @@ import InputSenderSettings from './InputSenderSettings'
 import InputThemeToggle from './InputThemeToggle'
 import InputToggleEditorTheme from './InputToggleEditorTheme'
 import InputTogglePreviewTheme from './InputTogglePreviewTheme'
+import { StyledIconButton } from './StyledIconButton'
 
 import type { ReactElement } from 'react'
 
@@ -29,25 +30,25 @@ const EditorSettingsDrawer = (): ReactElement => {
 
   return (
     <>
-      <Button
-        aria-label={TOOLBAR_SETTINGS_LABEL}
-        aria-haspopup='dialog'
-        aria-expanded={isOpen}
-        aria-controls={isOpen ? 'editor-settings' : undefined}
-        onClick={() => setIsOpen(true)}
-        startIcon={<SettingsIcon />}
-        sx={toolbarButtonStyles}>
-        {TOOLBAR_SETTINGS_LABEL}
-      </Button>
+      <Tooltip title={TOOLBAR_SETTINGS_LABEL}>
+        <StyledIconButton
+          aria-label={TOOLBAR_SETTINGS_LABEL}
+          aria-haspopup='dialog'
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? 'editor-settings' : undefined}
+          onClick={() => setIsOpen(true)}>
+          <SettingsIcon />
+        </StyledIconButton>
+      </Tooltip>
       <Drawer
-        anchor='right'
+        anchor='left'
         open={isOpen}
         onClose={handleClose}
         ModalProps={{ keepMounted: true }}
         slotProps={{
           paper: { id: 'editor-settings', role: 'dialog', 'aria-modal': true, 'aria-labelledby': 'editor-settings-title', sx: settingsDrawerStyles },
         }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, flexShrink: 0 }}>
           <Typography id='editor-settings-title' component='h2' variant='h6'>
             {TOOLBAR_SETTINGS_LABEL}
           </Typography>
@@ -56,7 +57,7 @@ const EditorSettingsDrawer = (): ReactElement => {
           </IconButton>
         </Box>
         <Divider />
-        <Stack spacing={3} divider={<Divider />} sx={{ p: 2 }}>
+        <Stack spacing={3} divider={<Divider />} sx={{ p: 2, overflowY: 'auto', minHeight: 0 }}>
           <Stack component='section' aria-labelledby='editor-settings-heading' spacing={1}>
             <Typography id='editor-settings-heading' component='h3' variant='subtitle1'>
               {SETTINGS_EDITOR_LABEL}
