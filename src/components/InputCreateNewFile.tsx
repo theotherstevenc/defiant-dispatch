@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox, Tooltip } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, FormControlLabel, Checkbox } from '@mui/material'
 import { useState } from 'react'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
@@ -11,9 +11,11 @@ import { BTN_LABEL_CANCEL, BTN_LABEL_CREATE, BTN_LABEL_CREATE_CHECKBOX, BTN_LABE
 import { createNewFile } from '../utils/createNewFile'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputCreateNewFile = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputCreateNewFile = (props: EditorActionProps) => {
   const { setIsMinifyEnabled, setIsWordWrapEnabled } = useEditorConfigContext()
   const { setWorkingFileID, setWorkingFileName, setHtml, setText, setAmp, setIsFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
@@ -57,11 +59,9 @@ const InputCreateNewFile = () => {
 
   return (
     <>
-      <Tooltip title={BTN_LABEL_CREATE}>
-        <StyledIconButton onClick={handleOpen} aria-label={BTN_LABEL_CREATE}>
-          <AddIcon />
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleOpen} label={BTN_LABEL_CREATE}>
+        <AddIcon />
+      </EditorActionButton>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>

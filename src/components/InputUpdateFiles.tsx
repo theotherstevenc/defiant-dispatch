@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close'
 import EditIcon from '@mui/icons-material/Edit'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Tooltip } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material'
 import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
@@ -9,9 +9,11 @@ import { iconButtonStyles } from '../styles/global.styles'
 import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputUpdateFiles = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputUpdateFiles = (props: EditorActionProps) => {
   const { deletedWorkingFileID, workingFileID, workingFileName, setWorkingFileName, isFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
   const [fileName, setFileName] = useState('')
@@ -47,11 +49,9 @@ const InputUpdateFiles = () => {
 
   return (
     <>
-      <Tooltip title={BTN_LABEL_UPDATE}>
-        <StyledIconButton onClick={handleOpen} aria-label={BTN_LABEL_UPDATE}>
-          <EditIcon />
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleOpen} label={BTN_LABEL_UPDATE}>
+        <EditIcon />
+      </EditorActionButton>
 
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
         <DialogTitle>

@@ -1,5 +1,4 @@
 import CodeIcon from '@mui/icons-material/Code'
-import { Tooltip } from '@mui/material'
 import beautify from 'js-beautify'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
@@ -7,9 +6,11 @@ import { useEditorContext } from '../context/EditorContext'
 import { INPUT_FORMAT_HTML_LABEL } from '../utils/constants'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputFormatHTML = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputFormatHTML = (props: EditorActionProps) => {
   const { html, setHtml } = useEditorContext()
   const { isMinifyEnabled } = useEditorConfigContext()
 
@@ -32,11 +33,9 @@ const InputFormatHTML = () => {
     }
   }
   return (
-    <Tooltip title={INPUT_FORMAT_HTML_LABEL}>
-      <StyledIconButton onClick={handleClick} aria-label={INPUT_FORMAT_HTML_LABEL}>
-        <CodeIcon />
-      </StyledIconButton>
-    </Tooltip>
+    <EditorActionButton {...props} onClick={handleClick} label={INPUT_FORMAT_HTML_LABEL}>
+      <CodeIcon />
+    </EditorActionButton>
   )
 }
 export default InputFormatHTML

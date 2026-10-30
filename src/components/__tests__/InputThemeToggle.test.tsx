@@ -1,9 +1,12 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+import { logError } from '../../utils/logError'
+import { updateFirestoreDoc } from '../../utils/updateFirestoreDoc'
 import InputThemeToggle from '../InputThemeToggle'
 
 const mockSetAppColorScheme = vi.fn()
+let mockAppColorScheme = ''
 
 vi.mock('../../context/ThemeSettingsContext', () => ({
   useThemeSettingsContext: () => ({
@@ -11,7 +14,7 @@ vi.mock('../../context/ThemeSettingsContext', () => ({
     setIsDarkMode: vi.fn(),
     isPreviewDarkMode: false,
     setIsPreviewDarkMode: vi.fn(),
-    appColorScheme: '',
+    appColorScheme: mockAppColorScheme,
     setAppColorScheme: mockSetAppColorScheme,
   }),
 }))
@@ -21,44 +24,46 @@ vi.mock('../../utils/updateFirestoreDoc', () => ({
 }))
 
 vi.mock('../../firebase', () => ({ db: {} }))
+vi.mock('../../utils/logError', () => ({ logError: vi.fn() }))
 
 describe('InputThemeToggle', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockAppColorScheme = ''
   })
 
-  it('renders three radio options', () => {
+  it('labels the app interface choices and reflects the actual light default when unset', () => {
     render(<InputThemeToggle />)
-    const radios = screen.getAllByRole('radio')
-    expect(radios).toHaveLength(3)
+    expect(screen.getByRole('radiogroup', { name: 'App interface' })).toBeInTheDocument()
+    expect(screen.getAllByRole('radio')).toHaveLength(3)
+    expect(screen.getByRole('radio', { name: 'Light' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Dark' })).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'System' })).not.toBeChecked()
   })
 
-  it('defaults to system when appColorScheme is empty', () => {
+  it.each(['light', 'dark', 'system'])('reflects the saved %s selection', (mode) => {
+    mockAppColorScheme = mode
     render(<InputThemeToggle />)
-    const radios = screen.getAllByRole('radio')
-    // system is the second radio (index 1) and should be checked when appColorScheme is falsy
-    expect(radios[1]).toBeChecked()
+    expect(screen.getByRole('radio', { name: new RegExp(mode, 'i') })).toBeChecked()
   })
 
-  it('calls setAppColorScheme when dark is selected', async () => {
-    const { updateFirestoreDoc } = await import('../../utils/updateFirestoreDoc')
+  it.each(['Dark', 'System'])('persists %s without changing editor or preview preferences', async (mode) => {
     render(<InputThemeToggle />)
-    const radios = screen.getAllByRole('radio')
-    // dark is the third radio
-    fireEvent.click(radios[2])
+    fireEvent.click(screen.getByRole('radio', { name: mode }))
     await vi.waitFor(() => {
-      expect(mockSetAppColorScheme).toHaveBeenCalledWith('dark')
-      expect(updateFirestoreDoc).toHaveBeenCalledWith({}, 'config', 'editorSettings', { appColorScheme: 'dark' })
+      expect(mockSetAppColorScheme).toHaveBeenCalledWith(mode.toLowerCase())
+      expect(updateFirestoreDoc).toHaveBeenCalledWith({}, 'config', 'editorSettings', { appColorScheme: mode.toLowerCase() })
     })
   })
 
-  it('calls setAppColorScheme when light is selected', async () => {
+  it('retains the selected mode and reports a failed save', async () => {
+    vi.mocked(updateFirestoreDoc).mockRejectedValueOnce(new Error('Save failed'))
     render(<InputThemeToggle />)
-    const radios = screen.getAllByRole('radio')
-    // light is the first radio
-    fireEvent.click(radios[0])
+    fireEvent.click(screen.getByRole('radio', { name: 'Dark' }))
     await vi.waitFor(() => {
-      expect(mockSetAppColorScheme).toHaveBeenCalledWith('light')
+      expect(logError).toHaveBeenCalled()
     })
+    expect(mockSetAppColorScheme).not.toHaveBeenCalled()
+    expect(screen.getByRole('radio', { name: 'Light' })).toBeChecked()
   })
 })

@@ -1,15 +1,16 @@
 import LockIcon from '@mui/icons-material/Lock'
 import LockOpenIcon from '@mui/icons-material/LockOpen'
-import { Tooltip } from '@mui/material'
 
 import { useEditorContext } from '../context/EditorContext'
 import { updateWorkingFile } from '../services/workingFilesService'
 import { INPUT_LOCK_FILE_LABEL_LOCK, INPUT_LOCK_FILE_LABEL_UNLOCK } from '../utils/constants'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputLockFile = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputLockFile = (props: EditorActionProps) => {
   const { workingFileID, isFileLocked, setIsFileLocked } = useEditorContext()
 
   const handleClick = async () => {
@@ -26,11 +27,9 @@ const InputLockFile = () => {
 
   return (
     <>
-      <Tooltip title={handleInputLockLabel}>
-        <StyledIconButton onClick={handleClick} aria-label={handleInputLockLabel}>
-          {isFileLocked ? <LockIcon /> : <LockOpenIcon />}
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleClick} label={handleInputLockLabel} isSelected={isFileLocked}>
+        {isFileLocked ? <LockIcon /> : <LockOpenIcon />}
+      </EditorActionButton>
     </>
   )
 }

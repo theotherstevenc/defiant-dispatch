@@ -1,45 +1,27 @@
-import CodeIcon from '@mui/icons-material/Code'
-import DarkModeIcon from '@mui/icons-material/DarkMode'
-import LightModeIcon from '@mui/icons-material/LightMode'
-import { Tooltip } from '@mui/material'
-
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
-import {
-  FIRESTORE_COLLECTION_CONFIG,
-  FIRESTORE_DOCUMENT_EDITOR_SETTINGS,
-  TOGGLE_BTN_EDITOR_DARK_MODE,
-  TOGGLE_BTN_EDITOR_LIGHT_MODE,
-} from '../utils/constants'
+import { FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, SETTINGS_EDITOR_THEME_LABEL } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
-import { StyledIconButton } from './StyledIconButton'
+import ThemeSelector from './ThemeSelector'
+
+import type { ThemeMode } from '../interfaces'
 
 const InputToggleEditorTheme = () => {
   const { isDarkMode, setIsDarkMode } = useThemeSettingsContext()
 
-  const handleOpen = async () => {
+  const handleChange = async (value: ThemeMode) => {
+    const isNextDarkMode = value === 'dark'
     try {
-      const firestoreObj = { isDarkMode: !isDarkMode }
+      const firestoreObj = { isDarkMode: isNextDarkMode }
       await updateFirestoreDoc(db, FIRESTORE_COLLECTION_CONFIG, FIRESTORE_DOCUMENT_EDITOR_SETTINGS, firestoreObj)
-      setIsDarkMode(!isDarkMode)
+      setIsDarkMode(isNextDarkMode)
     } catch (error) {
       logError('Failed to toggle editor theme:', 'InputToggleEditorTheme', error)
     }
   }
 
-  const handleToggleButtonLabel = isDarkMode ? TOGGLE_BTN_EDITOR_LIGHT_MODE : TOGGLE_BTN_EDITOR_DARK_MODE
-
-  return (
-    <>
-      <Tooltip title={handleToggleButtonLabel}>
-        <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
-          <CodeIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        </StyledIconButton>
-      </Tooltip>
-    </>
-  )
+  return <ThemeSelector id='editor-theme' label={SETTINGS_EDITOR_THEME_LABEL} value={isDarkMode ? 'dark' : 'light'} onChange={handleChange} />
 }
 export default InputToggleEditorTheme

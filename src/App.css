@@ -1,6 +1,20 @@
 #root {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep the local emulator warning from covering the mobile command bar. */
+.firebase-emulator-warning {
+  position: static !important;
+  flex-shrink: 0;
+  z-index: auto !important;
 }
 
 html,
