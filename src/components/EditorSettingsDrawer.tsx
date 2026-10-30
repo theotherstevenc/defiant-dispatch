@@ -3,12 +3,12 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import { Box, Divider, Drawer, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 
-import { settingsDrawerStyles } from '../styles/global.styles'
+import { settingsDrawerStyles, visuallyHiddenStyles } from '../styles/global.styles'
 import {
   LABEL_CLOSE,
   SETTINGS_APPEARANCE_LABEL,
   SETTINGS_AUTOSAVE_LABEL,
-  SETTINGS_EDITOR_LABEL,
+  SETTINGS_CONTENT_OPTIONS_LABEL,
   SETTINGS_FONT_SIZE_LABEL,
   SETTINGS_SENDING_LABEL,
   TOOLBAR_SETTINGS_LABEL,
@@ -58,29 +58,30 @@ const EditorSettingsDrawer = (): ReactElement => {
         </Box>
         <Divider />
         <Stack spacing={3} divider={<Divider />} sx={{ p: 2, overflowY: 'auto', minHeight: 0 }}>
-          <Stack component='section' aria-labelledby='editor-settings-heading' spacing={1}>
-            <Typography id='editor-settings-heading' component='h3' variant='subtitle1'>
-              {SETTINGS_EDITOR_LABEL}
+          <Stack component='section' aria-labelledby='content-options-heading' spacing={1} useFlexGap>
+            <Typography id='content-options-heading' component='h3' sx={visuallyHiddenStyles}>
+              {SETTINGS_CONTENT_OPTIONS_LABEL}
             </Typography>
-            <InputMarkupSettings section='editor' />
-            <Typography component='h4' variant='body2'>
-              {SETTINGS_FONT_SIZE_LABEL}
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <FontSizeControls />
-            </Box>
+            <InputMarkupSettings />
           </Stack>
-          <Stack component='section' aria-labelledby='sending-settings-heading' spacing={2}>
-            <Typography id='sending-settings-heading' component='h3' variant='subtitle1'>
+          <Stack component='section' aria-labelledby='sending-settings-heading' spacing={2} useFlexGap>
+            <Typography id='sending-settings-heading' component='h3' sx={visuallyHiddenStyles}>
               {SETTINGS_SENDING_LABEL}
             </Typography>
-            <InputMarkupSettings section='sending' />
             <InputSenderSettings />
           </Stack>
-          <Stack component='section' aria-labelledby='appearance-settings-heading' spacing={2}>
-            <Typography id='appearance-settings-heading' component='h3' variant='subtitle1'>
+          <Stack component='section' aria-labelledby='appearance-settings-heading' spacing={2} useFlexGap>
+            <Typography id='appearance-settings-heading' component='h3' sx={visuallyHiddenStyles}>
               {SETTINGS_APPEARANCE_LABEL}
             </Typography>
+            <Stack spacing={1}>
+              <Typography component='h4' variant='body2'>
+                {SETTINGS_FONT_SIZE_LABEL}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <FontSizeControls />
+              </Box>
+            </Stack>
             <InputThemeToggle />
             <InputToggleEditorTheme />
             <InputTogglePreviewTheme />

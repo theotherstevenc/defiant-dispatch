@@ -87,14 +87,27 @@ describe('EditorConfigActions', () => {
     fireEvent.click(settingsButton)
 
     const drawer = screen.getByRole('dialog', { name: 'Settings' })
-    expect(within(drawer).getByRole('heading', { name: 'Editor' })).toBeVisible()
-    expect(within(drawer).getByRole('heading', { name: 'Sending' })).toBeVisible()
-    expect(within(drawer).getByRole('heading', { name: 'Appearance' })).toBeVisible()
+    expect(within(drawer).getByRole('heading', { name: 'Content options' })).toBeInTheDocument()
+    expect(within(drawer).getByRole('heading', { name: 'Sending' })).toBeInTheDocument()
+    expect(within(drawer).getByRole('heading', { name: 'Appearance' })).toBeInTheDocument()
     expect(within(drawer).getByRole('textbox', { name: 'host' })).toHaveValue('smtp.example.com')
     fireEvent.click(within(drawer).getByRole('button', { name: 'Close' }))
 
     await waitFor(() => expect(drawer).not.toBeVisible())
     expect(settingsButton).toHaveFocus()
+  })
+
+  it('groups all three checkboxes together while retaining accessible section and theme names', () => {
+    render(<EditorConfigActions />)
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }))
+
+    const options = screen.getByRole('region', { name: 'Content options' })
+    expect(within(options).getAllByRole('checkbox')).toHaveLength(3)
+    expect(within(options).getByRole('checkbox', { name: 'Minify' })).toBeInTheDocument()
+    expect(within(options).getByRole('checkbox', { name: 'Word Wrap' })).toBeInTheDocument()
+    expect(within(options).getByRole('checkbox', { name: 'Prevent Threading' })).toBeInTheDocument()
+    expect(within(screen.getByRole('region', { name: 'Sending' })).getByRole('textbox', { name: 'host' })).toBeVisible()
+    expect(within(screen.getByRole('region', { name: 'Appearance' })).getByRole('radiogroup', { name: 'App theme' })).toBeVisible()
   })
 
   it('does not reapply minification when opening or reopening settings', async () => {
