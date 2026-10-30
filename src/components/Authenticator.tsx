@@ -81,7 +81,7 @@ const Authenticator = () => {
 
   return (
     <>
-      <Tooltip title={handleLoginButtonLabel}>
+      <Tooltip title={handleLoginButtonLabel} placement='top' disableInteractive>
         <StyledIconButton
           id='account-button'
           onClick={handleOpen}
@@ -102,6 +102,8 @@ const Authenticator = () => {
         anchorEl={accountAnchor}
         open={isAccountMenuOpen}
         onClose={() => setAccountAnchor(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         slotProps={{ list: { 'aria-labelledby': 'account-button' } }}>
         <MenuItem onClick={handleLogout} sx={{ minHeight: 44 }}>
           <ListItemIcon>

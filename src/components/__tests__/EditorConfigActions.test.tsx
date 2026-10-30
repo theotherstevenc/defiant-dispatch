@@ -79,7 +79,7 @@ describe('EditorConfigActions', () => {
     })
   })
 
-  it('keeps settings in the drawer and restores focus to the rail after closing', async () => {
+  it('keeps settings in the drawer and restores focus to the bottom bar after closing', async () => {
     render(<EditorConfigActions />)
     expect(screen.queryByRole('textbox', { name: 'host' })).not.toBeInTheDocument()
     const settingsButton = screen.getByRole('button', { name: 'Settings' })

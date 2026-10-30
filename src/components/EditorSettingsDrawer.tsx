@@ -30,7 +30,7 @@ const EditorSettingsDrawer = (): ReactElement => {
 
   return (
     <>
-      <Tooltip title={TOOLBAR_SETTINGS_LABEL}>
+      <Tooltip title={TOOLBAR_SETTINGS_LABEL} placement='top' disableInteractive>
         <StyledIconButton
           aria-label={TOOLBAR_SETTINGS_LABEL}
           aria-haspopup='dialog'

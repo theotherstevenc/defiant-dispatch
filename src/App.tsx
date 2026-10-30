@@ -17,8 +17,8 @@ function App() {
           <EditorContentDelivery />
         </Box>
         <Box component='main' sx={editorWorkspaceStyles}>
-          <EditorConfigActions />
           <EditorContainer />
+          <EditorConfigActions />
         </Box>
       </ThemeProvider>
     </EditorProvider>

@@ -17,7 +17,7 @@ export const workspaceEditorStyles = {
 
 export const editorWorkspaceStyles = {
   display: 'flex',
-  flexDirection: { xs: 'column-reverse', sm: 'row' },
+  flexDirection: 'column',
   flex: 1,
   minHeight: 0,
   minWidth: 0,
@@ -30,32 +30,40 @@ export const editorWorkspaceStyles = {
 
 export const inputConfigStyles = {
   display: 'flex',
-  flexDirection: { xs: 'row', sm: 'column' },
+  flexDirection: 'row',
   alignItems: 'center',
-  justifyContent: { xs: 'space-between', sm: 'flex-start' },
+  justifyContent: 'space-between',
   gap: 1,
   p: 1,
-  px: { xs: 1, sm: 0.75 },
-  pb: { xs: 'max(8px, env(safe-area-inset-bottom))', sm: 1 },
-  width: { xs: '100%', sm: 60 },
+  pb: 'max(8px, env(safe-area-inset-bottom))',
+  pl: 'max(8px, env(safe-area-inset-left))',
+  pr: 'max(8px, env(safe-area-inset-right))',
+  width: '100%',
   flexShrink: 0,
   overflow: 'auto',
-  borderTop: { xs: 1, sm: 0 },
-  borderRight: { xs: 0, sm: 1 },
+  borderTop: 1,
   borderColor: 'divider',
   bgcolor: 'background.paper',
+  '& .MuiIconButton-root': {
+    bgcolor: 'transparent',
+    color: 'text.secondary',
+    boxShadow: 'none',
+    '&:hover': {
+      bgcolor: 'action.hover',
+      color: 'text.primary',
+    },
+    '&[aria-pressed="true"]': {
+      bgcolor: 'action.selected',
+      color: 'primary.main',
+    },
+  },
 }
 
 export const commandGroupStyles = {
   display: 'flex',
-  flexDirection: { xs: 'row', sm: 'column' },
+  flexDirection: 'row',
   gap: 0.5,
   flexShrink: 0,
-}
-
-export const settingsGroupStyles = {
-  ...commandGroupStyles,
-  mt: { xs: 0, sm: 'auto' },
 }
 
 export const settingsDrawerStyles = {

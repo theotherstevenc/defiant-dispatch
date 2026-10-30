@@ -19,7 +19,7 @@ const EditorFileMenu = (): ReactElement => {
 
   return (
     <>
-      <Tooltip title={TOOLBAR_FILE_LABEL}>
+      <Tooltip title={TOOLBAR_FILE_LABEL} placement='top' disableInteractive>
         <StyledIconButton
           id='editor-file-button'
           aria-label={TOOLBAR_FILE_LABEL}
@@ -35,6 +35,8 @@ const EditorFileMenu = (): ReactElement => {
         anchorEl={anchorEl}
         open={isOpen}
         onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         keepMounted
         slotProps={{ list: { 'aria-labelledby': 'editor-file-button' } }}>
         <InputCreateNewFile isMenuItem onAction={handleClose} />

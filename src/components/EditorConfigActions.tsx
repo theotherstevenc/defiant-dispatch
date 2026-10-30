@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 
 import { Authenticator, EditorFileMenu, EditorSettingsDrawer, InputFormatHTML, InputLockFile, InputToggleWorkingFiles } from '../components'
-import { commandGroupStyles, inputConfigStyles, settingsGroupStyles } from '../styles/global.styles'
+import { commandGroupStyles, inputConfigStyles } from '../styles/global.styles'
 import { TOOLBAR_LABEL } from '../utils/constants'
 
 const EditorConfigActions = () => (
@@ -12,7 +12,7 @@ const EditorConfigActions = () => (
       <InputLockFile />
       <InputToggleWorkingFiles />
     </Box>
-    <Box sx={settingsGroupStyles}>
+    <Box sx={commandGroupStyles}>
       <EditorSettingsDrawer />
       <Authenticator />
     </Box>

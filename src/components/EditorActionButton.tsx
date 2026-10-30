@@ -46,7 +46,7 @@ const EditorActionButton = ({
   }
 
   return (
-    <Tooltip title={label}>
+    <Tooltip title={label} placement='top' disableInteractive>
       <StyledIconButton onClick={handleClick} aria-label={label} aria-pressed={isSelected}>
         {children}
       </StyledIconButton>
