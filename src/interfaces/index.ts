@@ -1,3 +1,10 @@
+export interface EditorActionProps {
+  isMenuItem?: boolean
+  onAction?: () => void
+  autoFocus?: boolean
+  tabIndex?: number
+}
+
 export interface SenderSettings {
   host: string
   port: string

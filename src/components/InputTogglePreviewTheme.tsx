@@ -1,7 +1,7 @@
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import { Tooltip } from '@mui/material'
+import { Button } from '@mui/material'
 
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
@@ -13,8 +13,6 @@ import {
 } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-import { StyledIconButton } from './StyledIconButton'
 
 const InputTogglePreviewTheme = () => {
   const { isPreviewDarkMode, setIsPreviewDarkMode } = useThemeSettingsContext()
@@ -33,12 +31,14 @@ const InputTogglePreviewTheme = () => {
 
   return (
     <>
-      <Tooltip title={handleToggleButtonLabel}>
-        <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
-          <VisibilityIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          {isPreviewDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        </StyledIconButton>
-      </Tooltip>
+      <Button
+        onClick={handleOpen}
+        aria-label={handleToggleButtonLabel}
+        startIcon={<VisibilityIcon />}
+        sx={{ minHeight: 44, justifyContent: 'flex-start' }}>
+        {isPreviewDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+        {handleToggleButtonLabel}
+      </Button>
     </>
   )
 }

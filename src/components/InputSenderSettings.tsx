@@ -46,11 +46,11 @@ const InputSenderSettings = () => {
   }
 
   const textFields = [
-    { id: SETTINGS_HOST, type: 'text', sx: {} },
-    { id: SETTINGS_PORT, type: 'text', sx: { width: '70px' } },
-    { id: SETTINGS_USER, type: 'text', sx: {} },
-    { id: SETTINGS_PASS, type: 'password', sx: {} },
-    { id: SETTINGS_FROM, type: 'text', sx: {} },
+    { id: SETTINGS_HOST, type: 'text' },
+    { id: SETTINGS_PORT, type: 'text' },
+    { id: SETTINGS_USER, type: 'text' },
+    { id: SETTINGS_PASS, type: 'password' },
+    { id: SETTINGS_FROM, type: 'text' },
   ]
 
   return (
@@ -63,10 +63,10 @@ const InputSenderSettings = () => {
           type={field.type}
           variant='outlined'
           size='small'
+          fullWidth
           value={inputSenderSettings[field.id as keyof SenderSettings]}
           onChange={(e) => handleEvent(e, false)}
           onBlur={(e) => handleEvent(e, true)}
-          sx={field.sx}
         />
       ))}
     </>

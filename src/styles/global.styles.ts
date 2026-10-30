@@ -17,24 +17,25 @@ export const workspaceEditorStyles = {
 
 export const inputConfigStyles = {
   display: 'flex',
-  gap: '0.175rem',
-  margin: '0.5rem',
-}
-
-export const inputSenderSettingsStyles = {
-  flexGrow: 1,
-  display: 'flex',
-  justifyContent: 'center',
-  gap: '0.175rem',
-  flexWrap: 'wrap',
-}
-
-export const inputActionsStyles = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'right',
   alignItems: 'center',
-  gap: '0.175rem',
+  gap: { xs: 0.5, sm: 1 },
+  m: 1,
+  flexShrink: 0,
+}
+
+export const toolbarButtonStyles = {
+  minHeight: 44,
+  minWidth: 44,
+  px: 0.75,
+  flexShrink: 0,
+  textTransform: 'none',
+  '& .MuiButton-startIcon': { mr: 0.5, ml: 0 },
+  '& .MuiButton-endIcon': { ml: 0.25, mr: 0 },
+}
+
+export const settingsDrawerStyles = {
+  width: { xs: '100%', sm: 400 },
+  maxWidth: '100%',
 }
 
 export const editorActionsStyles = {

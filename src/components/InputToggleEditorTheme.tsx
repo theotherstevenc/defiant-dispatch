@@ -1,7 +1,7 @@
 import CodeIcon from '@mui/icons-material/Code'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import LightModeIcon from '@mui/icons-material/LightMode'
-import { Tooltip } from '@mui/material'
+import { Button } from '@mui/material'
 
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { db } from '../firebase'
@@ -13,8 +13,6 @@ import {
 } from '../utils/constants'
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
-
-import { StyledIconButton } from './StyledIconButton'
 
 const InputToggleEditorTheme = () => {
   const { isDarkMode, setIsDarkMode } = useThemeSettingsContext()
@@ -33,12 +31,10 @@ const InputToggleEditorTheme = () => {
 
   return (
     <>
-      <Tooltip title={handleToggleButtonLabel}>
-        <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
-          <CodeIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-        </StyledIconButton>
-      </Tooltip>
+      <Button onClick={handleOpen} aria-label={handleToggleButtonLabel} startIcon={<CodeIcon />} sx={{ minHeight: 44, justifyContent: 'flex-start' }}>
+        {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+        {handleToggleButtonLabel}
+      </Button>
     </>
   )
 }

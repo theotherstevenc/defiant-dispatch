@@ -1,6 +1,8 @@
 import { styled, IconButton } from '@mui/material'
 
 export const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  minWidth: 44,
+  minHeight: 44,
   padding: '6px 16px',
   borderRadius: '4px',
   backgroundColor: theme.palette.primary.main,

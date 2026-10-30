@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tooltip } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material'
 import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
@@ -16,9 +16,11 @@ import {
 } from '../utils/constants'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputDeleteFile = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputDeleteFile = (props: EditorActionProps) => {
   const { deletedWorkingFileID, workingFileID, setHtml, setText, setAmp, workingFileName, setDeletedWorkingFileID, isFileLocked } = useEditorContext()
   const [open, setOpen] = useState(false)
 
@@ -54,11 +56,9 @@ const InputDeleteFile = () => {
 
   return (
     <>
-      <Tooltip title={BTN_LABEL_DELETE}>
-        <StyledIconButton onClick={handleOpen} aria-label={BTN_LABEL_DELETE}>
-          <DeleteIcon />
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleOpen} label={BTN_LABEL_DELETE} isDestructive>
+        <DeleteIcon />
+      </EditorActionButton>
 
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>

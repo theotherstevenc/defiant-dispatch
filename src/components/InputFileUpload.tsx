@@ -1,6 +1,4 @@
-import styled from '@emotion/styled'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { Tooltip } from '@mui/material'
 import { useRef } from 'react'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
@@ -9,21 +7,11 @@ import { BTN_UPLOAD_LABEL } from '../utils/constants'
 import { createNewFile } from '../utils/createNewFile'
 import { logError } from '../utils/logError'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-})
+import type { EditorActionProps } from '../interfaces'
 
-const InputFileUpload = () => {
+const InputFileUpload = (props: EditorActionProps) => {
   const { setHtml, setText, setAmp, setWorkingFileID, setWorkingFileName, setIsFileLocked } = useEditorContext()
   const { setIsMinifyEnabled, setIsWordWrapEnabled } = useEditorConfigContext()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -87,13 +75,11 @@ const InputFileUpload = () => {
 
   return (
     <>
-      <Tooltip title={BTN_UPLOAD_LABEL} arrow enterDelay={1000}>
-        <StyledIconButton onClick={handleButtonClick} aria-label={BTN_UPLOAD_LABEL}>
-          <CloudUploadIcon />
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleButtonClick} label={BTN_UPLOAD_LABEL}>
+        <CloudUploadIcon />
+      </EditorActionButton>
 
-      <VisuallyHiddenInput ref={fileInputRef} type='file' accept='.eml' tabIndex={-1} onChange={(e) => handleFileUpload(e)} />
+      <input hidden ref={fileInputRef} type='file' accept='.eml' onChange={(e) => handleFileUpload(e)} />
     </>
   )
 }

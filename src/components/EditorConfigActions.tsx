@@ -1,46 +1,38 @@
-import { Box } from '@mui/material'
+import { Box, useMediaQuery, useTheme } from '@mui/material'
 
 import {
   Authenticator,
-  FontSizeControls,
-  InputCreateNewFile,
-  InputDeleteFile,
-  InputFileUpload,
+  EditorFileMenu,
+  EditorSettingsDrawer,
+  EditorToolsMenu,
   InputFormatHTML,
   InputLockFile,
-  InputMarkupSettings,
-  InputSenderSettings,
-  InputThemeToggle,
-  InputToggleEditorTheme,
-  InputTogglePreviewTheme,
   InputToggleWorkingFiles,
-  InputUpdateFiles,
 } from '../components'
-import { inputActionsStyles, inputConfigStyles, inputSenderSettingsStyles } from '../styles/global.styles'
+import { inputConfigStyles } from '../styles/global.styles'
+import { TOOLBAR_LABEL } from '../utils/constants'
 
-const EditorConfigActions = () => (
-  <Box sx={inputConfigStyles}>
-    <Box>
-      <InputMarkupSettings />
-    </Box>
-    <Box sx={inputSenderSettingsStyles}>
-      <InputSenderSettings />
-    </Box>
-    <Box sx={inputActionsStyles}>
-      <InputThemeToggle />
-      <InputToggleEditorTheme />
-      <InputTogglePreviewTheme />
-      <InputFormatHTML />
-      <FontSizeControls />
-      <InputLockFile />
-      <InputToggleWorkingFiles />
-      <InputCreateNewFile />
-      <InputUpdateFiles />
-      <InputDeleteFile />
-      <InputFileUpload />
+const EditorConfigActions = () => {
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
+  return (
+    <Box component='nav' aria-label={TOOLBAR_LABEL} sx={inputConfigStyles}>
+      <EditorFileMenu />
+      {isSmallScreen ? (
+        <EditorToolsMenu />
+      ) : (
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <InputFormatHTML />
+          <InputLockFile />
+          <InputToggleWorkingFiles />
+        </Box>
+      )}
+      <Box sx={{ flexGrow: 1 }} />
+      <EditorSettingsDrawer />
       <Authenticator />
     </Box>
-  </Box>
-)
+  )
+}
 
 export default EditorConfigActions

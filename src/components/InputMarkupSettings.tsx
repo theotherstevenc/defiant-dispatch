@@ -16,7 +16,11 @@ import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 import { useRenderCount } from '../utils/useRenderCount'
 
-const InputMarkupSettings = () => {
+interface InputMarkupSettingsProps {
+  section?: 'editor' | 'sending' | 'all'
+}
+
+const InputMarkupSettings = ({ section = 'all' }: InputMarkupSettingsProps) => {
   useRenderCount('InputMarkupSettings')
   const { setHtml, html, setOriginalHtml, originalHtml } = useEditorContext()
   const { isMinifyEnabled, setIsMinifyEnabled, isWordWrapEnabled, setIsWordWrapEnabled, isPreventThreadingEnabled, setIsPreventThreadingEnabled } =
@@ -66,17 +70,23 @@ const InputMarkupSettings = () => {
   }
 
   useEffect(() => {
-    updateHtml()
+    if (section !== 'sending') {
+      updateHtml()
+    }
 
     // html and originalHtml are guaranteed current because the editor is readOnly while minified, so we can safely ignore the exhaustive-deps rule here
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMinifyEnabled])
+  }, [isMinifyEnabled, section])
 
   return (
     <>
-      {settings.map(({ name, label, checked }) => (
-        <FormControlLabel key={name} control={<Checkbox name={name} color='primary' />} label={label} checked={checked} onChange={handleChange} />
-      ))}
+      {settings
+        .filter(
+          ({ name }) => section === 'all' || (section === 'sending' ? name === 'isPreventThreadingEnabled' : name !== 'isPreventThreadingEnabled')
+        )
+        .map(({ name, label, checked }) => (
+          <FormControlLabel key={name} control={<Checkbox name={name} color='primary' />} label={label} checked={checked} onChange={handleChange} />
+        ))}
     </>
   )
 }

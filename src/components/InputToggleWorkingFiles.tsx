@@ -1,6 +1,5 @@
 import ToggleOffIcon from '@mui/icons-material/ToggleOff'
 import ToggleOnIcon from '@mui/icons-material/ToggleOn'
-import { Tooltip } from '@mui/material'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
@@ -14,9 +13,11 @@ import {
 import { logError } from '../utils/logError'
 import { updateFirestoreDoc } from '../utils/updateFirestoreDoc'
 
-import { StyledIconButton } from './StyledIconButton'
+import EditorActionButton from './EditorActionButton'
 
-const InputToggleWorkingFiles = () => {
+import type { EditorActionProps } from '../interfaces'
+
+const InputToggleWorkingFiles = (props: EditorActionProps) => {
   const { hideWorkingFiles, setHideWorkingFiles } = useEditorConfigContext()
 
   const handleOpen = async () => {
@@ -38,11 +39,9 @@ const InputToggleWorkingFiles = () => {
 
   return (
     <>
-      <Tooltip title={handleToggleButtonLabel}>
-        <StyledIconButton onClick={handleOpen} aria-label={handleToggleButtonLabel}>
-          {hideWorkingFiles ? <ToggleOffIcon /> : <ToggleOnIcon />}
-        </StyledIconButton>
-      </Tooltip>
+      <EditorActionButton {...props} onClick={handleOpen} label={handleToggleButtonLabel} isSelected={!hideWorkingFiles}>
+        {hideWorkingFiles ? <ToggleOffIcon /> : <ToggleOnIcon />}
+      </EditorActionButton>
     </>
   )
 }
