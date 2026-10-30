@@ -41,7 +41,7 @@ const EditorSettingsDrawer = (): ReactElement => {
         </StyledIconButton>
       </Tooltip>
       <Drawer
-        anchor='left'
+        anchor='right'
         open={isOpen}
         onClose={handleClose}
         ModalProps={{ keepMounted: true }}
