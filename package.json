@@ -34,7 +34,7 @@
     "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^7.3.7",
-    "@mui/material": "^7.3.7",
+    "@mui/material": "^9.5.0",
     "clsx": "^2.1.1",
     "firebase": "^12.8.0",
     "js-beautify": "^1.15.4",
