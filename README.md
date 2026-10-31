@@ -144,6 +144,26 @@ This builds the client, then deploys both hosting and Cloud Functions to Firebas
 
 For partial deploys, use `npm run deploy:hosting` or `npm run deploy:functions`.
 
+### Working-file order and Firestore rules
+
+Working files remain shared, but each signed-in user's sidebar order is saved separately in
+`userPreferences/{uid}` as `workingFileOrder`, an array of file IDs. Drag a file using its handle,
+or click/tap the handle to open its Move up/Move down menu. With the handle focused, press Enter
+to open the menu, or Space to start dragging, arrow keys to move, and Space to drop (Escape cancels).
+Locked files can still be reordered. Newly encountered files append to the list; deleted IDs are ignored. The latest
+saved order wins when the same account uses multiple devices.
+
+**Release prerequisite:** Firestore rules are managed outside this repository. Before deploying
+this feature, review/update the Firebase Console rules so authenticated users can read/write
+only their own `userPreferences/{uid}` document. Validate the allowed preference fields and
+array type, and inspect overlapping rules: a broad allow rule can defeat UID isolation.
+Verify that own-UID reads/writes succeed and other-UID reads/writes fail in the managed rules
+test environment. Keep existing working-file access rules unchanged.
+
+Preference permission/load failures disable reordering and show a retry action; selecting
+files still works. Failed saves restore the confirmed order and show an error rather than
+silently switching to browser-only persistence.
+
 ## Project Structure
 
 ```

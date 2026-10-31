@@ -45,7 +45,7 @@ const EditorContainer = () => {
 
   return (
     <Split className='split-component' sizes={sizes} minSize={EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM} onDragEnd={handleDragEnd} onDrag={handleDrag}>
-      <Box className={workingFilesClassName}>
+      <Box className={workingFilesClassName} sx={{ minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
         <EditorWorkingFiles />
       </Box>
       <Box sx={{ flexGrow: 1 }}>

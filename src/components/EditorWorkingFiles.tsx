@@ -1,19 +1,61 @@
-import LockIcon from '@mui/icons-material/Lock'
-import { Box, Button, Tooltip } from '@mui/material'
+import {
+  closestCenter,
+  DndContext,
+  KeyboardCode,
+  KeyboardSensor,
+  MouseSensor,
+  pointerWithin,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { Alert, Box, Button, Typography } from '@mui/material'
 import { useEffect } from 'react'
 
 import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
-import { WorkingFile } from '../interfaces'
 import { subscribeToWorkingFiles } from '../services/workingFilesService'
-import { BTN_VARIANT_CONTAINED, BTN_VARIANT_OUTLINED } from '../utils/constants'
+import { visuallyHiddenStyles } from '../styles/global.styles'
+import {
+  WORKING_FILES_DRAG_CANCELLED,
+  WORKING_FILES_DRAG_ENDED,
+  WORKING_FILES_DRAG_INSTRUCTIONS,
+  WORKING_FILES_DRAG_OVER,
+  WORKING_FILES_DRAG_STARTED,
+  WORKING_FILES_LABEL,
+  WORKING_FILES_LOADING,
+  WORKING_FILES_RETRY_LABEL,
+} from '../utils/constants'
 import { logError } from '../utils/logError'
 import { useRenderCount } from '../utils/useRenderCount'
+import { useWorkingFileOrder } from '../utils/useWorkingFileOrder'
+
+import SortableWorkingFile from './SortableWorkingFile'
+
+import type { WorkingFile } from '../interfaces'
+import type { CollisionDetection, DragEndEvent } from '@dnd-kit/core'
+
+const collisionDetection: CollisionDetection = (args) => (args.pointerCoordinates ? pointerWithin(args) : closestCenter(args))
 
 const EditorWorkingFiles = () => {
   useRenderCount('EditorWorkingFiles')
   const { setHtml, setText, setAmp, workingFileID, setWorkingFileID, setWorkingFileName, files, setFiles, setIsFileLocked } = useEditorContext()
   const { user } = useAuthContext()
+  const uid = user?.uid
+  const { orderedFiles, canReorder, isLoading, isSaving, error, hasLoadError, announcement, moveFile, retryLoading } = useWorkingFileOrder(uid, files)
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+      keyboardCodes: {
+        start: [KeyboardCode.Space],
+        cancel: [KeyboardCode.Esc],
+        end: [KeyboardCode.Space, KeyboardCode.Enter, KeyboardCode.Tab],
+      },
+    })
+  )
 
   const handleClick = (file: WorkingFile) => {
     setHtml(file.html)
@@ -25,79 +67,86 @@ const EditorWorkingFiles = () => {
   }
 
   useEffect(() => {
-    if (!user) return
+    if (!uid) return
+    let isActive = true
     const unsubscribe = subscribeToWorkingFiles(
-      (workingFiles) => setFiles(workingFiles),
+      (workingFiles) => {
+        if (isActive) setFiles(workingFiles)
+      },
       (error) => logError('An error occurred while fetching working files', 'EditorWorkingFiles', error)
     )
-    return () => unsubscribe()
-  }, [user, setFiles])
+    return () => {
+      isActive = false
+      unsubscribe()
+    }
+  }, [uid, setFiles])
 
   useEffect(() => {
     const currentFile = files.find((file) => file.id === workingFileID)
     setIsFileLocked(currentFile?.isFileLocked || false)
   }, [files, workingFileID, setIsFileLocked])
 
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return
+    const destination = orderedFiles.findIndex((file) => file.id === over.id)
+    void moveFile(String(active.id), destination)
+  }
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, padding: 0.5 }} className='editor-working-files'>
-      {files.length > 0 &&
-        files.map((file) => (
-          <Button
-            variant={workingFileID === file.id ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
-            onClick={() => handleClick(file)}
-            key={file.id}
-            sx={{ justifyContent: 'flex-start', position: 'relative', paddingLeft: 2, paddingRight: 4 }}>
-            {file.isFileLocked && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  right: 8,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  zIndex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  height: '100%',
-                }}>
-                <LockIcon fontSize='inherit' sx={{ fontSize: 12 }} />
-              </Box>
-            )}
-            <Tooltip
-              title={file.fileName}
-              arrow
-              enterDelay={1500}
-              leaveDelay={0}
-              slotProps={{
-                tooltip: {
-                  sx: {
-                    backgroundColor: '#252526',
-                    color: '#d4d4d4',
-                    fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-                    fontSize: 13,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                    border: '1px solid #333',
-                    padding: '6px 12px',
-                  },
-                },
-                arrow: {
-                  sx: {
-                    color: '#252526',
-                  },
-                },
-              }}>
-              <Box
-                sx={{
-                  width: '100%',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}>
-                {file.fileName}
-              </Box>
-            </Tooltip>
-          </Button>
-        ))}
+    <Box sx={{ p: 0.5, minWidth: 0 }} className='editor-working-files'>
+      {isLoading && (
+        <Typography variant='caption' aria-hidden='true'>
+          {WORKING_FILES_LOADING}
+        </Typography>
+      )}
+      <Box role='status' aria-live='polite' aria-atomic='true' sx={visuallyHiddenStyles}>
+        {announcement || (isLoading ? WORKING_FILES_LOADING : '')}
+      </Box>
+      {error && (
+        <Alert severity='error' sx={{ overflowWrap: 'anywhere' }}>
+          {error}
+          {hasLoadError && (
+            <Button onClick={retryLoading} disabled={isSaving} sx={{ minHeight: 44 }}>
+              {WORKING_FILES_RETRY_LABEL}
+            </Button>
+          )}
+        </Alert>
+      )}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetection}
+        onDragEnd={handleDragEnd}
+        accessibility={{
+          screenReaderInstructions: { draggable: WORKING_FILES_DRAG_INSTRUCTIONS },
+          announcements: {
+            onDragStart: ({ active }) => `${orderedFiles.find((file) => file.id === active.id)?.fileName}. ${WORKING_FILES_DRAG_STARTED}`,
+            onDragOver: ({ over }) =>
+              over ? `${WORKING_FILES_DRAG_OVER} ${orderedFiles.findIndex((file) => file.id === over.id) + 1}.` : WORKING_FILES_DRAG_CANCELLED,
+            onDragEnd: () => WORKING_FILES_DRAG_ENDED,
+            onDragCancel: () => WORKING_FILES_DRAG_CANCELLED,
+          },
+        }}>
+        <SortableContext items={orderedFiles.map((file) => file.id)} strategy={verticalListSortingStrategy}>
+          <Box
+            component='ul'
+            aria-label={WORKING_FILES_LABEL}
+            aria-busy={isSaving}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, listStyle: 'none', p: 0, m: 0 }}>
+            {orderedFiles.map((file, index) => (
+              <SortableWorkingFile
+                key={file.id}
+                file={file}
+                index={index}
+                total={orderedFiles.length}
+                isSelected={workingFileID === file.id}
+                canReorder={canReorder && orderedFiles.length > 1}
+                onSelect={handleClick}
+                onMove={moveFile}
+              />
+            ))}
+          </Box>
+        </SortableContext>
+      </DndContext>
     </Box>
   )
 }
