@@ -7,14 +7,13 @@ import { settingsDrawerStyles, visuallyHiddenStyles } from '../styles/global.sty
 import {
   LABEL_CLOSE,
   SETTINGS_APPEARANCE_LABEL,
-  SETTINGS_AUTOSAVE_LABEL,
   SETTINGS_CONTENT_OPTIONS_LABEL,
   SETTINGS_FONT_SIZE_LABEL,
   SETTINGS_SENDING_LABEL,
-  SETTINGS_THEME_HELPER_TEXT,
   TOOLBAR_SETTINGS_LABEL,
 } from '../utils/constants'
 
+import AppVersion from './AppVersion'
 import FontSizeControls from './FontSizeControls'
 import InputMarkupSettings from './InputMarkupSettings'
 import InputSenderSettings from './InputSenderSettings'
@@ -58,19 +57,21 @@ const EditorSettingsDrawer = (): ReactElement => {
           </IconButton>
         </Box>
         <Divider />
-        <Stack spacing={3} divider={<Divider />} sx={{ p: 2, overflowY: 'auto', minHeight: 0 }}>
+        <Stack spacing={2} sx={{ p: 2, overflowY: 'auto', minHeight: 0 }}>
           <Stack component='section' aria-labelledby='content-options-heading' spacing={1} useFlexGap>
             <Typography id='content-options-heading' component='h3' sx={visuallyHiddenStyles}>
               {SETTINGS_CONTENT_OPTIONS_LABEL}
             </Typography>
             <InputMarkupSettings />
           </Stack>
+          <Divider />
           <Stack component='section' aria-labelledby='sending-settings-heading' spacing={2} useFlexGap>
             <Typography id='sending-settings-heading' component='h3' sx={visuallyHiddenStyles}>
               {SETTINGS_SENDING_LABEL}
             </Typography>
             <InputSenderSettings />
           </Stack>
+          <Divider />
           <Stack component='section' aria-labelledby='appearance-settings-heading' spacing={2} useFlexGap>
             <Typography id='appearance-settings-heading' component='h3' sx={visuallyHiddenStyles}>
               {SETTINGS_APPEARANCE_LABEL}
@@ -86,13 +87,8 @@ const EditorSettingsDrawer = (): ReactElement => {
             <InputThemeToggle />
             <InputToggleEditorTheme />
             <InputTogglePreviewTheme />
-            <Typography variant='body2' color='text.secondary'>
-              {SETTINGS_THEME_HELPER_TEXT}
-            </Typography>
           </Stack>
-          <Typography variant='body2' color='text.secondary'>
-            {SETTINGS_AUTOSAVE_LABEL}
-          </Typography>
+          <AppVersion />
         </Stack>
       </Drawer>
     </>

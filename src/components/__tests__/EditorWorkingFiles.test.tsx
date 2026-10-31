@@ -107,6 +107,21 @@ describe('EditorWorkingFiles', () => {
     expect(select).not.toContainElement(handle)
   })
 
+  it('does not show tooltips over file names or reorder handles', () => {
+    vi.useFakeTimers()
+    try {
+      render(<EditorWorkingFiles />)
+      for (const button of [screen.getByRole('button', { name: 'File One' }), screen.getByRole('button', { name: 'Reorder File One' })]) {
+        fireEvent.mouseOver(button)
+        act(() => vi.advanceTimersByTime(2000))
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+        fireEvent.mouseOut(button)
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('shows lock icon on locked files', () => {
     render(<EditorWorkingFiles />)
     const lockIcons = document.querySelectorAll('[data-testid="LockIcon"]')
@@ -130,6 +145,89 @@ describe('EditorWorkingFiles', () => {
     expect(mockSetWorkingFileID).toHaveBeenCalledWith('2')
     expect(mockSetWorkingFileName).toHaveBeenCalledWith('File Two')
     expect(mockSetIsFileLocked).toHaveBeenCalledWith(true)
+  })
+
+  it('drags from a file name without selecting it on drop', async () => {
+    render(<EditorWorkingFiles />)
+    const label = screen.getByText('File Two')
+    const handle = screen.getByRole('button', { name: 'Reorder File Two' })
+    fireEvent.mouseDown(label, { button: 0, clientX: 100, clientY: 110 })
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 120 })
+    await waitFor(() => expect(handle).toHaveAttribute('aria-pressed', 'true'))
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 20 })
+    fireEvent.mouseUp(document)
+    fireEvent.click(label)
+
+    await waitFor(() => expect(saveWorkingFileOrder).toHaveBeenCalledWith('abc', ['2', '1']))
+    expect(fileNames()).toEqual(['File Two', 'File One'])
+    expect(mockSetWorkingFileID).not.toHaveBeenCalled()
+    expect(mockSetHtml).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'File One', pressed: true })).toBeInTheDocument()
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument()
+    // dnd-kit removes its post-drop click-suppression listener after 50ms.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    })
+  })
+
+  it('shows a separate preview for the active file and removes it when dragging is cancelled', async () => {
+    render(<EditorWorkingFiles />)
+    const label = screen.getByText('File One')
+    fireEvent.mouseDown(label, { button: 0, clientX: 100, clientY: 20 })
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 30 })
+    await waitFor(() => expect(screen.getAllByText('File One')).toHaveLength(2))
+    expect(screen.getAllByRole('button', { name: 'File One', pressed: true })).toHaveLength(1)
+    expect(screen.getAllByText('File One').some((name) => name.closest('[aria-hidden="true"]'))).toBe(true)
+
+    fireEvent.keyDown(document, { key: 'Escape', code: 'Escape' })
+
+    await waitFor(() => expect(screen.getAllByText('File One')).toHaveLength(1))
+    expect(screen.getByRole('button', { name: 'File One', pressed: true })).toBeInTheDocument()
+    expect(saveWorkingFileOrder).not.toHaveBeenCalled()
+    expect(mockSetWorkingFileID).not.toHaveBeenCalled()
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    })
+  })
+
+  it('still selects a file when mouse movement stays below the drag threshold', () => {
+    render(<EditorWorkingFiles />)
+    const label = screen.getByText('File Two')
+    fireEvent.mouseDown(label, { button: 0, clientX: 100, clientY: 110 })
+    fireEvent.mouseMove(document, { clientX: 100, clientY: 115 })
+    fireEvent.mouseUp(document)
+    fireEvent.click(label)
+
+    expect(mockSetWorkingFileID).toHaveBeenCalledWith('2')
+    expect(saveWorkingFileOrder).not.toHaveBeenCalled()
+  })
+
+  it('does not start dragging from a file name on touch', async () => {
+    render(<EditorWorkingFiles />)
+    const label = screen.getByText('File Two')
+    fireEvent.touchStart(label, { touches: [{ identifier: 0, target: label, clientX: 100, clientY: 110 }] })
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 250))
+    })
+    fireEvent.touchMove(label, { touches: [{ identifier: 0, target: label, clientX: 100, clientY: 20 }] })
+    fireEvent.touchEnd(label, { touches: [], changedTouches: [{ identifier: 0, clientX: 100, clientY: 20 }] })
+
+    expect(screen.getByRole('button', { name: 'Reorder File Two' })).not.toHaveAttribute('aria-pressed', 'true')
+    expect(saveWorkingFileOrder).not.toHaveBeenCalled()
+  })
+
+  it('does not activate row dragging through the portaled move menu', async () => {
+    render(<EditorWorkingFiles />)
+    const handle = openMoveMenu('File Two')
+    const moveUp = screen.getByRole('menuitem', { name: 'Move up File Two' })
+    fireEvent.mouseDown(moveUp, { button: 0, clientX: 20, clientY: 110 })
+    fireEvent.mouseMove(document, { clientX: 20, clientY: 130 })
+    fireEvent.mouseUp(document)
+    expect(handle).not.toHaveAttribute('aria-pressed', 'true')
+
+    fireEvent.click(moveUp)
+    await waitFor(() => expect(saveWorkingFileOrder).toHaveBeenCalledWith('abc', ['2', '1']))
+    expect(mockSetWorkingFileID).not.toHaveBeenCalled()
   })
 
   it('moves a locked file without selecting it, keeps focus and selection, and announces the result', async () => {

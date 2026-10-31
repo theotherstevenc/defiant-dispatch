@@ -1,5 +1,80 @@
 import { PREVIEW_DARK_MODE, PREVIEW_LIGHT_MODE } from '../utils/constants'
 
+import { EDITOR_SCROLLBAR_COLORS } from './global.theme'
+
+import type { Theme } from '@mui/material/styles'
+
+export const workingFilesPaneStyles = {
+  display: 'flex',
+  minWidth: 0,
+  minHeight: 0,
+  overflow: 'hidden',
+}
+
+export const workingFilesScrollAreaStyles = (theme: Theme) => ({
+  position: 'relative',
+  flex: 1,
+  minWidth: 0,
+  minHeight: 0,
+  '& .working-files-scrollbar': {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 14,
+    zIndex: 1,
+    touchAction: 'none',
+    userSelect: 'none',
+    opacity: 0,
+    pointerEvents: 'none',
+    transition: 'opacity 800ms linear',
+    '&:focus-visible': {
+      outline: '2px solid',
+      outlineColor: 'primary.main',
+      outlineOffset: -2,
+    },
+  },
+  '&:hover .working-files-scrollbar, &:has(:focus-visible) .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar': {
+    opacity: 1,
+    pointerEvents: 'auto',
+    transition: 'opacity 100ms',
+  },
+  '& .working-files-scrollbar-thumb': {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    bgcolor: EDITOR_SCROLLBAR_COLORS[theme.palette.mode].thumb,
+    '&:hover': {
+      bgcolor: EDITOR_SCROLLBAR_COLORS[theme.palette.mode].hover,
+    },
+  },
+  '&[data-dragging="true"] .working-files-scrollbar-thumb': {
+    bgcolor: EDITOR_SCROLLBAR_COLORS[theme.palette.mode].active,
+  },
+  '@media (hover: none), (pointer: coarse)': {
+    '& .working-files-scrollbar': {
+      opacity: 1,
+      pointerEvents: 'auto',
+    },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    '& .working-files-scrollbar, &:hover .working-files-scrollbar, &:has(:focus-visible) .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar':
+      {
+        transition: 'none',
+      },
+  },
+})
+
+export const workingFilesViewportStyles = {
+  height: '100%',
+  overflowY: 'auto',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+}
+
 export const workspacePreviewIframeStyles = (isDarkMode: boolean) => ({
   width: '100%',
   height: '100%',
@@ -29,8 +104,8 @@ export const editorWorkspaceStyles = {
 }
 
 export const inputConfigStyles = {
-  display: 'flex',
-  flexDirection: 'row',
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr auto', sm: 'auto minmax(0, 1fr) auto' },
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: 1,
@@ -56,6 +131,55 @@ export const inputConfigStyles = {
       bgcolor: 'action.selected',
       color: 'primary.main',
     },
+  },
+}
+
+export const editorToolbarStartStyles = {
+  gridColumn: 1,
+  gridRow: 1,
+}
+
+export const editorToolbarEndStyles = {
+  gridColumn: { xs: 2, sm: 3 },
+  gridRow: 1,
+}
+
+export const editorFileStatusStyles = {
+  minWidth: 0,
+  gridColumn: { xs: '1 / -1', sm: 2 },
+  gridRow: { xs: 2, sm: 1 },
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  minHeight: 44,
+  px: 1,
+  py: 0.5,
+  color: 'text.primary',
+}
+
+export const fileStatusTextStyles = {
+  display: 'block',
+  width: '100%',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  textAlign: 'center',
+}
+
+export const appVersionStyles = {
+  minHeight: 44,
+  justifyContent: 'flex-start',
+  p: 1,
+  color: 'text.secondary',
+  typography: 'caption',
+  textTransform: 'none',
+}
+
+export const captainsLogStyles = {
+  '& .MuiIconButton-root': {
+    minWidth: 44,
+    minHeight: 44,
   },
 }
 
@@ -103,13 +227,28 @@ export const visuallyHiddenStyles = {
   whiteSpace: 'nowrap',
 }
 
-export const workingFileRowStyles = {
+export const workingFileRowStyles = (theme: Theme) => ({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
   minWidth: 0,
   border: 1,
   borderRadius: 1,
+  '&:hover': {
+    backgroundImage: `linear-gradient(${theme.palette.action.hover}, ${theme.palette.action.hover})`,
+  },
+})
+
+export const workingFileAppearanceStyles = (isSelected: boolean) => ({
+  bgcolor: isSelected ? 'primary.main' : 'background.paper',
+  color: isSelected ? 'primary.contrastText' : 'primary.main',
+  borderColor: isSelected ? 'primary.main' : 'divider',
+})
+
+export const workingFileDragHandleStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 }
 
 export const workingFileSelectStyles = {
@@ -123,10 +262,11 @@ export const workingFileSelectStyles = {
   borderRadius: 'inherit',
   bgcolor: 'transparent',
   color: 'inherit',
+  cursor: 'inherit',
   boxShadow: 'none',
   '&:hover': {
     border: 0,
-    bgcolor: 'action.hover',
+    bgcolor: 'transparent',
     boxShadow: 'none',
   },
   '&:focus-visible': {
@@ -140,6 +280,9 @@ export const workingFileControlStyles = {
   width: 44,
   height: 44,
   flexShrink: 0,
+  '&:hover': {
+    bgcolor: 'transparent',
+  },
   '&[aria-disabled="true"]': {
     color: 'action.disabled',
     cursor: 'default',

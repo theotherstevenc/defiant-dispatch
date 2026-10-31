@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { describe, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, it, vi } from 'vitest'
 
 import App from './App'
 import { EditorConfigProvider } from './context/EditorConfigContext'
@@ -31,6 +31,17 @@ vi.mock('./context/EmailSettingsContext', () => ({
 }))
 
 describe('App', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe = vi.fn()
+        disconnect = vi.fn()
+      }
+    )
+  })
+  afterEach(() => vi.unstubAllGlobals())
+
   it('renders without crashing', () => {
     render(
       <EditorConfigProvider>

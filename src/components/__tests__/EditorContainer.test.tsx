@@ -13,6 +13,10 @@ vi.mock('../EditorWorkspacePreview', () => ({
   default: () => <div data-testid='workspace-preview'>Workspace Preview</div>,
 }))
 
+vi.mock('../WorkingFilesScrollArea', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}))
+
 vi.mock('react-split', () => ({
   default: ({ children }: { children: React.ReactNode }) => <div data-testid='split'>{children}</div>,
 }))

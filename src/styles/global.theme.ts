@@ -2,6 +2,19 @@ import { createTheme } from '@mui/material/styles'
 
 import { FOCUS_OUTLINE_COLOR } from '../utils/constants'
 
+export const EDITOR_SCROLLBAR_COLORS = {
+  light: {
+    thumb: '#64646466',
+    hover: '#646464b3',
+    active: '#00000099',
+  },
+  dark: {
+    thumb: '#79797966',
+    hover: '#646464b3',
+    active: '#bfbfbf66',
+  },
+}
+
 const focusVisible = {
   outline: '2px solid ' + FOCUS_OUTLINE_COLOR,
   outlineOffset: '2px',
