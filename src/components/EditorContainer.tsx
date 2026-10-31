@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Split from 'react-split'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
+import { workingFilesPaneStyles } from '../styles/global.styles'
 import {
   EDITOR_CONTAINER_SPLIT_SIZES_DEFAULT,
   EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM,
@@ -13,6 +14,7 @@ import usePersistentValue from '../utils/usePersistentValue'
 
 import EditorWorkingFiles from './EditorWorkingFiles'
 import EditorWorkspacePreview from './EditorWorkspacePreview'
+import WorkingFilesScrollArea from './WorkingFilesScrollArea'
 
 const EditorContainer = () => {
   const { hideWorkingFiles, setHideWorkingFiles } = useEditorConfigContext()
@@ -45,8 +47,10 @@ const EditorContainer = () => {
 
   return (
     <Split className='split-component' sizes={sizes} minSize={EDITOR_CONTAINER_SPLIT_SIZES_MINIMUM} onDragEnd={handleDragEnd} onDrag={handleDrag}>
-      <Box className={workingFilesClassName} sx={{ minWidth: 0, minHeight: 0, overflowY: 'auto' }}>
-        <EditorWorkingFiles />
+      <Box className={workingFilesClassName} sx={workingFilesPaneStyles}>
+        <WorkingFilesScrollArea>
+          <EditorWorkingFiles />
+        </WorkingFilesScrollArea>
       </Box>
       <Box sx={{ flexGrow: 1 }}>
         <EditorWorkspacePreview />

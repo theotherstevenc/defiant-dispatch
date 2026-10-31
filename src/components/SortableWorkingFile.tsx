@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import LockIcon from '@mui/icons-material/Lock'
-import { Box, Button, IconButton, Menu, MenuItem, Tooltip, useMediaQuery } from '@mui/material'
+import { Box, Button, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material'
 import { useId, useState } from 'react'
 
 import { workingFileControlStyles, workingFileRowStyles, workingFileSelectStyles } from '../styles/global.styles'
@@ -10,7 +10,6 @@ import {
   BTN_VARIANT_CONTAINED,
   BTN_VARIANT_OUTLINED,
   WORKING_FILES_DRAG_LABEL,
-  WORKING_FILES_HANDLE_HINT,
   WORKING_FILES_LOCKED_LABEL,
   WORKING_FILES_MOVE_DOWN_LABEL,
   WORKING_FILES_MOVE_UP_LABEL,
@@ -65,46 +64,42 @@ const SortableWorkingFile = ({ file, index, total, isSelected, canReorder, onSel
         transition,
         zIndex: isDragging ? 1 : undefined,
       }}>
-      <Tooltip title={WORKING_FILES_HANDLE_HINT}>
-        <IconButton
-          id={handleId}
-          ref={setActivatorNodeRef}
-          {...attributes}
-          {...listeners}
-          aria-label={`${WORKING_FILES_DRAG_LABEL} ${file.fileName}`}
-          aria-haspopup='menu'
-          aria-expanded={isMenuOpen}
-          aria-controls={isMenuOpen ? menuId : undefined}
-          onClick={(event) => {
-            if (!canReorder || isSorting) return
-            event.currentTarget.focus()
-            setAnchorEl(event.currentTarget)
-          }}
-          sx={[
-            workingFileControlStyles,
-            {
-              color: isSelected ? 'primary.contrastText' : 'text.secondary',
-              touchAction: 'none',
-              cursor: canReorder ? (isDragging ? 'grabbing' : 'grab') : 'default',
-              '&:focus-visible': { outlineColor: isSelected ? 'primary.contrastText' : 'primary.main' },
-            },
-          ]}>
-          <DragIndicatorIcon fontSize='small' />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title={file.fileName} enterDelay={1500}>
-        <Button
-          variant={isSelected ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
-          aria-pressed={isSelected}
-          aria-label={file.isFileLocked ? `${file.fileName}, ${WORKING_FILES_LOCKED_LABEL}` : file.fileName}
-          onClick={() => onSelect(file)}
-          endIcon={file.isFileLocked ? <LockIcon fontSize='small' /> : undefined}
-          sx={workingFileSelectStyles}>
-          <Box component='span' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {file.fileName}
-          </Box>
-        </Button>
-      </Tooltip>
+      <IconButton
+        id={handleId}
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        aria-label={`${WORKING_FILES_DRAG_LABEL} ${file.fileName}`}
+        aria-haspopup='menu'
+        aria-expanded={isMenuOpen}
+        aria-controls={isMenuOpen ? menuId : undefined}
+        onClick={(event) => {
+          if (!canReorder || isSorting) return
+          event.currentTarget.focus()
+          setAnchorEl(event.currentTarget)
+        }}
+        sx={[
+          workingFileControlStyles,
+          {
+            color: isSelected ? 'primary.contrastText' : 'text.secondary',
+            touchAction: 'none',
+            cursor: canReorder ? (isDragging ? 'grabbing' : 'grab') : 'default',
+            '&:focus-visible': { outlineColor: isSelected ? 'primary.contrastText' : 'primary.main' },
+          },
+        ]}>
+        <DragIndicatorIcon fontSize='small' />
+      </IconButton>
+      <Button
+        variant={isSelected ? BTN_VARIANT_CONTAINED : BTN_VARIANT_OUTLINED}
+        aria-pressed={isSelected}
+        aria-label={file.isFileLocked ? `${file.fileName}, ${WORKING_FILES_LOCKED_LABEL}` : file.fileName}
+        onClick={() => onSelect(file)}
+        endIcon={file.isFileLocked ? <LockIcon fontSize='small' /> : undefined}
+        sx={workingFileSelectStyles}>
+        <Box component='span' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {file.fileName}
+        </Box>
+      </Button>
       <Menu id={menuId} anchorEl={anchorEl} open={isMenuOpen} onClose={handleClose} slotProps={{ list: { 'aria-labelledby': handleId } }}>
         <MenuItem
           aria-label={`${WORKING_FILES_MOVE_UP_LABEL} ${file.fileName}`}

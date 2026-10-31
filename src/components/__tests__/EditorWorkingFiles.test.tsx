@@ -107,6 +107,21 @@ describe('EditorWorkingFiles', () => {
     expect(select).not.toContainElement(handle)
   })
 
+  it('does not show tooltips over file names or reorder handles', () => {
+    vi.useFakeTimers()
+    try {
+      render(<EditorWorkingFiles />)
+      for (const button of [screen.getByRole('button', { name: 'File One' }), screen.getByRole('button', { name: 'Reorder File One' })]) {
+        fireEvent.mouseOver(button)
+        act(() => vi.advanceTimersByTime(2000))
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+        fireEvent.mouseOut(button)
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('shows lock icon on locked files', () => {
     render(<EditorWorkingFiles />)
     const lockIcons = document.querySelectorAll('[data-testid="LockIcon"]')
