@@ -1,6 +1,6 @@
 import { PREVIEW_DARK_MODE, PREVIEW_LIGHT_MODE } from '../utils/constants'
 
-import { EDITOR_SCROLLBAR_COLORS } from './global.theme'
+import { EDITOR_SCROLLBAR_COLORS, EDITOR_SCROLLBAR_SIZES } from './global.theme'
 
 import type { Theme } from '@mui/material/styles'
 
@@ -21,7 +21,7 @@ export const workingFilesScrollAreaStyles = (theme: Theme) => ({
     top: 0,
     right: 0,
     bottom: 0,
-    width: 14,
+    width: EDITOR_SCROLLBAR_SIZES.vertical,
     zIndex: 1,
     touchAction: 'none',
     userSelect: 'none',
@@ -165,22 +165,7 @@ export const fileStatusTextStyles = {
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   textAlign: 'center',
-}
-
-export const appVersionStyles = {
-  minHeight: 44,
-  justifyContent: 'flex-start',
-  p: 1,
-  color: 'text.secondary',
-  typography: 'caption',
-  textTransform: 'none',
-}
-
-export const captainsLogStyles = {
-  '& .MuiIconButton-root': {
-    minWidth: 44,
-    minHeight: 44,
-  },
+  textTransform: 'uppercase',
 }
 
 export const commandGroupStyles = {
@@ -188,6 +173,76 @@ export const commandGroupStyles = {
   flexDirection: 'row',
   gap: 0.5,
   flexShrink: 0,
+}
+
+export const editorMenuPaperStyles = (theme: Theme) => ({
+  minWidth: theme.spacing(30),
+  maxWidth: `calc(100vw - ${theme.spacing(4)})`,
+  mb: 1,
+  border: 1,
+  borderColor: 'divider',
+  borderRadius: 3,
+  boxShadow: 6,
+  '& .MuiMenu-list': {
+    p: 0.75,
+  },
+  '& .MuiMenuItem-root': {
+    minHeight: 48,
+    px: 1.5,
+    my: 0.25,
+    borderRadius: 2,
+  },
+  '& .MuiListItemIcon-root': {
+    minWidth: 36,
+    '& .MuiSvgIcon-root': {
+      fontSize: 20,
+    },
+  },
+  '& .MuiListItemText-primary': {
+    ...theme.typography.body2,
+    fontWeight: 500,
+  },
+  '& .MuiDivider-root': {
+    mx: 1.5,
+    my: 1,
+  },
+})
+
+export const editorDialogPaperStyles = {
+  borderRadius: 4,
+  '& .MuiDialogTitle-root': {
+    p: 3,
+    pr: 8,
+    pb: 2,
+    fontWeight: 600,
+    '& .MuiIconButton-root': {
+      top: 16,
+      right: 16,
+      minWidth: 44,
+      minHeight: 44,
+    },
+  },
+  '& .MuiDialogContent-root': {
+    px: 3,
+    pb: 3,
+  },
+  '& .MuiDialogTitle-root + .MuiDialogContent-root': {
+    pt: 1,
+  },
+  '& .MuiFilledInput-root': {
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  '& .MuiDialogActions-root': {
+    px: 3,
+    py: 2,
+    gap: 1,
+    '& .MuiButton-root': {
+      minHeight: 44,
+      px: 2,
+      borderRadius: 2,
+    },
+  },
 }
 
 export const settingsDrawerStyles = {

@@ -2,6 +2,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen'
 import { Divider, Menu, Tooltip } from '@mui/material'
 import { useState } from 'react'
 
+import { editorMenuPaperStyles } from '../styles/global.styles'
 import { TOOLBAR_FILE_LABEL } from '../utils/constants'
 
 import InputCreateNewFile from './InputCreateNewFile'
@@ -38,7 +39,7 @@ const EditorFileMenu = (): ReactElement => {
         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         keepMounted
-        slotProps={{ list: { 'aria-labelledby': 'editor-file-button' } }}>
+        slotProps={{ paper: { sx: editorMenuPaperStyles }, list: { 'aria-labelledby': 'editor-file-button' } }}>
         <InputCreateNewFile isMenuItem onAction={handleClose} />
         <InputUpdateFiles isMenuItem onAction={handleClose} />
         <InputFileUpload isMenuItem onAction={handleClose} />

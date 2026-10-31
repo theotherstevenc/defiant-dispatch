@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
 import { deleteWorkingFile } from '../services/workingFilesService'
-import { iconButtonStyles } from '../styles/global.styles'
+import { editorDialogPaperStyles, iconButtonStyles } from '../styles/global.styles'
 import {
   BTN_LABEL_CANCEL,
   BTN_LABEL_CONFIRM,
@@ -60,7 +60,7 @@ const InputDeleteFile = (props: EditorActionProps) => {
         <DeleteIcon />
       </EditorActionButton>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} slotProps={{ paper: { sx: editorDialogPaperStyles } }}>
         <DialogTitle>
           {BTN_LABEL_DELETE_CONFIRM}
           <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles}>
@@ -76,7 +76,7 @@ const InputDeleteFile = (props: EditorActionProps) => {
           <Button onClick={handleClose} color='secondary'>
             {BTN_LABEL_CANCEL}
           </Button>
-          <Button onClick={handleDeleteFile} color='primary' autoFocus>
+          <Button onClick={handleDeleteFile} color='primary' variant='contained' autoFocus>
             {BTN_LABEL_CONFIRM}
           </Button>
         </DialogActions>

@@ -2,6 +2,11 @@ import { createTheme } from '@mui/material/styles'
 
 import { FOCUS_OUTLINE_COLOR } from '../utils/constants'
 
+export const EDITOR_SCROLLBAR_SIZES = {
+  vertical: 7,
+  horizontal: 6,
+}
+
 export const EDITOR_SCROLLBAR_COLORS = {
   light: {
     thumb: '#64646466',

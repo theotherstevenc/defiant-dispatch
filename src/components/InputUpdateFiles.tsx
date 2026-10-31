@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { useEditorContext } from '../context/EditorContext'
 import { updateWorkingFile } from '../services/workingFilesService'
-import { iconButtonStyles } from '../styles/global.styles'
+import { editorDialogPaperStyles, iconButtonStyles } from '../styles/global.styles'
 import { BTN_LABEL_CANCEL, BTN_LABEL_OK, BTN_LABEL_UPDATE, BTN_LABEL_UPDATE_DIALOG, LABEL_CLOSE } from '../utils/constants'
 import { logError } from '../utils/logError'
 
@@ -53,7 +53,7 @@ const InputUpdateFiles = (props: EditorActionProps) => {
         <EditIcon />
       </EditorActionButton>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm' slotProps={{ paper: { sx: editorDialogPaperStyles } }}>
         <DialogTitle>
           {BTN_LABEL_UPDATE}
           <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles}>
@@ -63,7 +63,8 @@ const InputUpdateFiles = (props: EditorActionProps) => {
         <DialogContent>
           <TextField
             autoFocus
-            margin='dense'
+            margin='normal'
+            variant='filled'
             label={BTN_LABEL_UPDATE_DIALOG}
             type='text'
             fullWidth
@@ -83,7 +84,7 @@ const InputUpdateFiles = (props: EditorActionProps) => {
           <Button onClick={handleClose} color='secondary'>
             {BTN_LABEL_CANCEL}
           </Button>
-          <Button onClick={handleConfirm} color='primary'>
+          <Button onClick={handleConfirm} color='primary' variant='contained'>
             {BTN_LABEL_OK}
           </Button>
         </DialogActions>
