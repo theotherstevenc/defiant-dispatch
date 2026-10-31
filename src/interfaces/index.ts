@@ -37,6 +37,10 @@ export interface WorkingFile {
   isFileLocked: boolean
 }
 
+export interface WorkingFilePreferences {
+  workingFileOrder: string[]
+}
+
 export interface EditorContextProps {
   html: string
   setHtml: (html: string) => void

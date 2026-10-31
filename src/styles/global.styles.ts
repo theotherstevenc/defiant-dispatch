@@ -103,6 +103,54 @@ export const visuallyHiddenStyles = {
   whiteSpace: 'nowrap',
 }
 
+export const workingFileRowStyles = {
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  minWidth: 0,
+  border: 1,
+  borderRadius: 1,
+}
+
+export const workingFileSelectStyles = {
+  flex: '1 1 0',
+  minWidth: 0,
+  minHeight: 44,
+  maxWidth: '100%',
+  paddingLeft: 0,
+  justifyContent: 'flex-start',
+  border: 0,
+  borderRadius: 'inherit',
+  bgcolor: 'transparent',
+  color: 'inherit',
+  boxShadow: 'none',
+  '&:hover': {
+    border: 0,
+    bgcolor: 'action.hover',
+    boxShadow: 'none',
+  },
+  '&:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'currentColor',
+    outlineOffset: -2,
+  },
+}
+
+export const workingFileControlStyles = {
+  width: 44,
+  height: 44,
+  flexShrink: 0,
+  '&[aria-disabled="true"]': {
+    color: 'action.disabled',
+    cursor: 'default',
+  },
+  '&:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'primary.main',
+    outlineOffset: -2,
+  },
+}
+
 export const editorActionsStyles = {
   display: 'flex',
   gap: '0.175rem',
