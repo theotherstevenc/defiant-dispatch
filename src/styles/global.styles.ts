@@ -104,8 +104,8 @@ export const editorWorkspaceStyles = {
 }
 
 export const inputConfigStyles = {
-  display: 'flex',
-  flexDirection: 'row',
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr auto', sm: 'auto minmax(0, 1fr) auto' },
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: 1,
@@ -132,6 +132,39 @@ export const inputConfigStyles = {
       color: 'primary.main',
     },
   },
+}
+
+export const editorToolbarStartStyles = {
+  gridColumn: 1,
+  gridRow: 1,
+}
+
+export const editorToolbarEndStyles = {
+  gridColumn: { xs: 2, sm: 3 },
+  gridRow: 1,
+}
+
+export const editorFileStatusStyles = {
+  minWidth: 0,
+  gridColumn: { xs: '1 / -1', sm: 2 },
+  gridRow: { xs: 2, sm: 1 },
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  minHeight: 44,
+  px: 1,
+  py: 0.5,
+  color: 'text.primary',
+}
+
+export const fileStatusTextStyles = {
+  display: 'block',
+  width: '100%',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  textAlign: 'center',
 }
 
 export const commandGroupStyles = {
