@@ -86,8 +86,6 @@ const WorkingFilesScrollArea = ({ children }: WorkingFilesScrollAreaProps) => {
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 || dragRef.current || thumbTravel <= 0) return
-    event.preventDefault()
-    event.currentTarget.focus({ preventScroll: true })
     event.currentTarget.setPointerCapture(event.pointerId)
     if (event.target instanceof Node && !thumbRef.current?.contains(event.target)) {
       const position = event.clientY - event.currentTarget.getBoundingClientRect().top - thumbHeight / 2

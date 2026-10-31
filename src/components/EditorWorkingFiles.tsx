@@ -1,6 +1,7 @@
 import {
   closestCenter,
   DndContext,
+  DragOverlay,
   KeyboardCode,
   KeyboardSensor,
   MouseSensor,
@@ -11,7 +12,8 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Alert, Box, Button, Typography } from '@mui/material'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
@@ -32,11 +34,15 @@ import { useRenderCount } from '../utils/useRenderCount'
 import { useWorkingFileOrder } from '../utils/useWorkingFileOrder'
 
 import SortableWorkingFile from './SortableWorkingFile'
+import WorkingFileDragPreview from './WorkingFileDragPreview'
 
 import type { WorkingFile } from '../interfaces'
-import type { CollisionDetection, DragEndEvent } from '@dnd-kit/core'
+import type { CollisionDetection, DragEndEvent, DragStartEvent, Modifier } from '@dnd-kit/core'
 
 const collisionDetection: CollisionDetection = (args) => (args.pointerCoordinates ? pointerWithin(args) : closestCenter(args))
+const restrictToVerticalAxis: Modifier = ({ transform }) => ({ ...transform, x: 0 })
+const dragOverlayModifiers = [restrictToVerticalAxis]
+const dragOverlayStyle = { pointerEvents: 'none' } as const
 
 const EditorWorkingFiles = () => {
   useRenderCount('EditorWorkingFiles')
@@ -44,6 +50,8 @@ const EditorWorkingFiles = () => {
   const { user } = useAuthContext()
   const uid = user?.uid
   const { orderedFiles, canReorder, isLoading, isSaving, error, hasLoadError, announcement, moveFile, retryLoading } = useWorkingFileOrder(uid, files)
+  const [draggedFileId, setDraggedFileId] = useState<string | null>(null)
+  const draggedFile = orderedFiles.find((file) => file.id === draggedFileId)
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
@@ -86,7 +94,10 @@ const EditorWorkingFiles = () => {
     setIsFileLocked(currentFile?.isFileLocked || false)
   }, [files, workingFileID, setIsFileLocked])
 
+  const handleDragStart = ({ active }: DragStartEvent) => setDraggedFileId(String(active.id))
+  const handleDragCancel = () => setDraggedFileId(null)
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setDraggedFileId(null)
     if (!over || active.id === over.id) return
     const destination = orderedFiles.findIndex((file) => file.id === over.id)
     void moveFile(String(active.id), destination)
@@ -115,6 +126,8 @@ const EditorWorkingFiles = () => {
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetection}
+        onDragStart={handleDragStart}
+        onDragCancel={handleDragCancel}
         onDragEnd={handleDragEnd}
         accessibility={{
           screenReaderInstructions: { draggable: WORKING_FILES_DRAG_INSTRUCTIONS },
@@ -146,6 +159,12 @@ const EditorWorkingFiles = () => {
             ))}
           </Box>
         </SortableContext>
+        {createPortal(
+          <DragOverlay modifiers={dragOverlayModifiers} dropAnimation={null} style={dragOverlayStyle} zIndex={0}>
+            {draggedFile && <WorkingFileDragPreview file={draggedFile} isSelected={workingFileID === draggedFile.id} />}
+          </DragOverlay>,
+          document.body
+        )}
       </DndContext>
     </Box>
   )

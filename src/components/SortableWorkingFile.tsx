@@ -5,7 +5,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import { Box, Button, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material'
 import { useId, useState } from 'react'
 
-import { workingFileControlStyles, workingFileRowStyles, workingFileSelectStyles } from '../styles/global.styles'
+import { workingFileAppearanceStyles, workingFileControlStyles, workingFileRowStyles, workingFileSelectStyles } from '../styles/global.styles'
 import {
   BTN_VARIANT_CONTAINED,
   BTN_VARIANT_OUTLINED,
@@ -16,6 +16,7 @@ import {
 } from '../utils/constants'
 
 import type { WorkingFile } from '../interfaces'
+import type { MouseEvent } from 'react'
 
 interface SortableWorkingFileProps {
   file: WorkingFile
@@ -39,6 +40,7 @@ const SortableWorkingFile = ({ file, index, total, isSelected, canReorder, onSel
     disabled: !canReorder,
     transition: shouldReduceMotion ? null : undefined,
   })
+  const { onMouseDown, ...handleListeners } = listeners ?? {}
   const canMoveUp = canReorder && !isSorting && index > 0
   const canMoveDown = canReorder && !isSorting && index < total - 1
   const handleClose = () => setAnchorEl(null)
@@ -46,29 +48,32 @@ const SortableWorkingFile = ({ file, index, total, isSelected, canReorder, onSel
     handleClose()
     void onMove(file.id, destination)
   }
+  const handleMouseDown = (event: MouseEvent<HTMLLIElement>) => {
+    if (event.target instanceof Node && event.currentTarget.contains(event.target)) onMouseDown?.(event)
+  }
 
   return (
     <Box
       component='li'
       ref={setNodeRef}
+      onMouseDown={handleMouseDown}
       sx={[
         workingFileRowStyles,
+        workingFileAppearanceStyles(isSelected),
         {
-          bgcolor: isSelected ? 'primary.main' : 'background.paper',
-          color: isSelected ? 'primary.contrastText' : 'primary.main',
-          borderColor: isSelected ? 'primary.main' : 'divider',
+          cursor: canReorder ? (isDragging ? 'grabbing' : 'grab') : 'default',
         },
       ]}
       style={{
         transform: CSS.Transform.toString(transform ? { ...transform, x: 0 } : null),
         transition,
-        zIndex: isDragging ? 1 : undefined,
+        opacity: isDragging ? 0 : undefined,
       }}>
       <IconButton
         id={handleId}
         ref={setActivatorNodeRef}
         {...attributes}
-        {...listeners}
+        {...handleListeners}
         aria-label={`${WORKING_FILES_DRAG_LABEL} ${file.fileName}`}
         aria-haspopup='menu'
         aria-expanded={isMenuOpen}

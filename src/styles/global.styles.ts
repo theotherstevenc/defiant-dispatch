@@ -24,6 +24,7 @@ export const workingFilesScrollAreaStyles = (theme: Theme) => ({
     width: 14,
     zIndex: 1,
     touchAction: 'none',
+    userSelect: 'none',
     opacity: 0,
     pointerEvents: 'none',
     transition: 'opacity 800ms linear',
@@ -33,7 +34,7 @@ export const workingFilesScrollAreaStyles = (theme: Theme) => ({
       outlineOffset: -2,
     },
   },
-  '&:hover .working-files-scrollbar, &:focus-within .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar': {
+  '&:hover .working-files-scrollbar, &:has(:focus-visible) .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar': {
     opacity: 1,
     pointerEvents: 'auto',
     transition: 'opacity 100ms',
@@ -58,7 +59,7 @@ export const workingFilesScrollAreaStyles = (theme: Theme) => ({
     },
   },
   '@media (prefers-reduced-motion: reduce)': {
-    '& .working-files-scrollbar, &:hover .working-files-scrollbar, &:focus-within .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar':
+    '& .working-files-scrollbar, &:hover .working-files-scrollbar, &:has(:focus-visible) .working-files-scrollbar, &[data-dragging="true"] .working-files-scrollbar':
       {
         transition: 'none',
       },
@@ -189,6 +190,18 @@ export const workingFileRowStyles = (theme: Theme) => ({
   },
 })
 
+export const workingFileAppearanceStyles = (isSelected: boolean) => ({
+  bgcolor: isSelected ? 'primary.main' : 'background.paper',
+  color: isSelected ? 'primary.contrastText' : 'primary.main',
+  borderColor: isSelected ? 'primary.main' : 'divider',
+})
+
+export const workingFileDragHandleStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}
+
 export const workingFileSelectStyles = {
   flex: '1 1 0',
   minWidth: 0,
@@ -200,6 +213,7 @@ export const workingFileSelectStyles = {
   borderRadius: 'inherit',
   bgcolor: 'transparent',
   color: 'inherit',
+  cursor: 'inherit',
   boxShadow: 'none',
   '&:hover': {
     border: 0,
