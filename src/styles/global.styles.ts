@@ -1,6 +1,6 @@
 import { PREVIEW_DARK_MODE, PREVIEW_LIGHT_MODE } from '../utils/constants'
 
-import { EDITOR_SCROLLBAR_COLORS } from './global.theme'
+import { EDITOR_SCROLLBAR_COLORS, EDITOR_SCROLLBAR_SIZES } from './global.theme'
 
 import type { Theme } from '@mui/material/styles'
 
@@ -21,7 +21,7 @@ export const workingFilesScrollAreaStyles = (theme: Theme) => ({
     top: 0,
     right: 0,
     bottom: 0,
-    width: 14,
+    width: EDITOR_SCROLLBAR_SIZES.vertical,
     zIndex: 1,
     touchAction: 'none',
     userSelect: 'none',
@@ -169,18 +169,13 @@ export const fileStatusTextStyles = {
 
 export const appVersionStyles = {
   minHeight: 44,
+  display: 'flex',
+  alignItems: 'center',
   justifyContent: 'flex-start',
   p: 1,
   color: 'text.secondary',
   typography: 'caption',
   textTransform: 'none',
-}
-
-export const captainsLogStyles = {
-  '& .MuiIconButton-root': {
-    minWidth: 44,
-    minHeight: 44,
-  },
 }
 
 export const commandGroupStyles = {

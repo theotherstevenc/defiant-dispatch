@@ -8,6 +8,7 @@ import { useEditorContext } from '../context/EditorContext'
 import { useThemeSettingsContext } from '../context/ThemeSettingsContext'
 import { updateWorkingFile } from '../services/workingFilesService'
 import { workspaceEditorStyles, workspacePreviewIframeStyles } from '../styles/global.styles'
+import { EDITOR_SCROLLBAR_SIZES } from '../styles/global.theme'
 import {
   EDITOR_DARK_MODE,
   EDITOR_LIGHT_MODE,
@@ -103,6 +104,10 @@ const EditorWorkspacePreview = () => {
       wordWrap: isWordWrapEnabled ? ('on' as const) : ('off' as const),
       lineNumbers: 'on' as const,
       minimap: { enabled: false },
+      scrollbar: {
+        verticalScrollbarSize: EDITOR_SCROLLBAR_SIZES.vertical,
+        horizontalScrollbarSize: EDITOR_SCROLLBAR_SIZES.horizontal,
+      },
     }),
     [editorFontSize, isMinifyEnabled, isWordWrapEnabled]
   )
