@@ -21,7 +21,7 @@ import { useState } from 'react'
 
 import { useAuthContext } from '../context/AuthContext'
 import { useEditorContext } from '../context/EditorContext'
-import { iconButtonStyles } from '../styles/global.styles'
+import { editorDialogPaperStyles, editorMenuPaperStyles, iconButtonStyles } from '../styles/global.styles'
 import { BTN_LABEL_ACCOUNT, BTN_LABEL_CANCEL, BTN_LABEL_LOGIN, BTN_LABEL_LOGOUT, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
 import { logError } from '../utils/logError'
 
@@ -104,7 +104,7 @@ const Authenticator = () => {
         onClose={() => setAccountAnchor(null)}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        slotProps={{ list: { 'aria-labelledby': 'account-button' } }}>
+        slotProps={{ paper: { sx: editorMenuPaperStyles }, list: { 'aria-labelledby': 'account-button' } }}>
         <MenuItem onClick={handleLogout} sx={{ minHeight: 44 }}>
           <ListItemIcon>
             <LogoutIcon />
@@ -113,7 +113,7 @@ const Authenticator = () => {
         </MenuItem>
       </Menu>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='xs' slotProps={{ paper: { sx: editorDialogPaperStyles } }}>
         <DialogTitle>
           {BTN_LABEL_LOGIN}
           <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles}>
@@ -123,7 +123,8 @@ const Authenticator = () => {
         <DialogContent>
           <TextField
             autoFocus
-            margin='dense'
+            margin='normal'
+            variant='filled'
             label='username'
             type='text'
             fullWidth
@@ -137,7 +138,8 @@ const Authenticator = () => {
             }}
           />
           <TextField
-            margin='dense'
+            margin='normal'
+            variant='filled'
             label='password'
             type='password'
             fullWidth
@@ -155,7 +157,7 @@ const Authenticator = () => {
           <Button onClick={handleClose} color='secondary'>
             {BTN_LABEL_CANCEL}
           </Button>
-          <Button onClick={handleLogin} color='primary'>
+          <Button onClick={handleLogin} color='primary' variant='contained'>
             {BTN_LABEL_OK}
           </Button>
         </DialogActions>

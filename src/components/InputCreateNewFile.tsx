@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { useEditorConfigContext } from '../context/EditorConfigContext'
 import { useEditorContext } from '../context/EditorContext'
-import { iconButtonStyles } from '../styles/global.styles'
+import { editorDialogPaperStyles, iconButtonStyles } from '../styles/global.styles'
 import { boilerPlateMarkup } from '../utils/boilerPlateMarkup'
 import { BTN_LABEL_CANCEL, BTN_LABEL_CREATE, BTN_LABEL_CREATE_CHECKBOX, BTN_LABEL_CREATE_DIALOG, BTN_LABEL_OK, LABEL_CLOSE } from '../utils/constants'
 import { createNewFile } from '../utils/createNewFile'
@@ -63,7 +63,7 @@ const InputCreateNewFile = (props: EditorActionProps) => {
         <AddIcon />
       </EditorActionButton>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth='sm' slotProps={{ paper: { sx: editorDialogPaperStyles } }}>
         <DialogTitle>
           {BTN_LABEL_CREATE}
           <IconButton aria-label={LABEL_CLOSE} onClick={handleClose} sx={iconButtonStyles}>
@@ -73,7 +73,8 @@ const InputCreateNewFile = (props: EditorActionProps) => {
         <DialogContent>
           <TextField
             autoFocus
-            margin='dense'
+            margin='normal'
+            variant='filled'
             label={BTN_LABEL_CREATE_DIALOG}
             type='text'
             fullWidth
@@ -97,7 +98,7 @@ const InputCreateNewFile = (props: EditorActionProps) => {
           <Button onClick={handleClose} color='secondary'>
             {BTN_LABEL_CANCEL}
           </Button>
-          <Button onClick={handleConfirm} color='primary'>
+          <Button onClick={handleConfirm} color='primary' variant='contained'>
             {BTN_LABEL_OK}
           </Button>
         </DialogActions>

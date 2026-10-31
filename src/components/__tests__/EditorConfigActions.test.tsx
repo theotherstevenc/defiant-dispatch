@@ -87,6 +87,7 @@ describe('EditorConfigActions', () => {
     fireEvent.click(settingsButton)
 
     const drawer = screen.getByRole('dialog', { name: 'Settings' })
+    expect(within(drawer).queryByText(/Defiant Dispatch - version/)).not.toBeInTheDocument()
     expect(within(drawer).getByRole('heading', { name: 'Content options' })).toBeInTheDocument()
     expect(within(drawer).getByRole('heading', { name: 'Sending' })).toBeInTheDocument()
     expect(within(drawer).getByRole('heading', { name: 'Appearance' })).toBeInTheDocument()
