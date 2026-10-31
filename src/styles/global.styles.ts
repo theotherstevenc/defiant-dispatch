@@ -167,6 +167,22 @@ export const fileStatusTextStyles = {
   textAlign: 'center',
 }
 
+export const appVersionStyles = {
+  minHeight: 44,
+  justifyContent: 'flex-start',
+  p: 1,
+  color: 'text.secondary',
+  typography: 'caption',
+  textTransform: 'none',
+}
+
+export const captainsLogStyles = {
+  '& .MuiIconButton-root': {
+    minWidth: 44,
+    minHeight: 44,
+  },
+}
+
 export const commandGroupStyles = {
   display: 'flex',
   flexDirection: 'row',
